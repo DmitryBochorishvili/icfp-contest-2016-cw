@@ -1,0 +1,52 @@
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'jacoco'
+
+group = 'cw.icfpc'
+description = 'CW team icfpc 2016'
+version = '0.1'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+
+repositories {
+    jcenter()
+}
+
+ext {
+}
+
+[compileJava, compileGroovy, compileTestJava, compileTestGroovy]*.options*.encoding = 'UTF-8'
+
+configurations.all {
+    // check for updates every build
+    resolutionStrategy {
+        cacheChangingModulesFor 60, 'seconds'
+    }
+}
+
+dependencies {
+    compile "org.apache.commons:commons-lang3:3.4"
+
+    testCompile 'org.codehaus.groovy:groovy-all:2.4.7'
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+}
+
+test {
+    // set heap size for the test JVM(s)
+    minHeapSize = "1024m"
+    maxHeapSize = "2048m"
+
+    outputs.upToDateWhen { false }
+    reports.junitXml.destination = file("${rootDir}/tests-output")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'cw.icfpc.MainApp'
+        attributes 'Implementation-Title': 'CW TEAM ICFPC 2016',
+                'Implementation-Version': "${version}",
+                'Implementation-Vendor': 'CW TEAM'
+    }
+}
