@@ -71,7 +71,7 @@ public final class AdjacentPolyGenerator
         AtomicPolygon root = adjacent.get(0);
         adjacent.remove(0);
         assert adjacent.size() <= 1;
-        Set<AtomicPolygon> excluded = new TreeSet<>();
+        Set<AtomicPolygon> excluded = new LinkedHashSet<>();
         excluded.addAll(adjacent);
         
         return generateAllSubsets(state, root, excluded);

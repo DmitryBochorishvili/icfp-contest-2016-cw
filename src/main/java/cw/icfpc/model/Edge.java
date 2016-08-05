@@ -19,6 +19,12 @@ public class Edge implements Flipable<Edge>
 
     public Edge(FractionPoint a, FractionPoint b)
     {
+        if (a == b) {
+            throw new IllegalArgumentException("b");
+        }
+        if (a.subtract(b).absSquared() == 0) {
+            throw new IllegalArgumentException("ab");
+        }
         this.a = a;
         this.b = b;
     }

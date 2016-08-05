@@ -40,7 +40,14 @@ public class GraphUtils
         List<AtomicPolygon> polygons = new ArrayList<>();
         for (int i = 0; i < paths.length; i++)
         {
-            List<FractionPoint> polyVertices = IntStream.of(paths[i]).boxed().map(index -> verticesList.get(index)).collect(Collectors.toList());
+            List<FractionPoint> polyVertices = IntStream.of(paths[i])
+                    .boxed()
+                    .map(verticesList::get)
+                    .collect(Collectors.toList());
+            // workaround
+            if (polyVertices.get(0) == polyVertices.get(polyVertices.size()-1)) {
+                polyVertices.remove(polyVertices.size()-1);
+            }
             AtomicPolygon poly = new AtomicPolygon(polyVertices);
             polygons.add(poly);
         }

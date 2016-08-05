@@ -31,4 +31,10 @@ public final class State
     public static State valueOf(List<AtomicPolygon> polygons) {
         return new State(polygons);
     }
+
+    public State addCompound(CompoundPolygon flippedCompound) {
+        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
+        atomicPolygons.addAll(flippedCompound.getPolygons());
+        return State.valueOf(atomicPolygons);
+    }
 }

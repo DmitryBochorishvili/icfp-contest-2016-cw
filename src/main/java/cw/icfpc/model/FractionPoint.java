@@ -34,6 +34,10 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
     public FractionPoint subtract(FractionPoint b) {
         return FractionPoint.valueOf(this.x.subtract(b.getX()), this.y.subtract(b.getY()));
     }
+    
+    public double absSquared() {
+        return getX().pow(2).add(getY().pow(2)).doubleValue();
+    }
 
     public static BigFraction dot(FractionPoint a, FractionPoint b)
     {

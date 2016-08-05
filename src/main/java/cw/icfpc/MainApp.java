@@ -1,9 +1,9 @@
 package cw.icfpc;
 
 import cw.icfpc.model.AtomicPolygon;
+import cw.icfpc.model.DecisionTree;
 import cw.icfpc.model.FractionPoint;
 import cw.icfpc.model.State;
-import org.apache.commons.lang3.math.Fraction;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.io.IOException;
@@ -25,6 +25,11 @@ public class MainApp
                 for (String file : args) {
                     s = r.readProblemFromFile(file);
                     vis.addScene(s, false);
+
+                    List<State> nodes = DecisionTree.generateDecisionNodes(s);
+                    for (State n: nodes) {
+                        vis.addScene(n, true);
+                    }
                 }
             }
             vis.drawToFile(null);
