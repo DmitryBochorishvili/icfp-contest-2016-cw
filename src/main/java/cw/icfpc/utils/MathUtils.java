@@ -14,18 +14,23 @@ public class MathUtils
 {
     public static FractionPoint reflect(FractionPoint p, Edge edge)
     {
-        double nx = edge.getA().getY().doubleValue() - edge.getB().getY().doubleValue();
-        double ny = edge.getB().getX().doubleValue() - edge.getA().getX().doubleValue();
-        double len = Math.sqrt(nx*nx + ny*ny);
-        nx /= len;
-        ny /= len;
+        // http://math.stackexchange.com/q/65503/67043
+        Fraction x1 = edge.getB().getX(); 
+        Fraction y1 = edge.getB().getY(); 
+        Fraction x0 = edge.getA().getX(); 
+        Fraction y0 = edge.getA().getY();
 
-        double dot2 = 2 * (nx * p.getX().doubleValue() + ny * p.getY().doubleValue());
+        Fraction dx = x1.subtract(x0);
+        Fraction dy = y1.subtract(y0);
 
-        double rx = p.getX().doubleValue() - dot2 * nx;
-        double ry = p.getY().doubleValue() - dot2 * ny;
+        Fraction sumOfSquares = dx.pow(2).add(dy.pow(2));
+        Fraction a = (dx.pow(2).subtract(dy.pow(2))) . divideBy(sumOfSquares);
+        Fraction b = dx.add(dx).multiplyBy(dy) . divideBy(sumOfSquares);
 
-        return new FractionPoint(Fraction.getFraction(rx), Fraction.getFraction(ry));
+        Fraction x2 = a.multiplyBy(p.getX().subtract(x0)) . add( b.multiplyBy(p.getY().subtract(y0)) ) . add(x0);
+        Fraction y2 = b.multiplyBy(p.getX().subtract(x0)) . subtract( a.multiplyBy(p.getY().subtract(y0)) ) . add(y0);
+
+        return new FractionPoint(x2, y2);
     }
     
     public static boolean isClockwise(List<FractionPoint> loop) 
@@ -39,7 +44,6 @@ public class MathUtils
         }
         return area > 0;
     }
-
 
     /**
      * Returns intersection point for 2 lines specified as edges.

@@ -20,7 +20,13 @@ class MathUtilsSpec extends Specification
 
     def 'reflect: across vertical line'()
     {
+        given:
+            def p = getFractionPoint("0,0")
+            def mirror1 = getEdge("3,0 3,3")
         expect:
+            def actual = MathUtils.reflect(p, mirror1)
+            actual == getFractionPoint("6,0")
+        
             getFractionPoint('-1/2,3/5') == MathUtils.reflect(getFractionPoint("1/2,3/5"), getEdge("0,0 0,1"))
     }
 
@@ -28,6 +34,12 @@ class MathUtilsSpec extends Specification
     {
         expect:
             getFractionPoint('3/5,1/2') == MathUtils.reflect(getFractionPoint('1/2,3/5'), getEdge('0,0 1,1'))
+    }
+
+    def 'reflect: across more random line'()
+    {
+        expect:
+            getFractionPoint('-8/5,-1/5') == MathUtils.reflect(getFractionPoint('-1,-2'), getEdge('-1,-1 -4,-2'))
     }
 
     def 'line intersection'()
@@ -52,11 +64,6 @@ class MathUtilsSpec extends Specification
             null == MathUtils.getEdgeIntersection(getEdge('0,0 2,1'), getEdge('0,2 10,2'))
     }
 
-    private FractionPoint point(int x, int y)
-    {
-        return new FractionPoint(Fraction.getFraction(x, 1), Fraction.getFraction(y, 1))
-    }
-    
     def 'isClockwise'()
     {
         given:
