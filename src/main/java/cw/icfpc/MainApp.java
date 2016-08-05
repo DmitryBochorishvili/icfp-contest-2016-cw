@@ -15,8 +15,10 @@ public class MainApp
     public static void main(String[] args)
     {
         StateVisualizer vis = new StateVisualizer();
-        State s = createExampleState();
+        //State s = createExampleState();
+        ProblemReader r = new ProblemReader();
         try {
+            State s = r.readProblemFromFile(null);
             vis.visualizeStateToFile(s, null);
         } catch (IOException e) {
             e.printStackTrace();

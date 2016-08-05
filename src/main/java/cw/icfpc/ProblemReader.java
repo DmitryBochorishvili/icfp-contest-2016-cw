@@ -32,21 +32,24 @@ public class ProblemReader {
         if(aFile == null){
             contents.append(defaultProblem);
         }
-        try {
-            BufferedReader input =  new BufferedReader(new FileReader(aFile));
+        else {
             try {
-                String line = null; //not declared within while loop
-                while (( line = input.readLine()) != null){
-                    contents.append(line);
-                    contents.append(System.getProperty("line.separator"));
+                BufferedReader input =  new BufferedReader(new FileReader(aFile));
+                try {
+                    String line = null; //not declared within while loop
+                    while (( line = input.readLine()) != null){
+                        contents.append(line);
+                        contents.append(System.getProperty("line.separator"));
+                    }
+                }
+                finally {
+                    input.close();
                 }
             }
-            finally {
-                input.close();
+            catch (IOException ex){
+                ex.printStackTrace();
             }
-        }
-        catch (IOException ex){
-            ex.printStackTrace();
+
         }
 
 
@@ -61,65 +64,102 @@ public class ProblemReader {
             List<Edge> edges = readEdges(input);
             
             List<AtomicPolygon> atomicPolygons = atomizePolygons(polygons, edges);
+            return new State(atomicPolygons);
         }
         catch (IOException ex){
             ex.printStackTrace();
         }
-
         return null;
     }
 
+    private class EdgeWithVisitMark extends Edge {
+
+        private boolean visited;
+
+        public EdgeWithVisitMark(FractionPoint a, FractionPoint b) {
+            super(a, b);
+            visited = false;
+        }
+
+        public void visit() {
+            visited = true;
+        }
+
+        public boolean isVisited() {
+            return visited;
+        }
+    }
+
     private List<AtomicPolygon> atomizePolygons(List<List<FractionPoint>> polygons, List<Edge> edges) {
+        List<AtomicPolygon> polygonsFound = new ArrayList<>();
+
+        List<EdgeWithVisitMark> edgesWithVisitMark = new ArrayList<>();
+        edges.forEach(origEdge -> {
+            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getA(), origEdge.getB()));
+            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getB(), origEdge.getA()));
+        });
+
         polygons.forEach(polygon -> {
             // TODO: first find out, is polygon sorted clock-wise or counter-clock-wise
 
             // for each vertex in our polygon, try to create atomic polygon using available edges
-            for(int i = 0; i < polygon.size(); i++) {
-                AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, edges);
-            }
+            polygon.forEach(startingPoint -> {
+                //AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, edges);
+
+                List<FractionPoint> vertices = new ArrayList<>();
+                vertices.add(startingPoint);
+                EdgeWithVisitMark currentEdge = visitNextEdge(null, startingPoint, edgesWithVisitMark);
+                while(currentEdge != null) {
+                    FractionPoint nextPoint = currentEdge.getB();
+                    if(vertices.contains(nextPoint)) {// found result
+                        polygonsFound.add(new AtomicPolygon(vertices));
+                        break;
+                    }
+                    vertices.add(nextPoint);
+                    EdgeWithVisitMark nextEdge = visitNextEdge(currentEdge, nextPoint, edgesWithVisitMark);
+                    currentEdge = nextEdge;
+                }
+
+            });
         });
-        return null;
+        return polygonsFound;
     }
 
-    private AtomicPolygon findAtomicPolygonStartingWith(int firstVertexIndex, List<FractionPoint> vertices, List<Edge> edges) {
-//        Collection<FractionPoint> vertices = polygon.getVertices();
-        int numberOfVertexesInPolygon = vertices.size();
-        // find first edge in list starting from point
-        Edge firstEdge = null;
-        int indexOfSecondPoint = -1;
-        for(int secondVertex = firstVertexIndex; secondVertex < firstVertexIndex + numberOfVertexesInPolygon; secondVertex++) {
-            int secondVertexNormalized = secondVertex >= numberOfVertexesInPolygon ? secondVertex - numberOfVertexesInPolygon : secondVertex;
-            Edge f = null;
-            // try to find (firstVertex,secondVertexNormalized) in edges list
-            for(int i = 0; i < edges.size(); i++) {
-                Edge edgeToCheck = new Edge(vertices.get(firstVertexIndex), vertices.get(secondVertexNormalized));
-                if(edges.get(i).equals(edgeToCheck)) {
-                    f = edgeToCheck;
-                    indexOfSecondPoint = secondVertexNormalized;
-                    break;
+
+    private EdgeWithVisitMark visitNextEdge(EdgeWithVisitMark previousEdge, FractionPoint point, List<EdgeWithVisitMark> edgesWithVisitMark) {
+        double minAngle = Math.PI * 2;
+        int minAngleEdgeIndex = -1;
+
+        List<EdgeWithVisitMark> edgesToConsider = new ArrayList<>();
+        for(int e = 0; e < edgesWithVisitMark.size(); e++) {
+            EdgeWithVisitMark edge = edgesWithVisitMark.get(e);
+            if(edge.isVisited())
+                continue;
+            if(previousEdge == null) { // this is going to be first edge of figure. Then return first good
+                if(edge.getA().equals(point)) {//found needed edge
+                    edge.visit();
+                    return edge;
                 }
             }
-            if(f != null) {
-                firstEdge = f;
-                break;
+            else {
+                if(edge.getA().equals(point)) {
+                    edgesToConsider.add(edge);
+                }
             }
         }
-        if(firstEdge == null)
-            throw new RuntimeException("something went wrong");
+        if(edgesToConsider.size() == 0) // walked through all edges but all of them connected to this point are visited
+            return null;
 
-        List<FractionPoint> atomicPolygonVertices = new ArrayList<FractionPoint>();
-        atomicPolygonVertices.add(firstEdge.getA());
-        atomicPolygonVertices.add(firstEdge.getB());
-
-        Edge previousEdge = firstEdge;
-        while(true) {
-            Edge f = getEdgeWithMinimalAngle(previousEdge, vertices, edges, indexOfSecondPoint);
-        }
+        //TODO: find edge with minimal angle
+//        for(int e = 0; e < edgesToConsider.size(); e++) {
+//            // find edge with minimal angle
+//        }
+        minAngleEdgeIndex = edgesToConsider.size() - 1; // TEMPORARY
+        edgesToConsider.get(minAngleEdgeIndex).visit();
+        return edgesToConsider.get(minAngleEdgeIndex);
     }
 
-    private Edge getEdgeWithMinimalAngle(Edge previousEdge, List<FractionPoint> polygon, List<Edge> edges, int indexOfSecondPoint) {
-        return null;
-    }
+
 
     private List<Edge> readEdges(BufferedReader input) throws IOException {
         List<Edge> edges = new ArrayList<Edge>();
