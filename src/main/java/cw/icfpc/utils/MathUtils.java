@@ -4,7 +4,11 @@ import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MathUtils
 {
@@ -111,4 +115,28 @@ public class MathUtils
 
         return withinX && withinY;
     }
+
+    /**
+     * Splits input facets into smaller facets by their intersection points.
+     * The returned facets do not intersect with each other, they may only have
+     * common edge.
+     */
+    public static Collection<Edge> splitByIntersections(Collection<Edge> edges)
+    {
+        List<Edge> newEdges = new ArrayList<>();
+        edges.forEach(edge -> {
+            List<FractionPoint> endpoints = new ArrayList<FractionPoint>();
+            endpoints.addAll(edge.getEndpoints());
+            List<FractionPoint> intersections = edges.stream().map(innerEdge -> getEdgeIntersection(edge, innerEdge))
+                    .filter(intersection -> intersection != null && !edge.getEndpoints().contains(intersection))
+                    .collect(Collectors.toList());
+
+            intersections.addAll(edge.getEndpoints());
+            intersections.sort(Comparator.<FractionPoint>naturalOrder());
+            for (int i = 1; i < intersections.size(); i++)
+                newEdges.add(new Edge(intersections.get(i - 1), intersections.get(i)));
+        });
+        return newEdges;
+    }
+
 }

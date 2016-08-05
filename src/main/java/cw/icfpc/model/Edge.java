@@ -1,19 +1,23 @@
 package cw.icfpc.model;
 
-public class Edge
+import cw.icfpc.utils.PolyFormat;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+
+public class Edge implements Comparable<Edge>
 {
     private FractionPoint a;
     private FractionPoint b;
+
+    private Collection<FractionPoint> endpoints;
 
     public static Edge valueOf(FractionPoint pointA, FractionPoint pointB) {
         // TODO: memoize!
         return new Edge(pointA, pointB);
     }
 
-    /**
-     * @deprecated use memoizing factory instead
-     */
-    @Deprecated
     public Edge(FractionPoint a, FractionPoint b)
     {
         this.a = a;
@@ -30,13 +34,18 @@ public class Edge
         return b;
     }
 
+    public Collection<FractionPoint> getEndpoints()
+    {
+        Collection<FractionPoint> result = new ArrayList<>();
+        result.add(a);
+        result.add(b);
+        return result;
+    }
+
     @Override
     public String toString()
     {
-        return "Edge{" +
-                "a=" + a +
-                ", b=" + b +
-                '}';
+        return "Edge{" + PolyFormat.format(getEndpoints()) + '}';
     }
 
     @Override
@@ -56,5 +65,13 @@ public class Edge
     public int hashCode()
     {
         return a.hashCode() + b.hashCode();
+    }
+
+
+    @Override
+    public int compareTo(Edge o)
+    {
+        int compareA = a.compareTo(o.getA());
+        return compareA != 0 ? compareA : b.compareTo(o.getB());
     }
 }

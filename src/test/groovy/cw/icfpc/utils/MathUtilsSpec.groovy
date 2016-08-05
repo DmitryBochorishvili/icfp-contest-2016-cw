@@ -69,4 +69,42 @@ class MathUtilsSpec extends Specification
             !MathUtils.isClockwise(twistedLoop)
     }
 
+    def 'split by intersections'()
+    {
+        given:
+            def edges = [
+                    getEdge('0,0 10,10'),
+                    getEdge('10,0 0,10')
+            ]
+
+        when:
+            def split = MathUtils.splitByIntersections(edges)
+
+        then:
+            split.sort() == [
+                    getEdge('0,0 5,5'),
+                    getEdge('0,10 5,5'),
+                    getEdge('5,5 10,0'),
+                    getEdge('5,5 10,10')
+            ].sort()
+    }
+
+    def 'split by intersections: no intersections'()
+    {
+        given:
+            def edges = [
+                    getEdge('0,0 10,10'),
+                    getEdge('0,0 0,10')
+            ]
+
+        when:
+            def split = MathUtils.splitByIntersections(edges)
+
+        then:
+            split.sort() == [
+                    getEdge('0,0 10,10'),
+                    getEdge('0,0 0,10')
+            ].sort()
+    }
+
 }

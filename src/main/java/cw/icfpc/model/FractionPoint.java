@@ -2,7 +2,7 @@ package cw.icfpc.model;
 
 import org.apache.commons.lang3.math.Fraction;
 
-public class FractionPoint
+public class FractionPoint implements Comparable<FractionPoint>
 {
     private Fraction x;
     private Fraction y;
@@ -56,5 +56,12 @@ public class FractionPoint
         int result = x.hashCode();
         result = 31 * result + y.hashCode();
         return result;
+    }
+
+    @Override
+    public int compareTo(FractionPoint o)
+    {
+        int compareX = x.compareTo(o.getX());
+        return compareX != 0 ? compareX : y.compareTo(o.getY());
     }
 }
