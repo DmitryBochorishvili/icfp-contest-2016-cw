@@ -1,36 +1,84 @@
 package cw.icfpc;
 
+import cw.icfpc.model.AtomicPolygon;
 import cw.icfpc.model.State;
-import org.apache.commons.lang3.math.Fraction;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.LinkedList;
+import java.util.List;
 import java.io.File;
 import java.io.IOException;
 
 public class StateVisualizer {
     private final int boardXScale = 500;
     private final int boardYScale = 500;
-    private final int boardXSize = boardXScale + 60;
-    private final int boardYSize = boardYScale + 60;
-    private final int axesStartXPosition = 30;
-    private final int axesStartYPosition = boardYSize - 30;
-    public StateVisualizer(){}
+    private static final int MARGIN = 30;
 
-    public void visualizeStateToFile(State s, String fileName) throws IOException {
+    private List<Scene> scenes = new LinkedList<>();
+    private Scene currentScene;
+    
+    private class Scene {
+        private int offsetX = 0;
+        private int offsetY = 0;
+        private State state;
+        private List<AtomicPolygon> facets = new LinkedList<>();
+        private Color overrideColor;
+    }
+
+    public StateVisualizer(State s) {
+        currentScene = new Scene();
+        scenes.add(currentScene);
+        currentScene.state = s;
+    }
+    
+    public StateVisualizer addScene(State s, boolean belowPrevious) {
+        Scene prevScene = currentScene;
+        currentScene = new Scene();
+        scenes.add(currentScene);
+        currentScene.state = s;
+        if (belowPrevious) {
+            currentScene.offsetX = prevScene.offsetX;
+            currentScene.offsetY = prevScene.offsetY + boardYScale + 2* MARGIN;
+        } else {
+            currentScene.offsetX = prevScene.offsetX + boardXScale + 2* MARGIN;
+            currentScene.offsetY = prevScene.offsetY;
+        }
+        
+        return this;
+    }
+
+    public StateVisualizer addFacets(List<AtomicPolygon> facets, java.awt.Color overrideColor) {
+        currentScene.facets.addAll(facets);
+        currentScene.overrideColor = overrideColor;
+        return this;
+    }
+    
+    public void drawToFile(String fileName) throws IOException {
         String output = fileName == null ? "pic.png" : fileName;
 
-        BufferedImage img = new BufferedImage(boardXSize, boardYSize, BufferedImage.TYPE_INT_RGB);
+        BufferedImage img = new BufferedImage(
+                currentScene.offsetX + boardXScale + 2*MARGIN,
+                currentScene.offsetY + boardYScale + 2*MARGIN, 
+                BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = img.createGraphics();
+        
         g2d.setBackground(Color.WHITE);
-        drawAxes(g2d);
-
-        drawState(g2d, s);
+        
+        for (Scene scene: scenes) {
+            currentScene = scene;
+            drawAxes(g2d);
+            drawState(g2d, currentScene.state);
+        }
 
         File f = new File(output);
         ImageIO.write(img, "PNG", f);
+    }
+    
+    public static StateVisualizer builder(State s) {
+        return new StateVisualizer(s);
     }
 
     private void drawState(Graphics2D g2d, State s) {
@@ -51,11 +99,11 @@ public class StateVisualizer {
     }
 
     private int getDisplayPositionX(BigFraction x) {
-        return axesStartXPosition + (int) Math.round(x.doubleValue() * boardXScale);
+        return currentScene.offsetX + MARGIN + (int) Math.round(x.doubleValue() * boardXScale);
     }
 
     private int getDisplayPositionY(BigFraction y) {
-        return axesStartYPosition - (int) Math.round(y.doubleValue() * boardYScale);
+        return currentScene.offsetY + boardYScale - MARGIN - (int) Math.round(y.doubleValue() * boardYScale);
     }
 
     private void drawEdges(Graphics2D g2d, State s) {
@@ -73,25 +121,41 @@ public class StateVisualizer {
         g2d.setColor(Color.BLUE);
         Stroke prev = g2d.getStroke();
         float dash1[] = {10.0f};
-        g2d.setStroke(        new BasicStroke(1.0f,
+        g2d.setStroke(new BasicStroke(1.0f,
                 BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER,
                 10.0f, dash1, 0.0f));
-        g2d.drawLine(0, axesStartYPosition, boardXSize - 1, axesStartYPosition);
-        g2d.drawLine(axesStartXPosition, 0, axesStartXPosition, boardYSize - 1);
+        g2d.drawLine(currentScene.offsetX + MARGIN, 
+                currentScene.offsetY + boardYScale - MARGIN, 
+                currentScene.offsetX + boardXScale + 2*MARGIN - 1, 
+                currentScene.offsetY + boardYScale - MARGIN);
+        g2d.drawLine(currentScene.offsetX + MARGIN, 
+                currentScene.offsetY + MARGIN, 
+                currentScene.offsetX + MARGIN, 
+                currentScene.offsetY + boardYScale - MARGIN - 1);
 
         g2d.setColor(Color.YELLOW);
         float dash2[] = {3.0f};
-        g2d.setStroke(        new BasicStroke(1.0f,
+        g2d.setStroke(new BasicStroke(1.0f,
                 BasicStroke.CAP_BUTT,
                 BasicStroke.JOIN_MITER,
                 10.0f, dash2, 0.0f));
+        
         //draw minor lines
-        for(int x = axesStartXPosition + boardXScale / 10; x < boardXSize; x += boardXScale / 10) {
-            g2d.drawLine(x, 0, x, boardYSize - 1);
+        for(int x = MARGIN + currentScene.offsetX + boardXScale / 10; 
+            x < currentScene.offsetX + boardXScale + MARGIN; 
+            x += boardXScale / 10) {
+            g2d.drawLine(x, currentScene.offsetY + MARGIN, x, currentScene.offsetY + boardYScale - 1 - MARGIN);
         }
-        for(int y = axesStartYPosition - boardYScale / 10; y > 0; y -= boardYScale / 10) {
-            g2d.drawLine(0, y, boardXSize - 1, y);
+
+        for(int y = currentScene.offsetY + boardYScale - MARGIN - boardYScale / 10;
+            y > currentScene.offsetY + MARGIN;
+            y -= boardYScale / 10) 
+        {
+            g2d.drawLine(currentScene.offsetX + MARGIN, 
+                    y, 
+                    currentScene.offsetX + MARGIN + boardXScale - 1, 
+                    y);
         }
 
         g2d.setStroke(prev);
