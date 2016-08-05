@@ -39,4 +39,9 @@ public class CompoundPolygon
     public int hashCode() {
         return polygons.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return "CompoundPolygon{" + polygons + '}';
+    }
 }
