@@ -40,10 +40,7 @@ public class FractionPoint
     @Override
     public String toString()
     {
-        return "FractionPoint{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "FractionPoint{" + x + "," + y + '}';
     }
 
     @Override
