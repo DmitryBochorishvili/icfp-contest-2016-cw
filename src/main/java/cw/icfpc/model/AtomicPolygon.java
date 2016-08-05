@@ -1,11 +1,10 @@
 package cw.icfpc.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class AtomicPolygon
 {
-    private List<FractionPoint> vertices;
+    private Set<FractionPoint> vertices;
     private List<Facet> facets;
     
     public static AtomicPolygon valueOf(List<FractionPoint> vertices) {
@@ -19,7 +18,7 @@ public class AtomicPolygon
     @Deprecated
     public AtomicPolygon(List<FractionPoint> vertices)
     {
-        this.vertices = vertices;
+        this.vertices = new LinkedHashSet<>(vertices);
         this.facets = new ArrayList<>(vertices.size());
         for (int i=1; i<vertices.size(); i++) {
             Facet f = Facet.valueOf(vertices.get(i-1), vertices.get(i));
@@ -30,7 +29,7 @@ public class AtomicPolygon
         this.facets.add(f);
     }
 
-    public List<FractionPoint> getVertices()
+    public Collection<FractionPoint> getVertices()
     {
         return vertices;
     }
@@ -61,16 +60,12 @@ public class AtomicPolygon
             return false;
 
         AtomicPolygon that = (AtomicPolygon) o;
-
         return vertices.equals(that.vertices);
-
     }
 
     @Override
     public int hashCode() {
-        int result = vertices.hashCode();
-        result = 31 * result + facets.hashCode();
-        return result;
+        return vertices.hashCode();
     }
 
 }

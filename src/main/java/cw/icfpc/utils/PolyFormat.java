@@ -2,11 +2,12 @@ package cw.icfpc.utils;
 
 import cw.icfpc.model.Facet;
 import cw.icfpc.model.FractionPoint;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.Fraction;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class PolyFormat
 {
@@ -42,6 +43,13 @@ public class PolyFormat
             throw new RuntimeException("Invalid fraction point to parse: " + str);
 
         return new FractionPoint(Fraction.getFraction(fractions[0]), Fraction.getFraction(fractions[1]));
+    }
+
+    public static List<FractionPoint> getFractionPointList(String str)
+    {
+        return Stream.of(str.split(" "))
+                .map(PolyFormat::getFractionPoint)
+                .collect(Collectors.toList());
     }
 
     public static Facet getFacet(String str)

@@ -4,6 +4,8 @@ import cw.icfpc.model.Facet;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
 
+import java.util.List;
+
 public class MathUtils
 {
     public static FractionPoint reflect(FractionPoint p, Facet facet)
@@ -20,6 +22,18 @@ public class MathUtils
         double ry = p.getY().doubleValue() - dot2 * ny;
 
         return new FractionPoint(Fraction.getFraction(rx), Fraction.getFraction(ry));
+    }
+    
+    public static boolean isClockwise(List<FractionPoint> loop) 
+    {
+        // http://stackoverflow.com/a/1165943/207791
+        double area = 0;
+        for (int i=0; i<loop.size(); i++) {
+            FractionPoint p1 = loop.get(i);
+            FractionPoint p0 = i > 0 ? loop.get(i-1) : loop.get(loop.size()-1);
+            area += (p1.getX().doubleValue() - p0.getX().doubleValue()) * (p1.getY().doubleValue() + p0.getY().doubleValue());
+        }
+        return area > 0;
     }
 
 

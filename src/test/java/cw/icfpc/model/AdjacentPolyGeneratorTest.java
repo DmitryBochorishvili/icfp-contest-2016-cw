@@ -4,18 +4,17 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static cw.icfpc.utils.PolyFormat.getFractionPointList;
 import static org.junit.Assert.*;
 
 public class AdjacentPolyGeneratorTest {
     
-    private Map<AtomicPolygon, AtomicPolygon> adjacency = new HashMap<>();
-    
-    private class TestedAtomicPolygon extends AtomicPolygon {
+    private class AtomicPolygonStub extends AtomicPolygon {
         Set<AtomicPolygon> neighbours = new HashSet<>();
         private String name;
 
-        public TestedAtomicPolygon(String name) {
-            super(Collections.emptyList());
+        public AtomicPolygonStub(String name) {
+            super(getFractionPointList("0,0 1,0 1,1"));
             this.name = name;
         }
 
@@ -24,7 +23,7 @@ public class AdjacentPolyGeneratorTest {
             return neighbours.contains(other);
         }
         
-        public void addNeighbour(TestedAtomicPolygon other) {
+        public void addNeighbour(AtomicPolygonStub other) {
             neighbours.add(other);
             other.neighbours.add(this);
         }
@@ -38,12 +37,12 @@ public class AdjacentPolyGeneratorTest {
         public boolean equals(Object o) {
             if (this == o)
                 return true;
-            if (!(o instanceof TestedAtomicPolygon))
+            if (!(o instanceof AtomicPolygonStub))
                 return false;
             if (!super.equals(o))
                 return false;
 
-            TestedAtomicPolygon that = (TestedAtomicPolygon) o;
+            AtomicPolygonStub that = (AtomicPolygonStub) o;
 
             return name.equals(that.name);
         }
@@ -57,14 +56,14 @@ public class AdjacentPolyGeneratorTest {
     @Test
     public void generateAllSubsets() throws Exception {
 
-        TestedAtomicPolygon a = new TestedAtomicPolygon("a");
-        TestedAtomicPolygon b = new TestedAtomicPolygon("b");
-        TestedAtomicPolygon c = new TestedAtomicPolygon("c");
-        TestedAtomicPolygon d = new TestedAtomicPolygon("d");
-        TestedAtomicPolygon e = new TestedAtomicPolygon("e");
-        TestedAtomicPolygon f = new TestedAtomicPolygon("f");
-        TestedAtomicPolygon g = new TestedAtomicPolygon("g");
-        TestedAtomicPolygon h = new TestedAtomicPolygon("h");
+        AtomicPolygonStub a = new AtomicPolygonStub("a");
+        AtomicPolygonStub b = new AtomicPolygonStub("b");
+        AtomicPolygonStub c = new AtomicPolygonStub("c");
+        AtomicPolygonStub d = new AtomicPolygonStub("d");
+        AtomicPolygonStub e = new AtomicPolygonStub("e");
+        AtomicPolygonStub f = new AtomicPolygonStub("f");
+        AtomicPolygonStub g = new AtomicPolygonStub("g");
+        AtomicPolygonStub h = new AtomicPolygonStub("h");
 
         AtomicPolygon[] polys = {a, b, c, d, e, f, g, h};
         State state = new State(new ArrayList<>(Arrays.asList(polys)));
