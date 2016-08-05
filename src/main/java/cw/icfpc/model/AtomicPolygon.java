@@ -15,10 +15,6 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
         return new AtomicPolygon(vertices);
     }
 
-    /**
-     * @deprecated use memoizing factory instead
-     */
-    @Deprecated
     public AtomicPolygon(List<FractionPoint> vertices)
     {
         this.vertices = new LinkedHashSet<>(vertices);
