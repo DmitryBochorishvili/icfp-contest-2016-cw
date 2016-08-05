@@ -27,7 +27,29 @@ class MathUtilsSpec extends Specification
     def 'reflect: across 45 degrees line'()
     {
         expect:
-            getFractionPoint('3/5,1/2') == MathUtils.reflect(getFractionPoint("1/2,3/5"), getFacet("0,0 1,1"))
+            getFractionPoint('3/5,1/2') == MathUtils.reflect(getFractionPoint('1/2,3/5'), getFacet('0,0 1,1'))
+    }
+
+    def 'line intersection'()
+    {
+        expect:
+            // parallel lines
+            null == MathUtils.getLineIntersection(getFacet('0,0 2,1'), getFacet('1,0 3,1'))
+
+            // intersection out of facets
+            getFractionPoint('4,2') == MathUtils.getLineIntersection(getFacet('0,0 2,1'), getFacet('0,2 2,2'))
+    }
+
+    def 'facet intersection'()
+    {
+        expect:
+            getFractionPoint('1,2') == MathUtils.getFacetIntersection(getFacet('0,0 2,4'), getFacet('0,2 10,2'))
+
+            // parallel lines
+            null == MathUtils.getFacetIntersection(getFacet('0,0 2,1'), getFacet('1,0 3,1'))
+
+            // intersection out of one of the facets
+            null == MathUtils.getFacetIntersection(getFacet('0,0 2,1'), getFacet('0,2 10,2'))
     }
 
 }
