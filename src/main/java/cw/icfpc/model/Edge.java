@@ -33,6 +33,11 @@ public class Edge implements Flipable<Edge>
         return b;
     }
 
+    public Edge getReverse()
+    {
+        return new Edge(getB(), getA());
+    }
+
     @Override
     public Edge flip(Edge relativeTo) {
         return valueOf(a.flip(relativeTo), b.flip(relativeTo));

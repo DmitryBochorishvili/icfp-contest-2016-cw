@@ -4,6 +4,8 @@ import cw.icfpc.model.AtomicPolygon;
 import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import cw.icfpc.model.State;
+import cw.icfpc.utils.GraphUtils;
+import cw.icfpc.utils.MathUtils;
 import cw.icfpc.utils.PolyFormat;
 
 import java.io.*;
@@ -56,14 +58,14 @@ public class ProblemReader {
         return parseProblem(contents.toString());
     }
 
-    protected State parseProblem(String s) {
+    public State parseProblem(String s) {
         try {
             BufferedReader input =  new BufferedReader(new StringReader(s));
             int polygonsNumber = readPolygonsNumber(input);
             List<List<FractionPoint>> polygons = readPolygonVertices(polygonsNumber, input);
             List<Edge> edges = readEdges(input);
             
-            List<AtomicPolygon> atomicPolygons = atomizePolygons(polygons, edges);
+            List<AtomicPolygon> atomicPolygons = atomizePolygons2(polygons, edges);
             return new State(atomicPolygons);
         }
         catch (IOException ex){
@@ -88,6 +90,13 @@ public class ProblemReader {
         public boolean isVisited() {
             return visited;
         }
+    }
+
+    private List<AtomicPolygon> atomizePolygons2(List<List<FractionPoint>> polygons, List<Edge> edges) {
+        //TODO: once again, find out by polygons if it's sorted clock or counter-clock-wise.
+        // For now, don't care
+
+        return GraphUtils.minimumCycles((List<Edge>)MathUtils.splitByIntersections(edges));
     }
 
     private List<AtomicPolygon> atomizePolygons(List<List<FractionPoint>> polygons, List<Edge> edges) {
@@ -127,8 +136,8 @@ public class ProblemReader {
 
 
     private EdgeWithVisitMark visitNextEdge(EdgeWithVisitMark previousEdge, FractionPoint point, List<EdgeWithVisitMark> edgesWithVisitMark) {
-        double minAngle = Math.PI * 2;
-        int minAngleEdgeIndex = -1;
+        double maxAngle = -Math.PI * 2;
+        int maxAngleEdgeIndex = -1;
 
         List<EdgeWithVisitMark> edgesToConsider = new ArrayList<>();
         for(int e = 0; e < edgesWithVisitMark.size(); e++) {
@@ -151,12 +160,19 @@ public class ProblemReader {
             return null;
 
         //TODO: find edge with minimal angle
-//        for(int e = 0; e < edgesToConsider.size(); e++) {
-//            // find edge with minimal angle
-//        }
-        minAngleEdgeIndex = edgesToConsider.size() - 1; // TEMPORARY
-        edgesToConsider.get(minAngleEdgeIndex).visit();
-        return edgesToConsider.get(minAngleEdgeIndex);
+        for(int e = 0; e < edgesToConsider.size(); e++) {
+            double curAngle =  MathUtils.angleBetween(previousEdge.getA(), edgesToConsider.get(e).getA(), edgesToConsider.get(e).getB());
+            if(curAngle >= 0 && curAngle > maxAngle && curAngle < Math.PI - 1e-6) {
+                maxAngle = curAngle;
+                maxAngleEdgeIndex = e;
+            }
+        }
+//        minAngleEdgeIndex = edgesToConsider.size() - 1; // TEMPORARY
+        if(maxAngleEdgeIndex != -1) {
+            edgesToConsider.get(maxAngleEdgeIndex).visit();
+            return edgesToConsider.get(maxAngleEdgeIndex);
+        }
+        return null;
     }
 
 
