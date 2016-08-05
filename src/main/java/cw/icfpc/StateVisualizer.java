@@ -2,6 +2,7 @@ package cw.icfpc;
 
 import cw.icfpc.model.State;
 import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -42,19 +43,19 @@ public class StateVisualizer {
         g2d.setColor(Color.RED);
         s.getAtomicPolygons().forEach( polygon -> {
             polygon.getVertices().forEach( vertex -> {
-                Fraction x = vertex.getX();
-                Fraction y = vertex.getY();
+                BigFraction x = vertex.getX();
+                BigFraction y = vertex.getY();
                 g2d.drawArc(getDisplayPositionX(x) - 3, getDisplayPositionY(y) - 3, 6, 6, 0, 360);
             });
         });
     }
 
-    private int getDisplayPositionX(Fraction x) {
-        return axesStartXPosition + x.getNumerator() * boardXScale / x.getDenominator();
+    private int getDisplayPositionX(BigFraction x) {
+        return axesStartXPosition + (int) Math.round(x.doubleValue() * boardXScale);
     }
 
-    private int getDisplayPositionY(Fraction y) {
-        return axesStartYPosition - y.getNumerator() * boardYScale / y.getDenominator();
+    private int getDisplayPositionY(BigFraction y) {
+        return axesStartYPosition - (int) Math.round(y.doubleValue() * boardYScale);
     }
 
     private void drawEdges(Graphics2D g2d, State s) {

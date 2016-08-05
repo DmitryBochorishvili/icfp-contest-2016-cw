@@ -3,6 +3,7 @@ package cw.icfpc.utils;
 import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,20 +16,20 @@ public class MathUtils
     public static FractionPoint reflect(FractionPoint p, Edge edge)
     {
         // http://math.stackexchange.com/q/65503/67043
-        Fraction x1 = edge.getB().getX(); 
-        Fraction y1 = edge.getB().getY(); 
-        Fraction x0 = edge.getA().getX(); 
-        Fraction y0 = edge.getA().getY();
+        BigFraction x1 = edge.getB().getX();
+        BigFraction y1 = edge.getB().getY();
+        BigFraction x0 = edge.getA().getX();
+        BigFraction y0 = edge.getA().getY();
 
-        Fraction dx = x1.subtract(x0);
-        Fraction dy = y1.subtract(y0);
+        BigFraction dx = x1.subtract(x0);
+        BigFraction dy = y1.subtract(y0);
 
-        Fraction sumOfSquares = dx.pow(2).add(dy.pow(2));
-        Fraction a = (dx.pow(2).subtract(dy.pow(2))) . divideBy(sumOfSquares);
-        Fraction b = dx.add(dx).multiplyBy(dy) . divideBy(sumOfSquares);
+        BigFraction sumOfSquares = dx.pow(2).add(dy.pow(2));
+        BigFraction a = (dx.pow(2).subtract(dy.pow(2))) . divide(sumOfSquares);
+        BigFraction b = dx.add(dx).multiply(dy) . divide(sumOfSquares);
 
-        Fraction x2 = a.multiplyBy(p.getX().subtract(x0)) . add( b.multiplyBy(p.getY().subtract(y0)) ) . add(x0);
-        Fraction y2 = b.multiplyBy(p.getX().subtract(x0)) . subtract( a.multiplyBy(p.getY().subtract(y0)) ) . add(y0);
+        BigFraction x2 = a.multiply(p.getX().subtract(x0)) . add( b.multiply(p.getY().subtract(y0)) ) . add(x0);
+        BigFraction y2 = b.multiply(p.getX().subtract(x0)) . subtract( a.multiply(p.getY().subtract(y0)) ) . add(y0);
 
         return new FractionPoint(x2, y2);
     }
@@ -51,38 +52,38 @@ public class MathUtils
      */
     public static FractionPoint getLineIntersection(Edge f1, Edge f2)
     {
-        Fraction x1 = f1.getA().getX();
-        Fraction x2 = f1.getB().getX();
-        Fraction x3 = f2.getA().getX();
-        Fraction x4 = f2.getB().getX();
+        BigFraction x1 = f1.getA().getX();
+        BigFraction x2 = f1.getB().getX();
+        BigFraction x3 = f2.getA().getX();
+        BigFraction x4 = f2.getB().getX();
 
-        Fraction y1 = f1.getA().getY();
-        Fraction y2 = f1.getB().getY();
-        Fraction y3 = f2.getA().getY();
-        Fraction y4 = f2.getB().getY();
+        BigFraction y1 = f1.getA().getY();
+        BigFraction y2 = f1.getB().getY();
+        BigFraction y3 = f2.getA().getY();
+        BigFraction y4 = f2.getB().getY();
 
         // (x1-x2)(y3-y4)-(y1-y2)(x3-x4)
-        Fraction denominator = x1.subtract(x2)
-                .multiplyBy(y3.subtract(y4))
+        BigFraction denominator = x1.subtract(x2)
+                .multiply(y3.subtract(y4))
                 .subtract(
-                        y1.subtract(y2).multiplyBy(x3.subtract(x4)));
+                        y1.subtract(y2).multiply(x3.subtract(x4)));
 
         if (Math.abs(denominator.doubleValue()) < 1e-6)
             return null; // lines are parallel or close to parallel
 
         // (x1y2 - y1x2)(x3 - x4)-(x1 - x2)(x3y4 - y3x4)
-        Fraction x_nominator = x1.multiplyBy(y2).subtract(y1.multiplyBy(x2))
-                .multiplyBy(x3.subtract(x4))
-                .subtract(x1.subtract(x2).multiplyBy(
-                        x3.multiplyBy(y4).subtract(y3.multiplyBy(x4))));
+        BigFraction x_nominator = x1.multiply(y2).subtract(y1.multiply(x2))
+                .multiply(x3.subtract(x4))
+                .subtract(x1.subtract(x2).multiply(
+                        x3.multiply(y4).subtract(y3.multiply(x4))));
 
         // (x1y2 - y1x2)(y3 - y4) - (y1 - y2)(x3y4 - y3x4)
-        Fraction y_nominator = x1.multiplyBy(y2).subtract(y1.multiplyBy(x2))
-                .multiplyBy(y3.subtract(y4))
-                .subtract(y1.subtract(y2).multiplyBy(
-                        x3.multiplyBy(y4).subtract(y3.multiplyBy(x4))));
+        BigFraction y_nominator = x1.multiply(y2).subtract(y1.multiply(x2))
+                .multiply(y3.subtract(y4))
+                .subtract(y1.subtract(y2).multiply(
+                        x3.multiply(y4).subtract(y3.multiply(x4))));
 
-        FractionPoint intersection = new FractionPoint(x_nominator.divideBy(denominator).reduce(), y_nominator.divideBy(denominator).reduce());
+        FractionPoint intersection = new FractionPoint(x_nominator.divide(denominator).reduce(), y_nominator.divide(denominator).reduce());
 
         return intersection;
     }
@@ -103,11 +104,11 @@ public class MathUtils
 
     public static boolean isPointWithin(FractionPoint p, Edge f)
     {
-        Fraction x1 = f.getA().getX();
-        Fraction x2 = f.getB().getX();
+        BigFraction x1 = f.getA().getX();
+        BigFraction x2 = f.getB().getX();
 
-        Fraction y1 = f.getA().getY();
-        Fraction y2 = f.getB().getY();
+        BigFraction y1 = f.getA().getY();
+        BigFraction y2 = f.getB().getY();
 
         boolean withinX = x1.compareTo(x2) < 0
                 ? x1.compareTo(p.getX()) <= 0 && x2.compareTo(p.getX()) >= 0

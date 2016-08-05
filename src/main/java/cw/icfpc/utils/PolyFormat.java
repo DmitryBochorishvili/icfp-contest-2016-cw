@@ -3,7 +3,11 @@ package cw.icfpc.utils;
 import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.fraction.BigFractionFormat;
+import org.apache.commons.math3.fraction.FractionFormat;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,12 +16,12 @@ import java.util.stream.Stream;
 public class PolyFormat
 {
 
-    public static String format(Fraction f)
+    public static String format(BigFraction f)
     {
-        if (f.getDenominator() == 0)
+        if (f.getDenominator().equals(BigInteger.ZERO))
             return "0";
-        else if (f.getDenominator() == 1)
-            return Integer.toString(f.getNumerator());
+        else if (f.getDenominator().equals(BigInteger.ONE))
+            return f.getNumerator().toString();
         else
             return f.getNumerator() + "/" + f.getDenominator();
     }
@@ -42,7 +46,8 @@ public class PolyFormat
         if (fractions.length != 2)
             throw new RuntimeException("Invalid fraction point to parse: " + str);
 
-        return new FractionPoint(Fraction.getFraction(fractions[0]), Fraction.getFraction(fractions[1]));
+        BigFractionFormat format = new BigFractionFormat();
+        return new FractionPoint(format.parse(fractions[0]), format.parse(fractions[1]));
     }
 
     public static List<FractionPoint> getFractionPointList(String str)

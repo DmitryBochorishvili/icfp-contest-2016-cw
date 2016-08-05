@@ -2,28 +2,31 @@ package cw.icfpc.model;
 
 import cw.icfpc.utils.MathUtils;
 import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.math3.fraction.BigFraction;
+
+import java.math.BigInteger;
 
 public class FractionPoint implements Comparable<FractionPoint>, Flipable<FractionPoint>
 {
-    private Fraction x;
-    private Fraction y;
+    private BigFraction x;
+    private BigFraction y;
 
-    private static FractionPoint valueOf(Fraction x, Fraction y) {
+    private static FractionPoint valueOf(BigFraction x, BigFraction y) {
         return new FractionPoint(x, y);
     }
 
-    public FractionPoint(Fraction x, Fraction y)
+    public FractionPoint(BigFraction x, BigFraction y)
     {
         this.x = x;
         this.y = y;
     }
 
-    public Fraction getX()
+    public BigFraction getX()
     {
         return x;
     }
 
-    public Fraction getY()
+    public BigFraction getY()
     {
         return y;
     }
@@ -37,9 +40,9 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
         return MathUtils.reflect(this, relativeTo);
     }
     
-    private static String fractionToString(Fraction f) 
+    private static String fractionToString(BigFraction f)
     {
-        if (f.getDenominator() == 1) {
+        if (f.getDenominator() == BigInteger.ONE) {
             return String.valueOf(f.getNumerator());
         }
         return f.toString();
