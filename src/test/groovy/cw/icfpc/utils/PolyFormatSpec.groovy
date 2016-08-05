@@ -1,6 +1,6 @@
 package cw.icfpc.utils
 
-import cw.icfpc.model.Facet
+import cw.icfpc.model.Edge
 import cw.icfpc.model.FractionPoint
 import org.apache.commons.lang3.math.Fraction
 import spock.lang.Specification
@@ -41,7 +41,7 @@ class PolyFormatSpec extends Specification
     def 'parse Facet'()
     {
         given:
-            def facet = new Facet(new FractionPoint(Fraction.THREE_FIFTHS, Fraction.TWO_THIRDS),
+            def facet = new Edge(new FractionPoint(Fraction.THREE_FIFTHS, Fraction.TWO_THIRDS),
                     new FractionPoint(Fraction.ONE_HALF, Fraction.ONE_THIRD))
 
         when:

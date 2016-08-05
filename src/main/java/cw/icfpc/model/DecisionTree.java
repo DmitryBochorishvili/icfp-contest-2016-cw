@@ -1,7 +1,5 @@
 package cw.icfpc.model;
 
-import java.util.stream.Stream;
-
 public class DecisionTree
 {
     public void generateDecisionNodes(State state)
@@ -9,7 +7,7 @@ public class DecisionTree
 
         AdjacentPolyGenerator polyGenerator = new AdjacentPolyGenerator();
 
-        state.getFacets().forEach(facet -> {
+        state.getEdges().forEach(facet -> {
             Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, facet);
             compounds.forEach(cp -> {
 //                CompoundPolygon flippedCompound = cp.flip(facet);

@@ -1,15 +1,14 @@
 package cw.icfpc.model;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public final class AdjacentPolyGenerator
 {
 
-    private static List<AtomicPolygon> getAdjacentTo(State state, Facet facet) {
+    private static List<AtomicPolygon> getAdjacentTo(State state, Edge edge) {
         List<AtomicPolygon> adjacent = new ArrayList<>(2);
         for (AtomicPolygon a : state.getAtomicPolygons()) {
-            if (a.getFacets().contains(facet)) {
+            if (a.getEdges().contains(edge)) {
                 adjacent.add(a);
             }
         }
@@ -58,9 +57,9 @@ public final class AdjacentPolyGenerator
     }
     
     
-    public static List<CompoundPolygon> getAllCompounds(State state, Facet facet) 
+    public static List<CompoundPolygon> getAllCompounds(State state, Edge edge) 
     {
-        List<AtomicPolygon> adjacent = getAdjacentTo(state, facet);
+        List<AtomicPolygon> adjacent = getAdjacentTo(state, edge);
         if (adjacent.size() < 1) {
             return Collections.emptyList();
         }

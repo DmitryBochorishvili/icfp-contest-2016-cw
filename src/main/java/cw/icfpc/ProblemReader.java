@@ -1,13 +1,14 @@
 package cw.icfpc;
 
 import cw.icfpc.model.AtomicPolygon;
-import cw.icfpc.model.Facet;
+import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import cw.icfpc.model.State;
 import cw.icfpc.utils.PolyFormat;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ProblemReader {
@@ -57,10 +58,10 @@ public class ProblemReader {
         try {
             BufferedReader input =  new BufferedReader(new StringReader(s));
             int polygonsNumber = readPolygonsNumber(input);
-            List<AtomicPolygon> polygons = readPolygonVertices(polygonsNumber, input);
-            List<Facet> facets = readFacets(input);
+            List<List<FractionPoint>> polygons = readPolygonVertices(polygonsNumber, input);
+            List<Edge> edges = readFacets(input);
             
-            List<AtomicPolygon> atomicPolygons = atomizePolygons(polygons, facets);
+            List<AtomicPolygon> atomicPolygons = atomizePolygons(polygons, edges);
         }
         catch (IOException ex){
             ex.printStackTrace();
@@ -69,68 +70,69 @@ public class ProblemReader {
         return null;
     }
 
-    private List<AtomicPolygon> atomizePolygons(List<AtomicPolygon> polygons, List<Facet> facets) {
+    private List<AtomicPolygon> atomizePolygons(List<List<FractionPoint>> polygons, List<Edge> edges) {
         polygons.forEach(polygon -> {
             // TODO: first find out, is polygon sorted clock-wise or counter-clock-wise
 
-            // for each vertex in our polygon, try to create atomic polygon using available facets
-            for(int i = 0; i < polygon.getVertices().size(); i++) {
-                AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, facets);
+            // for each vertex in our polygon, try to create atomic polygon using available edges
+            for(int i = 0; i < polygon.size(); i++) {
+                AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, edges);
             }
         });
         return null;
     }
 
-    private AtomicPolygon findAtomicPolygonStartingWith(int firstVertexIndex, AtomicPolygon polygon, List<Facet> facets) {
-        int numberOfVertexesInPolygon = polygon.getVertices().size();
+    private AtomicPolygon findAtomicPolygonStartingWith(int firstVertexIndex, List<FractionPoint> vertices, List<Edge> edges) {
+//        Collection<FractionPoint> vertices = polygon.getVertices();
+        int numberOfVertexesInPolygon = vertices.size();
         // find first facet in list starting from point
-        Facet firstFacet = null;
+        Edge firstEdge = null;
         int indexOfSecondPoint = -1;
         for(int secondVertex = firstVertexIndex; secondVertex < firstVertexIndex + numberOfVertexesInPolygon; secondVertex++) {
             int secondVertexNormalized = secondVertex >= numberOfVertexesInPolygon ? secondVertex - numberOfVertexesInPolygon : secondVertex;
-            Facet f = null;
-            // try to find (firstVertex,secondVertexNormalized) in facets list
-            for(int i = 0; i < facets.size(); i++) {
-                Facet facetToCheck = new Facet(polygon.getVertices().get(firstVertexIndex), polygon.getVertices().get(secondVertexNormalized));
-                if(facets.get(i).equals(facetToCheck)) {
-                    f = facetToCheck;
+            Edge f = null;
+            // try to find (firstVertex,secondVertexNormalized) in edges list
+            for(int i = 0; i < edges.size(); i++) {
+                Edge edgeToCheck = new Edge(vertices.get(firstVertexIndex), vertices.get(secondVertexNormalized));
+                if(edges.get(i).equals(edgeToCheck)) {
+                    f = edgeToCheck;
                     indexOfSecondPoint = secondVertexNormalized;
                     break;
                 }
             }
             if(f != null) {
-                firstFacet = f;
+                firstEdge = f;
                 break;
             }
         }
-        if(firstFacet == null)
+        if(firstEdge == null)
             throw new RuntimeException("something went wrong");
 
         List<FractionPoint> atomicPolygonVertices = new ArrayList<FractionPoint>();
-        atomicPolygonVertices.add(firstFacet.getA());
-        atomicPolygonVertices.add(firstFacet.getB());
+        atomicPolygonVertices.add(firstEdge.getA());
+        atomicPolygonVertices.add(firstEdge.getB());
 
-        Facet previousFacet = firstFacet;
+        Edge previousEdge = firstEdge;
         while(true) {
-            Facet f = getFacetWithMinimalAngle(previousFacet, polygon, facets, indexOfSecondPoint);
+            Edge f = getFacetWithMinimalAngle(previousEdge, vertices, edges, indexOfSecondPoint);
         }
     }
 
-    private Facet getFacetWithMinimalAngle(Facet previousFacet, AtomicPolygon polygon, List<Facet> facets, int indexOfSecondPoint) {
+    private Edge getFacetWithMinimalAngle(Edge previousEdge, List<FractionPoint> polygon, List<Edge> edges, int indexOfSecondPoint) {
         return null;
     }
 
-    private List<Facet> readFacets(BufferedReader input) throws IOException {
-        List<Facet> facets = new ArrayList<Facet>();
+    private List<Edge> readFacets(BufferedReader input) throws IOException {
+        List<Edge> edges = new ArrayList<Edge>();
         String facetNumberAsString = input.readLine();
         int facetNumber = Integer.parseInt(facetNumberAsString);
         for(int j = 0; j < facetNumber; j++)
         {
             String facetCoordinatesAsString = input.readLine();
-            Facet facet = PolyFormat.getFacet(facetCoordinatesAsString);
-            facets.add(facet);
+            Edge edge = PolyFormat.getFacet(facetCoordinatesAsString);
+            edges.add(edge);
         }
-        return facets;
+        return edges;
     }
 
     private int readFacetNumber(BufferedReader input) throws IOException {
@@ -140,8 +142,8 @@ public class ProblemReader {
         return facetNumber;
     }
 
-    private List<AtomicPolygon> readPolygonVertices(int polygonsNumber, BufferedReader input) throws IOException {
-        List<AtomicPolygon> polygons = new ArrayList<AtomicPolygon>(); // this is not really atomic polygon, since in input data polygons are not atomic. Just reuse structure for now.
+    private List<List<FractionPoint>> readPolygonVertices(int polygonsNumber, BufferedReader input) throws IOException {
+        List<List<FractionPoint>> polygons = new ArrayList<>(); // this is not really atomic polygon, since in input data polygons are not atomic. Just reuse structure for now.
         for(int i = 0; i < polygonsNumber; i++)
         {
             String verticesNumberAsString = input.readLine();
@@ -153,7 +155,7 @@ public class ProblemReader {
                 FractionPoint vertex = PolyFormat.getFractionPoint(vertexCoordinatesAsString);
                 vertices.add(vertex);
             }
-            polygons.add(new AtomicPolygon(vertices));
+            polygons.add(vertices);
         }
         return polygons;
     }

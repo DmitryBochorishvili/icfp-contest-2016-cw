@@ -1,6 +1,5 @@
 package cw.icfpc.utils
 
-import cw.icfpc.model.Facet
 import cw.icfpc.model.FractionPoint
 import org.apache.commons.lang3.math.Fraction
 import spock.lang.Specification
@@ -37,7 +36,7 @@ class MathUtilsSpec extends Specification
             // parallel lines
             null == MathUtils.getLineIntersection(getFacet('0,0 2,1'), getFacet('1,0 3,1'))
 
-            // intersection out of facets
+            // intersection out of edges
             getFractionPoint('4,2') == MathUtils.getLineIntersection(getFacet('0,0 2,1'), getFacet('0,2 2,2'))
     }
 
@@ -49,7 +48,7 @@ class MathUtilsSpec extends Specification
             // parallel lines
             null == MathUtils.getFacetIntersection(getFacet('0,0 2,1'), getFacet('1,0 3,1'))
 
-            // intersection out of one of the facets
+            // intersection out of one of the edges
             null == MathUtils.getFacetIntersection(getFacet('0,0 2,1'), getFacet('0,2 10,2'))
     }
 

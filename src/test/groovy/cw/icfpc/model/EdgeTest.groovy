@@ -4,7 +4,7 @@ import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getFacet
 
-class FacetTest extends Specification {
+class EdgeTest extends Specification {
   def "equals and hashCode"() {
     given:
       def a = getFacet("0,0 1,1")

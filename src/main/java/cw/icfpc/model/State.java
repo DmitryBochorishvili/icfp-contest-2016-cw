@@ -1,12 +1,10 @@
 package cw.icfpc.model;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
-
 import java.util.*;
 
 public final class State
 {
-    private List<Facet> facets;
+    private List<Edge> edges;
 
     private List<AtomicPolygon> atomicPolygons;
 
@@ -14,15 +12,15 @@ public final class State
     {
         this.atomicPolygons = atomicPolygons;
 
-        facets = new ArrayList<Facet>();
+        edges = new ArrayList<Edge>();
         atomicPolygons.forEach(polygon -> {
-            facets.addAll(polygon.getFacets());
+            edges.addAll(polygon.getEdges());
         });
     }
 
-    public List<Facet> getFacets()
+    public List<Edge> getEdges()
     {
-        return facets;
+        return edges;
     }
 
     public List<AtomicPolygon> getAtomicPolygons()

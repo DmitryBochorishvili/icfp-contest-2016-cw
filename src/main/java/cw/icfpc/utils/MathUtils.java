@@ -1,6 +1,6 @@
 package cw.icfpc.utils;
 
-import cw.icfpc.model.Facet;
+import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
 
@@ -8,10 +8,10 @@ import java.util.List;
 
 public class MathUtils
 {
-    public static FractionPoint reflect(FractionPoint p, Facet facet)
+    public static FractionPoint reflect(FractionPoint p, Edge edge)
     {
-        double nx = facet.getA().getY().doubleValue() - facet.getB().getY().doubleValue();
-        double ny = facet.getB().getX().doubleValue() - facet.getA().getX().doubleValue();
+        double nx = edge.getA().getY().doubleValue() - edge.getB().getY().doubleValue();
+        double ny = edge.getB().getX().doubleValue() - edge.getA().getX().doubleValue();
         double len = Math.sqrt(nx*nx + ny*ny);
         nx /= len;
         ny /= len;
@@ -41,7 +41,7 @@ public class MathUtils
      * Returns intersection point for 2 lines specified as facets.
      * If lines do not intersect then returns null.
      */
-    public static FractionPoint getLineIntersection(Facet f1, Facet f2)
+    public static FractionPoint getLineIntersection(Edge f1, Edge f2)
     {
         Fraction x1 = f1.getA().getX();
         Fraction x2 = f1.getB().getX();
@@ -83,7 +83,7 @@ public class MathUtils
      * Returns intersection point for 2 facets.
      * If facets do not intersect then returns null.
      */
-    public static FractionPoint getFacetIntersection(Facet f1, Facet f2)
+    public static FractionPoint getFacetIntersection(Edge f1, Edge f2)
     {
         FractionPoint p = getLineIntersection(f1, f2);
 
@@ -93,7 +93,7 @@ public class MathUtils
         return isPointWithin(p, f1) && isPointWithin(p, f2) ? p : null;
     }
 
-    public static boolean isPointWithin(FractionPoint p, Facet f)
+    public static boolean isPointWithin(FractionPoint p, Edge f)
     {
         Fraction x1 = f.getA().getX();
         Fraction x2 = f.getB().getX();

@@ -1,6 +1,6 @@
 package cw.icfpc.utils;
 
-import cw.icfpc.model.Facet;
+import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
 
@@ -52,13 +52,13 @@ public class PolyFormat
                 .collect(Collectors.toList());
     }
 
-    public static Facet getFacet(String str)
+    public static Edge getFacet(String str)
     {
         String[] points = str.split(" ");
 
         if (points.length != 2)
             throw new RuntimeException("Invalid facet to parse: " + str);
 
-        return new Facet(getFractionPoint(points[0]), getFractionPoint(points[1]));
+        return new Edge(getFractionPoint(points[0]), getFractionPoint(points[1]));
     }
 }

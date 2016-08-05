@@ -1,6 +1,5 @@
 package cw.icfpc;
 
-import cw.icfpc.model.FractionPoint;
 import cw.icfpc.model.State;
 import org.apache.commons.lang3.math.Fraction;
 
@@ -60,7 +59,7 @@ public class StateVisualizer {
 
     private void drawFacets(Graphics2D g2d, State s) {
         g2d.setColor(Color.WHITE);
-        s.getFacets().forEach( facet -> {
+        s.getEdges().forEach( facet -> {
             g2d.drawLine(getDisplayPositionX(facet.getA().getX()),
                     getDisplayPositionY(facet.getA().getY()),
                     getDisplayPositionX(facet.getB().getX()),

@@ -5,7 +5,7 @@ import java.util.*;
 public class AtomicPolygon
 {
     private Set<FractionPoint> vertices;
-    private List<Facet> facets;
+    private List<Edge> edges;
     
     public static AtomicPolygon valueOf(List<FractionPoint> vertices) {
         // FIXME: memoize
@@ -19,14 +19,14 @@ public class AtomicPolygon
     public AtomicPolygon(List<FractionPoint> vertices)
     {
         this.vertices = new LinkedHashSet<>(vertices);
-        this.facets = new ArrayList<>(vertices.size());
+        this.edges = new ArrayList<>(vertices.size());
         for (int i=1; i<vertices.size(); i++) {
-            Facet f = Facet.valueOf(vertices.get(i-1), vertices.get(i));
-            this.facets.add(f);
+            Edge f = Edge.valueOf(vertices.get(i-1), vertices.get(i));
+            this.edges.add(f);
         }
         // and add last facet from last to first point
-        Facet f = Facet.valueOf(vertices.get(vertices.size() - 1), vertices.get(0));
-        this.facets.add(f);
+        Edge f = Edge.valueOf(vertices.get(vertices.size() - 1), vertices.get(0));
+        this.edges.add(f);
     }
 
     public Collection<FractionPoint> getVertices()
@@ -34,9 +34,9 @@ public class AtomicPolygon
         return vertices;
     }
 
-    public List<Facet> getFacets()
+    public List<Edge> getEdges()
     {
-        return facets;
+        return edges;
     }
     
     public boolean isAdjacent(AtomicPolygon other) {
@@ -44,8 +44,8 @@ public class AtomicPolygon
             return false;
         }
         
-        for (Facet f : this.facets) {
-            if (other.getFacets().contains(f)) {
+        for (Edge f : this.edges) {
+            if (other.getEdges().contains(f)) {
                 return true;
             }
         }

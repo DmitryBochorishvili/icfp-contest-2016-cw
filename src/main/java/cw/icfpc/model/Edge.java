@@ -1,20 +1,20 @@
 package cw.icfpc.model;
 
-public class Facet
+public class Edge
 {
     private FractionPoint a;
     private FractionPoint b;
 
-    public static Facet valueOf(FractionPoint pointA, FractionPoint pointB) {
+    public static Edge valueOf(FractionPoint pointA, FractionPoint pointB) {
         // TODO: memoize!
-        return new Facet(pointA, pointB);
+        return new Edge(pointA, pointB);
     }
 
     /**
      * @deprecated use memoizing factory instead
      */
     @Deprecated
-    public Facet(FractionPoint a, FractionPoint b)
+    public Edge(FractionPoint a, FractionPoint b)
     {
         this.a = a;
         this.b = b;
@@ -33,7 +33,7 @@ public class Facet
     @Override
     public String toString()
     {
-        return "Facet{" +
+        return "Edge{" +
                 "a=" + a +
                 ", b=" + b +
                 '}';
@@ -47,9 +47,9 @@ public class Facet
         if (o == null || getClass() != o.getClass())
             return false;
 
-        Facet facet = (Facet) o;
+        Edge edge = (Edge) o;
 
-        return a.equals(facet.a) && b.equals(facet.b) || a.equals(facet.b) && b.equals(facet.a);
+        return a.equals(edge.a) && b.equals(edge.b) || a.equals(edge.b) && b.equals(edge.a);
     }
 
     @Override
