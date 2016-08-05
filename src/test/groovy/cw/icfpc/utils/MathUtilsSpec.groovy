@@ -41,9 +41,11 @@ class MathUtilsSpec extends Specification
         given:
             def loop1 = getFractionPointList("0,0 0,1 1,1")
             def loop2 = getFractionPointList("1,1 0,0 1,0")
+            def twistedLoop = getFractionPointList("0,0 -1,0 -1,1 0,1 0,2 -2,2 -2,-1 0,-1")
         expect:
             MathUtils.isClockwise(loop1)
             !MathUtils.isClockwise(loop2)
+            !MathUtils.isClockwise(twistedLoop)
     }
 
 }
