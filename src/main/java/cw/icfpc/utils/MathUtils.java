@@ -38,7 +38,7 @@ public class MathUtils
 
 
     /**
-     * Returns intersection point for 2 lines specified as facets.
+     * Returns intersection point for 2 lines specified as edges.
      * If lines do not intersect then returns null.
      */
     public static FractionPoint getLineIntersection(Edge f1, Edge f2)
@@ -80,10 +80,10 @@ public class MathUtils
     }
 
     /**
-     * Returns intersection point for 2 facets.
-     * If facets do not intersect then returns null.
+     * Returns intersection point for 2 edges.
+     * If edges do not intersect then returns null.
      */
-    public static FractionPoint getFacetIntersection(Edge f1, Edge f2)
+    public static FractionPoint getEdgeIntersection(Edge f1, Edge f2)
     {
         FractionPoint p = getLineIntersection(f1, f2);
 

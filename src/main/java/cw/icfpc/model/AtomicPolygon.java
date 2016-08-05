@@ -24,7 +24,7 @@ public class AtomicPolygon
             Edge f = Edge.valueOf(vertices.get(i-1), vertices.get(i));
             this.edges.add(f);
         }
-        // and add last facet from last to first point
+        // and add last edge from last to first point
         Edge f = Edge.valueOf(vertices.get(vertices.size() - 1), vertices.get(0));
         this.edges.add(f);
     }

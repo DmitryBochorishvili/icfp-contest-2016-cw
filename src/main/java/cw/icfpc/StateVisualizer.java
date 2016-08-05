@@ -35,7 +35,7 @@ public class StateVisualizer {
     private void drawState(Graphics2D g2d, State s) {
         g2d.setStroke(new BasicStroke(2));
         drawVertices(g2d, s);
-        drawFacets(g2d, s);
+        drawEdges(g2d, s);
     }
 
     private void drawVertices(Graphics2D g2d, State s) {
@@ -57,13 +57,13 @@ public class StateVisualizer {
         return axesStartYPosition - y.getNumerator() * boardYScale / y.getDenominator();
     }
 
-    private void drawFacets(Graphics2D g2d, State s) {
+    private void drawEdges(Graphics2D g2d, State s) {
         g2d.setColor(Color.WHITE);
-        s.getEdges().forEach( facet -> {
-            g2d.drawLine(getDisplayPositionX(facet.getA().getX()),
-                    getDisplayPositionY(facet.getA().getY()),
-                    getDisplayPositionX(facet.getB().getX()),
-                    getDisplayPositionY(facet.getB().getY())
+        s.getEdges().forEach( edge -> {
+            g2d.drawLine(getDisplayPositionX(edge.getA().getX()),
+                    getDisplayPositionY(edge.getA().getY()),
+                    getDisplayPositionX(edge.getB().getX()),
+                    getDisplayPositionY(edge.getB().getY())
             );
         });
     }

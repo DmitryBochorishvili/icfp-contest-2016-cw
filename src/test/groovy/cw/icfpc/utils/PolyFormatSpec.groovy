@@ -38,17 +38,17 @@ class PolyFormatSpec extends Specification
             new FractionPoint(Fraction.THREE_FIFTHS, Fraction.TWO_THIRDS) == PolyFormat.getFractionPoint('3/5,2/3')
     }
 
-    def 'parse Facet'()
+    def 'parse Edge'()
     {
         given:
-            def facet = new Edge(new FractionPoint(Fraction.THREE_FIFTHS, Fraction.TWO_THIRDS),
+            def edge = new Edge(new FractionPoint(Fraction.THREE_FIFTHS, Fraction.TWO_THIRDS),
                     new FractionPoint(Fraction.ONE_HALF, Fraction.ONE_THIRD))
 
         when:
-            def result = PolyFormat.getFacet('3/5,2/3 1/2,1/3')
+            def result = PolyFormat.getEdge('3/5,2/3 1/2,1/3')
 
         then:
-            result == facet
+            result == edge
     }
 
 }

@@ -52,12 +52,12 @@ public class PolyFormat
                 .collect(Collectors.toList());
     }
 
-    public static Edge getFacet(String str)
+    public static Edge getEdge(String str)
     {
         String[] points = str.split(" ");
 
         if (points.length != 2)
-            throw new RuntimeException("Invalid facet to parse: " + str);
+            throw new RuntimeException("Invalid edge to parse: " + str);
 
         return new Edge(getFractionPoint(points[0]), getFractionPoint(points[1]));
     }

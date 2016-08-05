@@ -8,7 +8,6 @@ import cw.icfpc.utils.PolyFormat;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ProblemReader {
@@ -59,7 +58,7 @@ public class ProblemReader {
             BufferedReader input =  new BufferedReader(new StringReader(s));
             int polygonsNumber = readPolygonsNumber(input);
             List<List<FractionPoint>> polygons = readPolygonVertices(polygonsNumber, input);
-            List<Edge> edges = readFacets(input);
+            List<Edge> edges = readEdges(input);
             
             List<AtomicPolygon> atomicPolygons = atomizePolygons(polygons, edges);
         }
@@ -85,7 +84,7 @@ public class ProblemReader {
     private AtomicPolygon findAtomicPolygonStartingWith(int firstVertexIndex, List<FractionPoint> vertices, List<Edge> edges) {
 //        Collection<FractionPoint> vertices = polygon.getVertices();
         int numberOfVertexesInPolygon = vertices.size();
-        // find first facet in list starting from point
+        // find first edge in list starting from point
         Edge firstEdge = null;
         int indexOfSecondPoint = -1;
         for(int secondVertex = firstVertexIndex; secondVertex < firstVertexIndex + numberOfVertexesInPolygon; secondVertex++) {
@@ -114,32 +113,32 @@ public class ProblemReader {
 
         Edge previousEdge = firstEdge;
         while(true) {
-            Edge f = getFacetWithMinimalAngle(previousEdge, vertices, edges, indexOfSecondPoint);
+            Edge f = getEdgeWithMinimalAngle(previousEdge, vertices, edges, indexOfSecondPoint);
         }
     }
 
-    private Edge getFacetWithMinimalAngle(Edge previousEdge, List<FractionPoint> polygon, List<Edge> edges, int indexOfSecondPoint) {
+    private Edge getEdgeWithMinimalAngle(Edge previousEdge, List<FractionPoint> polygon, List<Edge> edges, int indexOfSecondPoint) {
         return null;
     }
 
-    private List<Edge> readFacets(BufferedReader input) throws IOException {
+    private List<Edge> readEdges(BufferedReader input) throws IOException {
         List<Edge> edges = new ArrayList<Edge>();
-        String facetNumberAsString = input.readLine();
-        int facetNumber = Integer.parseInt(facetNumberAsString);
-        for(int j = 0; j < facetNumber; j++)
+        String edgeNumberAsString = input.readLine();
+        int edgeNumber = Integer.parseInt(edgeNumberAsString);
+        for(int j = 0; j < edgeNumber; j++)
         {
-            String facetCoordinatesAsString = input.readLine();
-            Edge edge = PolyFormat.getFacet(facetCoordinatesAsString);
+            String edgeCoordinatesAsString = input.readLine();
+            Edge edge = PolyFormat.getEdge(edgeCoordinatesAsString);
             edges.add(edge);
         }
         return edges;
     }
 
-    private int readFacetNumber(BufferedReader input) throws IOException {
-        int facetNumber;
+    private int readEdgeNumber(BufferedReader input) throws IOException {
+        int edgeNumber;
         String polygonsNumberAsString = input.readLine();
-        facetNumber = Integer.parseInt(polygonsNumberAsString);
-        return facetNumber;
+        edgeNumber = Integer.parseInt(polygonsNumberAsString);
+        return edgeNumber;
     }
 
     private List<List<FractionPoint>> readPolygonVertices(int polygonsNumber, BufferedReader input) throws IOException {

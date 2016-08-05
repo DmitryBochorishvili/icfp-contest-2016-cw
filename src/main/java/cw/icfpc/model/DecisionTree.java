@@ -7,10 +7,10 @@ public class DecisionTree
 
         AdjacentPolyGenerator polyGenerator = new AdjacentPolyGenerator();
 
-        state.getEdges().forEach(facet -> {
-            Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, facet);
+        state.getEdges().forEach(edge -> {
+            Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
             compounds.forEach(cp -> {
-//                CompoundPolygon flippedCompound = cp.flip(facet);
+//                CompoundPolygon flippedCompound = cp.flip(edge);
 //                cp.getSubsets().forEach(compoundSubset -> {
 
                     // из начального состояния вычесть compound
