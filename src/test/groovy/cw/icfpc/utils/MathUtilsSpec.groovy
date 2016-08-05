@@ -7,6 +7,7 @@ import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getFacet
 import static cw.icfpc.utils.PolyFormat.getFractionPoint
+import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class MathUtilsSpec extends Specification
 {
@@ -28,6 +29,21 @@ class MathUtilsSpec extends Specification
     {
         expect:
             getFractionPoint('3/5,1/2') == MathUtils.reflect(getFractionPoint("1/2,3/5"), getFacet("0,0 1,1"))
+    }
+
+    private FractionPoint point(int x, int y)
+    {
+        return new FractionPoint(Fraction.getFraction(x, 1), Fraction.getFraction(y, 1))
+    }
+    
+    def 'isClockwise'()
+    {
+        given:
+            def loop1 = getFractionPointList("0,0 0,1 1,1")
+            def loop2 = getFractionPointList("1,1 0,0 1,0")
+        expect:
+            MathUtils.isClockwise(loop1)
+            !MathUtils.isClockwise(loop2)
     }
 
 }

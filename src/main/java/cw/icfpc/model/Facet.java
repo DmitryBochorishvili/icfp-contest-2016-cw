@@ -40,15 +40,15 @@ public class Facet
     }
 
     @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
-        Facet facet = (Facet)o;
+        Facet facet = (Facet) o;
 
-        if (!a.equals(facet.a)) return false;
-        return b.equals(facet.b);
+        return a.equals(facet.a) && b.equals(facet.b);
 
     }
 
