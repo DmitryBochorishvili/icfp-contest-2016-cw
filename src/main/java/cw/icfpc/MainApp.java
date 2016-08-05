@@ -15,11 +15,12 @@ public class MainApp
 
     public static void main(String[] args)
     {
+        String file = args.length > 0 ? args[0] : null; //"problems/1";
         StateVisualizer vis = new StateVisualizer();
         //State s = createExampleState();
         ProblemReader r = new ProblemReader();
         try {
-            State s = r.readProblemFromFile(null);
+            State s = r.readProblemFromFile(file);
             vis.visualizeStateToFile(s, null);
         } catch (IOException e) {
             e.printStackTrace();

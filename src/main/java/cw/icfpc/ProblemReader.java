@@ -56,7 +56,7 @@ public class ProblemReader {
         return parseProblem(contents.toString());
     }
 
-    private State parseProblem(String s) {
+    protected State parseProblem(String s) {
         try {
             BufferedReader input =  new BufferedReader(new StringReader(s));
             int polygonsNumber = readPolygonsNumber(input);
