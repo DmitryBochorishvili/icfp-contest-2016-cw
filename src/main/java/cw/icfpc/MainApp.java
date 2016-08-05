@@ -15,16 +15,20 @@ public class MainApp
 
     public static void main(String[] args)
     {
-        String file = args.length > 0 ? args[0] : null; //"problems/1";
         //State s = createExampleState();
         ProblemReader r = new ProblemReader();
         try {
-            State s = r.readProblemFromFile(file);
-            StateVisualizer
-                    .builder(s)
-                    .addScene(s, true)
-                    .addScene(s, false)
-                    .drawToFile(null);
+            State s = r.readProblemFromFile(null);
+            StateVisualizer vis = StateVisualizer.builder(s);
+
+            if (args.length > 0) {
+                for (String file : args) {
+                    s = r.readProblemFromFile(file);
+                    vis.addScene(s, false);
+                }
+            }
+            vis.drawToFile(null);
+            
         } catch (IOException e) {
             e.printStackTrace();
         }

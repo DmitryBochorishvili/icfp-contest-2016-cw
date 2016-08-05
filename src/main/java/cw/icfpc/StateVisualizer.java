@@ -55,7 +55,7 @@ public class StateVisualizer {
         currentScene.overrideColor = overrideColor;
         return this;
     }
-    
+
     public void drawToFile(String fileName) throws IOException {
         String output = fileName == null ? "pic.png" : fileName;
 
