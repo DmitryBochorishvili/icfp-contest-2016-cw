@@ -51,6 +51,19 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
         return false;
     }
 
+    public Edge getAdjacentEdge(AtomicPolygon other) {
+        if (other == this) {
+            return null;
+        }
+
+        for (Edge f : this.edges) {
+            if (other.getEdges().contains(f)) {
+                return f;
+            }
+        }
+        return null;
+    }
+
     @Override
     public AtomicPolygon flip(Edge relativeTo) {
         List<FractionPoint> flippedVertexes = vertices.stream()

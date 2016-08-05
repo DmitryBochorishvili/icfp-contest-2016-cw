@@ -6,6 +6,7 @@ import cw.icfpc.model.FractionPoint;
 import org.openscience.cdk.graph.MinimumCycleBasis;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class GraphUtils
 {
-    public static List<AtomicPolygon> minimumCycles(List<Edge> edges)
+    public static List<AtomicPolygon> minimumCycles(Collection<Edge> edges)
     {
         Map<FractionPoint, Integer> verticesMap = new HashMap<>();
         List<FractionPoint> verticesList = new ArrayList<>();

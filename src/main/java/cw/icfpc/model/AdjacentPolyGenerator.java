@@ -1,6 +1,10 @@
 package cw.icfpc.model;
 
+
+import cw.icfpc.utils.GraphUtils;
+
 import java.util.*;
+import java.util.stream.Collector;
 
 public final class AdjacentPolyGenerator
 {
@@ -72,4 +76,46 @@ public final class AdjacentPolyGenerator
         
         return generateAllSubsets(state, root, excluded);
     }
+
+    /**
+     * Returns list of possible atomic polygons to be retained in state after flip.
+     */
+    public static List<CompoundPolygon> getAllSourceSubCompounds(CompoundPolygon poly)
+    {
+        final int MAX_OPTIONS = 10;
+
+        List<CompoundPolygon> result = new ArrayList<>();
+
+        for (int i = 0; i < Math.pow(2, poly.getPolygons().size()) && i < MAX_OPTIONS; i++)
+        {
+            List<AtomicPolygon> atomics = new ArrayList<>();
+            for (int k = 0; k < poly.getPolygons().size(); k++)
+            {
+                if ((i & (1L << k)) != 0)
+                {
+                    atomics.add(poly.getPolygons().get(k));
+                }
+            }
+            result.add(new CompoundPolygon(atomics));
+        }
+        return result;
+    }
+
+    /**
+     * Returns list of possible new atomic polygons after flip.
+     */
+    public static List<CompoundPolygon> getAllFlippedCompounds(CompoundPolygon poly)
+    {
+        Set<Edge> edges = new HashSet<>();
+
+        poly.getPolygons().stream().forEach(a -> edges.addAll(a.getEdges()));
+
+        for (int i = 0; i < poly.getPolygons().size() - 1; i++)
+        {
+            edges.remove(poly.getPolygons().get(i).getAdjacentEdge(poly.getPolygons().get(i + 1)));
+        }
+
+        return Collections.singletonList(new CompoundPolygon(GraphUtils.minimumCycles(edges)));
+    }
+
 }

@@ -26,4 +26,15 @@ class AtomicPolygonTest extends Specification {
       def actual = a.flip(mirror1)
       actual == new AtomicPolygon(getFractionPointList("6,0 6,1 5,1"))
   }
+
+  def 'get adjucent edge'()
+  {
+    given:
+        def p1 = new AtomicPolygon(getFractionPointList('0,0 0,1 1,1'))
+        def p2 = new AtomicPolygon(getFractionPointList('0,0 0,-1 1,1'))
+
+    expect:
+        getEdge('0,0 1,1') == p1.getAdjacentEdge(p2)
+  }
+
 }
