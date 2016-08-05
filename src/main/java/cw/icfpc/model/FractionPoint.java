@@ -7,12 +7,15 @@ public class FractionPoint
     private Fraction x;
     private Fraction y;
 
+    private static FractionPoint valueOf(Fraction x, Fraction y) {
+        return new FractionPoint(x, y);
+    }
+
     public FractionPoint(Fraction x, Fraction y)
     {
         this.x = x;
         this.y = y;
     }
-
 
     public Fraction getX()
     {
@@ -22,6 +25,10 @@ public class FractionPoint
     public Fraction getY()
     {
         return y;
+    }
+
+    public FractionPoint subtract(FractionPoint b) {
+        return FractionPoint.valueOf(this.x.subtract(b.getX()), this.y.subtract(b.getY()));
     }
 
     @Override
