@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static cw.icfpc.utils.PolyFormat.getFractionPointList;
 import static org.junit.Assert.*;
 
 public class AdjacentPolyGeneratorTest {
@@ -15,7 +16,7 @@ public class AdjacentPolyGeneratorTest {
         private String name;
 
         public TestedAtomicPolygon(String name) {
-            super(Collections.emptyList());
+            super(getFractionPointList("0,0 1,0 1,1"));
             this.name = name;
         }
 
