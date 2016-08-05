@@ -113,5 +113,17 @@ class MathUtilsSpec extends Specification
                     getEdge('0,0 0,10')
             ] as Set
     }
+    
+    FractionPoint p(s) 
+    {
+        return getFractionPoint(s)
+    }
+    
+    def 'Angle between'() 
+    {
+        expect:
+            MathUtils.angleBetween(p('0,0'), p('0,1'), p('1,1')) == -Math.PI/2
+            MathUtils.angleBetween(p('1,0'), p('0,0'), p('1,1')) == -3*Math.PI/4
+    }
 
 }
