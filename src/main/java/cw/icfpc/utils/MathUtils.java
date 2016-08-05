@@ -5,10 +5,7 @@ import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
 import org.apache.commons.math3.fraction.BigFraction;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MathUtils
@@ -134,6 +131,8 @@ public class MathUtils
             endpoints.addAll(edge.getEndpoints());
             List<FractionPoint> intersections = edges.stream().map(innerEdge -> getEdgeIntersection(edge, innerEdge))
                     .filter(intersection -> intersection != null && !edge.getEndpoints().contains(intersection))
+                    .sorted()
+                    .distinct()
                     .collect(Collectors.toList());
 
             intersections.addAll(edge.getEndpoints());
