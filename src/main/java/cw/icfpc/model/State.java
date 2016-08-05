@@ -1,9 +1,8 @@
 package cw.icfpc.model;
 
-import java.util.List;
-import java.util.stream.Stream;
+import java.util.*;
 
-public class State
+public final class State
 {
     private List<Facet> facets;
 
@@ -24,4 +23,7 @@ public class State
         return atomicPolygons;
     }
 
+    public static State valueOf(List<AtomicPolygon> polygons) {
+        return new State(polygons);
+    }
 }

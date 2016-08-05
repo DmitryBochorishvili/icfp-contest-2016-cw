@@ -5,6 +5,15 @@ public class Facet
     private FractionPoint a;
     private FractionPoint b;
 
+    public static Facet valueOf(FractionPoint pointA, FractionPoint pointB) {
+        // TODO: memoize!
+        return new Facet(pointA, pointB);
+    }
+
+    /**
+     * @deprecated use memoizing factory instead
+     */
+    @Deprecated
     public Facet(FractionPoint a, FractionPoint b)
     {
         this.a = a;
