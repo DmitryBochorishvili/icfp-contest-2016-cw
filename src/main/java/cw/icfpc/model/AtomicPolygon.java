@@ -25,6 +25,9 @@ public class AtomicPolygon
             Facet f = Facet.valueOf(vertices.get(i-1), vertices.get(i));
             this.facets.add(f);
         }
+        // and add last facet from last to first point
+        Facet f = Facet.valueOf(vertices.get(vertices.size() - 1), vertices.get(0));
+        this.facets.add(f);
     }
 
     public List<FractionPoint> getVertices()
