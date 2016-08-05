@@ -11,7 +11,8 @@ targetCompatibility = 1.8
 
 
 repositories {
-    jcenter()
+    mavenCentral()
+    maven { url "http://mvnrepository.com/artifact" }
 }
 
 ext {
@@ -28,7 +29,8 @@ configurations.all {
 
 dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
-    compile 'org.apache.commpns:commons-math:3.6.1'
+    compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
 
     testCompile 'org.codehaus.groovy:groovy-all:2.4.7'
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'

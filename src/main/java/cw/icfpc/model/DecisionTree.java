@@ -12,8 +12,8 @@ public class DecisionTree
         state.getFacets().forEach(facet -> {
             Stream<CompoundPolygon> compounds = polyGenerator.getAllAdjacent(facet, state.getAtomicPolygons());
             compounds.forEach(cp -> {
-                CompoundPolygon flippedCompound = cp.flip(facet);
-                cp.getSubsets().forEach(compoundSubset -> {
+//                CompoundPolygon flippedCompound = cp.flip(facet);
+//                cp.getSubsets().forEach(compoundSubset -> {
 
                     // из начального состояния вычесть compound
                     // добавить flippedCompound в его возмножных конфигурациях
@@ -21,7 +21,7 @@ public class DecisionTree
 
 //                        State newState =
 //                        compoundSubset
-                });
+//                });
             });
         });
 
