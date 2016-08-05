@@ -2,11 +2,10 @@ package cw.icfpc.model;
 
 import cw.icfpc.utils.PolyFormat;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Edge implements Comparable<Edge>
+public class Edge implements Flipable<Edge>
 {
     private FractionPoint a;
     private FractionPoint b;
@@ -32,6 +31,11 @@ public class Edge implements Comparable<Edge>
     public FractionPoint getB()
     {
         return b;
+    }
+
+    @Override
+    public Edge flip(Edge relativeTo) {
+        return valueOf(a.flip(relativeTo), b.flip(relativeTo));
     }
 
     public Collection<FractionPoint> getEndpoints()
@@ -67,11 +71,4 @@ public class Edge implements Comparable<Edge>
         return a.hashCode() + b.hashCode();
     }
 
-
-    @Override
-    public int compareTo(Edge o)
-    {
-        int compareA = a.compareTo(o.getA());
-        return compareA != 0 ? compareA : b.compareTo(o.getB());
-    }
 }

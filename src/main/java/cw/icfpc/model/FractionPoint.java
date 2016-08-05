@@ -1,8 +1,9 @@
 package cw.icfpc.model;
 
+import cw.icfpc.utils.MathUtils;
 import org.apache.commons.lang3.math.Fraction;
 
-public class FractionPoint implements Comparable<FractionPoint>
+public class FractionPoint implements Comparable<FractionPoint>, Flipable<FractionPoint>
 {
     private Fraction x;
     private Fraction y;
@@ -32,22 +33,34 @@ public class FractionPoint implements Comparable<FractionPoint>
     }
 
     @Override
-    public boolean equals(Object o)
+    public FractionPoint flip(Edge relativeTo) {
+        return MathUtils.reflect(this, relativeTo);
+    }
+    
+    private static String fractionToString(Fraction f) 
     {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        FractionPoint that = (FractionPoint)o;
-
-        if (!x.equals(that.x)) return false;
-        return y.equals(that.y);
-
+        if (f.getDenominator() == 1) {
+            return String.valueOf(f.getNumerator());
+        }
+        return f.toString();
     }
 
     @Override
     public String toString()
     {
-        return "FractionPoint{" + x + "," + y + '}';
+        return "FractionPoint{" + fractionToString(x) + "," + fractionToString(y) + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+
+        FractionPoint that = (FractionPoint) o;
+
+        return x.equals(that.x) && y.equals(that.y);
     }
 
     @Override

@@ -13,4 +13,12 @@ class EdgeTest extends Specification {
       a.equals(b)
       a.hashCode() == b.hashCode()
   }
+  
+  def "flip"() {
+    given:
+      def e = getEdge("0,0 1,1")
+      def mirror = getEdge("2,0 0,2")
+    expect:
+      e.flip(mirror) == getEdge("1,1 2,2")
+  }
 }

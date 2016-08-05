@@ -2,9 +2,9 @@ package cw.icfpc.model;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Stack;
+import java.util.stream.Collectors;
 
-public class CompoundPolygon
+public class CompoundPolygon implements Flipable<CompoundPolygon>
 {
     // TODO: Do we actually need their order? Especially that it's not always in adjacency order.
     private List<AtomicPolygon> polygons;
@@ -21,6 +21,14 @@ public class CompoundPolygon
 
     public static CompoundPolygon valueOf(List<AtomicPolygon> polygons) {
         return new CompoundPolygon(polygons);
+    }
+
+    @Override
+    public CompoundPolygon flip(Edge relativeTo) {
+        List<AtomicPolygon> flipped = this.polygons.stream()
+                .map(p -> p.flip(relativeTo))
+                .collect(Collectors.toList());
+        return valueOf(flipped);
     }
 
     @Override

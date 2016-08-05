@@ -1,10 +1,13 @@
 package cw.icfpc.model;
 
-import java.util.*;
+import cw.icfpc.utils.MathUtils;
 
-public class AtomicPolygon
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class AtomicPolygon implements Flipable<AtomicPolygon>
 {
-    private Set<FractionPoint> vertices;
+    private LinkedHashSet<FractionPoint> vertices;
     private List<Edge> edges;
     
     public static AtomicPolygon valueOf(List<FractionPoint> vertices) {
@@ -53,6 +56,14 @@ public class AtomicPolygon
     }
 
     @Override
+    public AtomicPolygon flip(Edge relativeTo) {
+        List<FractionPoint> flippedVertexes = vertices.stream()
+                .map(p -> MathUtils.reflect(p, relativeTo))
+                .collect(Collectors.toList());
+        return valueOf(flippedVertexes);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o)
             return true;
@@ -68,4 +79,10 @@ public class AtomicPolygon
         return vertices.hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "AtomicPolygon{" +
+                "vertices=" + vertices +
+                '}';
+    }
 }

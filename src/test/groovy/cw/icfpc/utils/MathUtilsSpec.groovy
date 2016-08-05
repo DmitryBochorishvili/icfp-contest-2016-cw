@@ -88,12 +88,12 @@ class MathUtilsSpec extends Specification
             def split = MathUtils.splitByIntersections(edges)
 
         then:
-            split.sort() == [
+            split as Set == [
                     getEdge('0,0 5,5'),
                     getEdge('0,10 5,5'),
                     getEdge('5,5 10,0'),
                     getEdge('5,5 10,10')
-            ].sort()
+            ] as Set
     }
 
     def 'split by intersections: no intersections'()
@@ -108,10 +108,10 @@ class MathUtilsSpec extends Specification
             def split = MathUtils.splitByIntersections(edges)
 
         then:
-            split.sort() == [
+            split as Set == [
                     getEdge('0,0 10,10'),
                     getEdge('0,0 0,10')
-            ].sort()
+            ] as Set
     }
 
 }
