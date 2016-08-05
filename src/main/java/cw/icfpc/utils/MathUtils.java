@@ -148,13 +148,10 @@ public class MathUtils
      * Calculates the angle between vectors AB and BC.
      */
     public static double angleBetween(FractionPoint a, FractionPoint b, FractionPoint c) {
+        // http://stackoverflow.com/questions/21483999/using-atan2-to-find-angle-between-two-vectors
         FractionPoint v1 = b.subtract(a);
         FractionPoint v2 = c.subtract(b);
 
-        // FIXME: optimize: http://stackoverflow.com/questions/21483999/using-atan2-to-find-angle-between-two-vectors
-        
-        return 
-                Math.atan2(v2.getY().doubleValue(), v2.getX().doubleValue())
-                - Math.atan2(v1.getY().doubleValue(), v1.getX().doubleValue());
+        return Math.atan2(FractionPoint.cross(v1, v2).doubleValue(), FractionPoint.dot(v1, v2).doubleValue());
     }
 }
