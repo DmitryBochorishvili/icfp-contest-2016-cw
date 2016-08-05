@@ -108,7 +108,7 @@ public final class AdjacentPolyGenerator
     {
         Set<Edge> edges = new HashSet<>();
 
-        poly.getPolygons().stream().forEach(a -> edges.addAll(a.getEdges()));
+        poly.getPolygons().forEach(a -> edges.addAll(a.getEdges()));
 
         for (int i = 0; i < poly.getPolygons().size() - 1; i++)
         {

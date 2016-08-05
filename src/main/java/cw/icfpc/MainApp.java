@@ -9,6 +9,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 
 public class MainApp
 {
@@ -21,13 +22,17 @@ public class MainApp
             State s = r.readProblemFromFile(null);
             StateVisualizer vis = StateVisualizer.builder(s);
 
+            PriorityQueue<State> nodes = new PriorityQueue<>((o1, o2) -> o1.getHeuristic() - o2.getHeuristic());
+
             if (args.length > 0) {
                 for (String file : args) {
                     s = r.readProblemFromFile(file);
                     vis.addScene(s, false);
 
-                    List<State> nodes = DecisionTree.generateDecisionNodes(s);
+                    nodes.addAll(DecisionTree.generateDecisionNodes(s));
+                    System.out.println("Generated decision nodes: " + nodes.size());
                     for (State n: nodes) {
+//                        System.out.println("Adding a new computed state");
                         vis.addScene(n, true);
                     }
                 }

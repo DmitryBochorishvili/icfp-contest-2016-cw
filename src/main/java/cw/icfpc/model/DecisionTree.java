@@ -13,17 +13,14 @@ public class DecisionTree
             Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
             compounds.forEach(cp -> {
                 CompoundPolygon flippedCompound = cp.flip(edge);
-                State newState = state.addCompound(flippedCompound);
-                nodes.add(newState);
-                
-//                cp.getSubsets().forEach(compoundSubset -> {
-
-                    // из начального состояния вычесть compound
-                    // добавить flippedCompound в его возмножных конфигурациях
-                    // добавить сабсет в его возможных конфигурациях
-
-//                        State newState = compoundSubset
-//                });
+                Iterable<CompoundPolygon> flippedCompoundSubsets = AdjacentPolyGenerator.getAllFlippedCompounds(flippedCompound);
+                Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompounds(cp);
+                flippedCompoundSubsets.forEach(flipCpSubset -> {
+                    sourceCompoundSubsets.forEach(srcCpSubset -> {
+                        State newState = state.addRemoveCompound(flipCpSubset, srcCpSubset);
+                        nodes.add(newState);
+                    });
+                });
             });
         });
 

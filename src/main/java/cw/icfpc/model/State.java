@@ -17,6 +17,10 @@ public final class State
             edges.addAll(polygon.getEdges());
         });
     }
+    
+    public int getHeuristic() {
+        return atomicPolygons.size();
+    }
 
     public List<Edge> getEdges()
     {
@@ -35,6 +39,13 @@ public final class State
     public State addCompound(CompoundPolygon flippedCompound) {
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
         atomicPolygons.addAll(flippedCompound.getPolygons());
+        return State.valueOf(atomicPolygons);
+    }
+
+    public State addRemoveCompound(CompoundPolygon toAdd, CompoundPolygon toRemove) {
+        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
+        atomicPolygons.addAll(toAdd.getPolygons());
+        atomicPolygons.removeAll(toRemove.getPolygons());
         return State.valueOf(atomicPolygons);
     }
 }
