@@ -33,8 +33,6 @@ public class GraphUtils
         if (merged.size() != 1)
             throw new RuntimeException("Polygons cannot be merged properly");
 
-        // TODO remove vertices if 2 edges lay on the same line after merge
-
         return merged.get(0);
     }
 
@@ -71,11 +69,42 @@ public class GraphUtils
             if (polyVertices.get(0) == polyVertices.get(polyVertices.size()-1)) {
                 polyVertices.remove(polyVertices.size()-1);
             }
-            AtomicPolygon poly = new AtomicPolygon(polyVertices);
+            AtomicPolygon poly = new AtomicPolygon(mergeSameLineVertices(polyVertices));
             polygons.add(poly);
         }
 
         return polygons;
+    }
+
+    /**
+     * Merges any two consequent edges into one if they lay on the same line.
+     */
+    public static List<FractionPoint> mergeSameLineVertices(List<FractionPoint> vertices)
+    {
+        List<FractionPoint> verticesFiltered = null;
+
+        for (int i = 0; i < vertices.size(); i++)
+        {
+            FractionPoint a = vertices.get(i);
+            FractionPoint b = vertices.get((i + 1) % vertices.size());
+            FractionPoint c = vertices.get((i + 2) % vertices.size());
+
+            // xa - xb == xb - xc && ya - yb == yb - yc
+            if (a.getX() .subtract (b.getX()) .equals (b.getX() .subtract (c.getX()))
+                    && a.getY() .subtract (b.getY()) .equals (b.getY() .subtract (c.getY())))
+            {
+                // create a copy of vertices without middle point
+                if (verticesFiltered == null)
+                {
+                    verticesFiltered = new ArrayList<>();
+                    verticesFiltered.addAll(vertices.subList(0, i + 1));
+                }
+                verticesFiltered.remove(b);
+            }
+            else if (verticesFiltered != null && i + 1 < vertices.size())
+                verticesFiltered.add(b);
+        }
+        return verticesFiltered != null ? verticesFiltered : vertices;
     }
 
     private static int getVertexIndex(FractionPoint p, Map<FractionPoint, Integer> vertices,

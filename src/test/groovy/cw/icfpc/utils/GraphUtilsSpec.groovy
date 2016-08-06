@@ -27,6 +27,15 @@ class GraphUtilsSpec extends Specification
             ['2,0 0,0 1,1', '2,0 0,0 1,-1'] == cycles.collect{PolyFormat.format(it.getVertices())}
     }
 
+    def 'merge edges on the same line'()
+    {
+        given:
+            def p = getFractionPointList('0,0 1/2,1/2 0,1/2 -1/2,1/2')
+
+        expect:
+            getFractionPointList('0,0 1/2,1/2 -1/2,1/2') == GraphUtils.mergeSameLineVertices(p)
+    }
+
     def 'merge 2 adjacent polygons'()
     {
         given:
@@ -35,11 +44,9 @@ class GraphUtilsSpec extends Specification
 
             def expectedEdges = [
                     getEdge('0,0 0,1'),
-                    getEdge('0,1 1,1'),
-                    getEdge('1,1 2,1'),
+                    getEdge('0,1 2,1'),
                     getEdge('2,1 2,0'),
-                    getEdge('2,0 1,0'),
-                    getEdge('1,0 0,0'),
+                    getEdge('2,0 0,0'),
             ]
 
         when:

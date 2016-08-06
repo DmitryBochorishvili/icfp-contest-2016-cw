@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 
 public class MathUtils
 {
+    public static final double EPSILON = 1e-10;
+
     public static FractionPoint reflect(FractionPoint p, Edge edge)
     {
         // http://math.stackexchange.com/q/65503/67043
@@ -141,6 +143,14 @@ public class MathUtils
                 newEdges.add(new Edge(intersections.get(i - 1), intersections.get(i)));
         });
         return newEdges;
+    }
+
+    public static double distance(FractionPoint a, FractionPoint b)
+    {
+        double dx = a.getX().doubleValue() - b.getX().doubleValue();
+        double dy = a.getY().doubleValue() - b.getY().doubleValue();
+
+        return Math.sqrt(dx*dx + dy*dy);
     }
 
     /**

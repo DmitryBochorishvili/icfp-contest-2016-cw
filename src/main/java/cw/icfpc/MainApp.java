@@ -31,32 +31,47 @@ public class MainApp
                     s.setIteration(0);
                     nodes.add(s);
 
+                    if (s.isFinalState())
+                    {
+                        System.out.println("Solution found!!!");
+                        break;
+                    }
+
                     int step = 0;
-                    while (step < 5)
+                    boolean solutionFound[] = new boolean[1];
+                    while (!solutionFound[0] && !nodes.isEmpty() && step < 100)
                     {
                         step++;
                         State currentState = nodes.remove(0);
                         vis.addScene(currentState, false);
 
-                        if (currentState.getSimpleArea() > 1 - 1e-6)
+                        List<State> decisions = DecisionTree.generateDecisionNodes(currentState);
+                        System.out.println("Generated " + decisions.size() + " decision nodes on step: " + step
+                                + ". Total decisions to check: " + (nodes.size() + decisions.size()));
+                        decisions.forEach(d -> {
+                            if (d.isFinalState())
+                            {
+                                System.out.println("Solution found!!!");
+                                solutionFound[0] = true;
+                            }
+                        });
+
+                        for (State n : nodes)
                         {
-                            System.out.println("Solution found!!!");
-                            break;
+                            //vis.addScene(n, true);
                         }
-                        nodes.addAll(DecisionTree.generateDecisionNodes(currentState));
+
+                        nodes.addAll(decisions);
 
                         // sort new states by heuristic
                         nodes.sort((o1, o2) -> o1.getHeuristic() < o2.getHeuristic() ? 1 : -1);
-
-                        System.out.println("Have " + nodes.size() + " decision nodes on step: " + step);
-                        for (State n : nodes)
-                        {
-                            vis.addScene(n, true);
-                        }
                     }
+
+                    if (!solutionFound[0])
+                        System.out.println("Solution not found :((");
                 }
             }
-            vis.drawToFile(null);
+            //vis.drawToFile(null);
             
         } catch (IOException e) {
             e.printStackTrace();

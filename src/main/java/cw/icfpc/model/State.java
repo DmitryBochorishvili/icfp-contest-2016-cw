@@ -1,10 +1,12 @@
 package cw.icfpc.model;
 
 import cw.icfpc.utils.GraphUtils;
+import cw.icfpc.utils.MathUtils;
 import org.apache.commons.collections4.MultiValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class State
 {
@@ -64,7 +66,7 @@ public final class State
     }
 
     public double getHeuristic() {
-        return 1000 - atomicPolygons.size();
+        return 1000 - atomicPolygons.size() - iteration;
     }
 
     public Collection<Edge> getEdges()
@@ -102,7 +104,7 @@ public final class State
     }
 
     /**
-     * Returns true only if there is 1 polygon adjacent to this edge;
+     * Returns true if there is only 1 polygon adjacent to this edge;
      */
     public boolean isEdgeOuter(Edge edge)
     {
@@ -136,6 +138,21 @@ public final class State
     public boolean isStateValid()
     {
         return allPolygonsAdjacent() && getSimpleArea() <= 1;
+    }
+
+    /**
+     * Returns true if the state is final i.e. 1x1 square
+     */
+    public boolean isFinalState()
+    {
+        if (Math.abs(1 - getSimpleArea()) < MathUtils.EPSILON
+            && edges.size() - adjacentEdges.keySet().size() == 4)
+        {
+            List<Edge> outerEdges = edges.stream().filter(e -> adjacentEdges.get(e).isEmpty()).collect(Collectors.toList());
+            double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
+            return outerEdges.stream().allMatch(e -> MathUtils.distance(e.getA(), e.getB()) == distance);
+        }
+        return false;
     }
 
     public int getIteration()
