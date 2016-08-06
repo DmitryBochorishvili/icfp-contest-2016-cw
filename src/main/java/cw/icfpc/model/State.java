@@ -18,15 +18,14 @@ public final class State
     private MultiValuedMap<AtomicPolygon, AtomicPolygon> adjacentPolygons = new HashSetValuedHashMap<>();
 
     private int iteration = -1;
+    private State derivedFrom;
 
     public State(List<AtomicPolygon> atomicPolygons)
     {
         this.atomicPolygons = atomicPolygons;
 
-        edges = new HashSet<Edge>();
-        atomicPolygons.forEach(polygon -> {
-            edges.addAll(polygon.getEdges());
-        });
+        edges = new HashSet<>();
+        atomicPolygons.forEach(polygon -> edges.addAll(polygon.getEdges()));
 
         for (int i = 0; i < atomicPolygons.size(); i++)
             for (int k = i + 1; k < atomicPolygons.size(); k++)
@@ -87,7 +86,7 @@ public final class State
     // doesn't take into account a possibility that a polygon could present in multiple layers.
     public double getSimpleArea()
     {
-        return atomicPolygons.stream().mapToDouble(p -> p.getArea()).sum();
+        return atomicPolygons.stream().mapToDouble(AtomicPolygon::getArea).sum();
     }
 
     public State addCompound(CompoundPolygon flippedCompound) {
@@ -163,5 +162,9 @@ public final class State
     public void setIteration(int interation)
     {
         this.iteration = interation;
+    }
+    
+    public void setDerivedFrom(State parent) {
+        this.derivedFrom = parent;
     }
 }

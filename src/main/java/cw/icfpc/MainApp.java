@@ -19,7 +19,7 @@ public class MainApp
         //State s = createExampleState();
         ProblemReader r = new ProblemReader();
         try {
-            State s = r.readProblemFromFile(null);
+            State s = r.readDefaultProblem();
             StateVisualizer vis = StateVisualizer.builder(s);
 
 
