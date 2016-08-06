@@ -106,4 +106,39 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
                 "vertices=" + vertices +
                 '}';
     }
+
+    /**
+     * http://stackoverflow.com/a/8721483/207791
+     * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+     */
+    public boolean contains(FractionPoint test) {
+        FractionPoint[] points = vertices.toArray(new FractionPoint[vertices.size()]); 
+        int i;
+        int j;
+        boolean result = false;
+        for (i = 0, j = points.length - 1; i < points.length; j = i++) {
+//                if ((points[i].y > test.y) != (points[j].y > test.y) &&
+//                        (test.x < (points[j].x - points[i].x) * (test.y - points[i].y) 
+//                                / (points[j].y-points[i].y) + points[i].x)) {
+//                    result = !result;
+//                }
+            FractionPoint jMinusI = points[j].subtract(points[i]);
+            if (points[i].getY().compareTo(test.getY()) != points[j].getY().compareTo(test.getY()) 
+                    &&
+                    test.getX().compareTo(
+                            jMinusI.getX() .multiply( test.getY().subtract(points[i].getY()) ) . divide(
+                                    jMinusI.getY()
+                            ) . add( points[i].getX() ) )
+                            < 0) 
+            {
+                result = !result;
+            }
+
+        }
+        return result;
+    }
+    
+    public boolean overlaps(AtomicPolygon other) {
+        return vertices.stream().anyMatch(other::contains);
+    }
 }
