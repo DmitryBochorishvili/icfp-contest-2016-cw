@@ -158,28 +158,36 @@ public class MathUtils
      * http://math.stackexchange.com/a/1033561/67043
      * @param centerA
      * @param centerB
-     * @param radiusA
-     * @param radiusB
+     * @param radiusASquare
+     * @param radiusBSquare
      * @return 1..2 intersection points for the given circles (now only 1)
      */
     public static FractionPoint[] getCirclesIntersection(
             FractionPoint centerA, FractionPoint centerB,
-            BigFraction radiusA, BigFraction radiusB)
+            BigFraction radiusASquare, BigFraction radiusBSquare)
     {
         BigFraction dSquared = centerA.subtract(centerB).absSquaredFraction();
-        BigFraction d = sqrt(dSquared);
-        BigFraction el = radiusA.pow(2).subtract(radiusB.pow(2)).add(dSquared).divide(2).divide(d);
-        BigFraction h = sqrt(radiusA.pow(2).subtract(el.pow(2)));
+        double d = Math.sqrt(dSquared.doubleValue());
+        BigFraction dApproximate = new BigFraction(d);
+        BigFraction el = radiusASquare.subtract(radiusBSquare).add(dSquared).divide(2).divide(dApproximate);
+        double h = Math.sqrt(radiusASquare.subtract(el.pow(2)).doubleValue());
 
         FractionPoint c2MinusC1 = centerB.subtract(centerA);
 
-        // We could generate 2 moints, but we actually need them to be on one side of the (c1, c2) line.
-        BigFraction x = el.divide(d).multiply(c2MinusC1.getX()).add(centerA.getX()) . add(h.divide(d).multiply(c2MinusC1.getY()));
-        BigFraction y = el.divide(d).multiply(c2MinusC1.getY()).add(centerA.getY()) . subtract(h.divide(d).multiply(c2MinusC1.getX()));
+        BigFraction anotherAttempt = new BigFraction(h / d);
+        BigFraction elByD = new BigFraction(el.doubleValue() / d);
+
+        // We could generate 2 points, but we actually need them to be on one side of the (c1, c2) line.
+        BigFraction x = elByD.multiply(c2MinusC1.getX()).add(centerA.getX()) . add(anotherAttempt.multiply(c2MinusC1.getY()));
+        BigFraction y = elByD.multiply(c2MinusC1.getY()).add(centerA.getY()) . subtract(anotherAttempt.multiply(c2MinusC1.getX()));
         
         return new FractionPoint[] {new FractionPoint(x, y)};
     }
 
+    /**
+     * Just doesn't work.
+     */
+    @Deprecated
     public static BigFraction sqrt(BigFraction x) {
         // as we must get a rational fraction in the end, does this mean there 
         // must exist a rational square root of the fraction?
@@ -190,6 +198,10 @@ public class MathUtils
         return new BigFraction(numeratorRoot, denominatorRoot);
     }
 
+    /**
+     * Just doesn't work with a defined precision.
+     */
+    @Deprecated
     // http://stackoverflow.com/a/16804098/207791
     public static BigInteger sqrt(BigInteger x) {
         BigInteger div = BigInteger.ZERO.setBit(x.bitLength()/2);

@@ -6,23 +6,37 @@ import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 class PartialSolution {
 
     private List<AtomicPolygon> tiles;
+    private List<Edge> connectableEdges = new LinkedList<>();
 
-    public PartialSolution(List<AtomicPolygon> tiles) {
-        this.tiles = Collections.unmodifiableList(tiles);
+    private double area;
+
+    private PartialSolution(List<AtomicPolygon> tiles, List<Edge> connectableEdges, double area) {
+        this.tiles = tiles;
+        this.connectableEdges = connectableEdges;
+        this.area = area;
     }
 
-    private static PartialSolution valueOf(List<AtomicPolygon> tiles) {
+    private static PartialSolution valueOf(List<AtomicPolygon> tiles, List<Edge> connectableEdges, double area) {
         // TODO: memoize
-        return new PartialSolution(tiles);
+        PartialSolution partialSolution = new PartialSolution(tiles, connectableEdges, area);
+        return partialSolution;
+    }
+    
+    public boolean isComplete() {
+        return Math.abs(area-1) < 1e-6;
     }
     
     public List<Edge> getConnectableEdges() {
+        return connectableEdges;
+    }
+    
+    public List<AtomicPolygon> getConnectableTiles() {
         throw new NotImplementedException("");
     }
 
@@ -65,11 +79,6 @@ class PartialSolution {
             return null;
         }
 
-        //            if (!Precision.equals(tileEdge.getLengthSquared(), connectable.getLengthSquared())) {
-        //                return null;
-        //            }
-
-        //            AtomicPolygon[] rotated = rotateToMatch(tile, tileEdge, connectable);
         if (!canPlace(tile)) {
             return null;
         }
@@ -77,7 +86,13 @@ class PartialSolution {
         List<AtomicPolygon> tiles = new ArrayList<>(this.tiles);
         tiles.add(tile);
 
-        return PartialSolution.valueOf(tiles);
+        List<Edge> connectableEdges = new LinkedList<>(this.connectableEdges);
+        List<Edge> newEdges = new LinkedList<>(tile.getEdges());
+        newEdges.remove(tileEdge);
+        connectableEdges.remove(connectable);
+        connectableEdges.addAll(newEdges);
+        
+        return PartialSolution.valueOf(tiles, connectableEdges, this.area + tile.getArea());
     }
 
 }
