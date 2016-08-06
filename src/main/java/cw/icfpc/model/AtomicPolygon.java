@@ -108,10 +108,15 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
     }
 
     /**
+     * FIXME: Might be a real problem: unpredictable, if a point lies exactly on a polygon side.
      * http://stackoverflow.com/a/8721483/207791
      * http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
      */
     public boolean contains(FractionPoint test) {
+        if (vertices.contains(test)) {
+            return false;
+        }
+        
         FractionPoint[] points = vertices.toArray(new FractionPoint[vertices.size()]); 
         int i;
         int j;

@@ -43,7 +43,14 @@ class AtomicPolygonTest extends Specification {
       def p1 = new AtomicPolygon(getFractionPointList('0,0 1,0 1/2,1'))
       def p2 = new AtomicPolygon(getFractionPointList('0,0 -1,0 -1,-1 0,-1'))
     expect:
-      p1.contains(getFractionPoint('0,0'))
+      !p1.contains(getFractionPoint('0,0'))
+      !p1.contains(getFractionPoint('1,0'))
+      !p1.contains(getFractionPoint('1/2,1'))
+
+      !p1.contains(getFractionPoint('0,1/2'))
+      // FIXME: Might be a real problem: if a point lies exactly on a polygon side.
+      //!p1.contains(getFractionPoint('1/2,0'))
+    
       !p1.contains(getFractionPoint('0,2'))
       p1.contains(getFractionPoint('1/5,1/5'))
       !p1.contains(getFractionPoint('2,0'))
