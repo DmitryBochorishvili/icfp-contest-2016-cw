@@ -156,6 +156,7 @@ public class MathUtils
 
     /**
      * http://math.stackexchange.com/a/1033561/67043
+     * FIXME: DO return both intersection points.
      * @param centerA
      * @param centerB
      * @param radiusASquare

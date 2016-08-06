@@ -136,8 +136,8 @@ class MathUtilsSpec extends Specification
             def r2Square = BigFraction.ONE
         expect:
             def inter = MathUtils.getCirclesIntersection(c1, c2, r1Square, r2Square)[0]
-            // not exactly.
-            //inter == new FractionPoint(new BigFraction(0, 1), new BigFraction(1, 1))
+            // TODO: Test that it returns BOTH points 0,1 and 1,0
+            inter.closeTo(new FractionPoint(new BigFraction(1, 1), new BigFraction(0, 1)))
     }
 
 }

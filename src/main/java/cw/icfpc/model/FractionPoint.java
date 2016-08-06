@@ -71,9 +71,16 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
     {
         return "FractionPoint{" + fractionToString(x) + "," + fractionToString(y) + '}';
     }
+    
+    public boolean closeTo(FractionPoint other) 
+    {
+        double d = this.subtract(other).absSquared();
+        return d < 1e-6;
+    }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(Object o) 
+    {
         if (this == o)
             return true;
         if (o == null || getClass() != o.getClass())
