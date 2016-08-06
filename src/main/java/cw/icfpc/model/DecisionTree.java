@@ -25,14 +25,16 @@ public class DecisionTree
                     State newState = state.addRemoveCompound(flippedCompound, srcCpSubset);
 
                     // new state is valid only if its ares is bigger than area of previous state
-                    if (newState.getSimpleArea() > currentStateArea && newState.allPolygonsAdjacent())
+                    if (newState.getSimpleArea() > currentStateArea && newState.isStateValid())
                     {
                         //nodes.add(newState);
 
                         // merge first flipped atomic with first compound atomic
                         AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
                         AtomicPolygon p2 = cp.getPolygons().get(0);
-                        nodes.add(newState.mergePolygons(p1, p2));
+                        newState = newState.mergePolygons(p1, p2);
+                        newState.setIteration(state.getIteration() + 1);
+                        nodes.add(newState);
                     }
                 });
 

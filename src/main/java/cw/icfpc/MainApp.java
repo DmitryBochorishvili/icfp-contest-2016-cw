@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.PriorityQueue;
 
 public class MainApp
 {
@@ -29,17 +28,31 @@ public class MainApp
             if (args.length > 0) {
                 for (String file : args) {
                     s = r.readProblemFromFile(file);
-                    vis.addScene(s, false);
+                    s.setIteration(0);
+                    nodes.add(s);
 
-                    nodes.addAll(DecisionTree.generateDecisionNodes(s));
+                    int step = 0;
+                    while (step < 5)
+                    {
+                        step++;
+                        State currentState = nodes.remove(0);
+                        vis.addScene(currentState, false);
 
-                    // sort new states by heuristic
-                    nodes.sort((o1, o2) -> o1.getHeuristic() > o2.getHeuristic() ? 1 : -1);
+                        if (currentState.getSimpleArea() > 1 - 1e-6)
+                        {
+                            System.out.println("Solution found!!!");
+                            break;
+                        }
+                        nodes.addAll(DecisionTree.generateDecisionNodes(currentState));
 
-                    System.out.println("Generated decision nodes: " + nodes.size());
-                    for (State n: nodes) {
-//                        System.out.println("Adding a new computed state");
-                        vis.addScene(n, true);
+                        // sort new states by heuristic
+                        nodes.sort((o1, o2) -> o1.getHeuristic() < o2.getHeuristic() ? 1 : -1);
+
+                        System.out.println("Have " + nodes.size() + " decision nodes on step: " + step);
+                        for (State n : nodes)
+                        {
+                            vis.addScene(n, true);
+                        }
                     }
                 }
             }

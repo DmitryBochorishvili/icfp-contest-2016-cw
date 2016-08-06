@@ -44,7 +44,7 @@ public class StateVisualizer {
             currentScene.offsetY = prevScene.offsetY + boardYScale + 2* MARGIN;
         } else {
             currentScene.offsetX = prevScene.offsetX + boardXScale + 2* MARGIN;
-            currentScene.offsetY = prevScene.offsetY;
+            currentScene.offsetY = 0;
         }
         
         return this;
@@ -91,7 +91,7 @@ public class StateVisualizer {
     private void drawTitle(Graphics2D g2d, State s)
     {
         g2d.setColor(Color.WHITE);
-        g2d.drawString("Polygons: " + s.getAtomicPolygons().size(),
+        g2d.drawString("Iteration: " + s.getIteration() + ", Polygons: " + s.getAtomicPolygons().size(),
                 currentScene.offsetX + MARGIN, currentScene.offsetY + boardYScale - MARGIN / 2);
     }
 

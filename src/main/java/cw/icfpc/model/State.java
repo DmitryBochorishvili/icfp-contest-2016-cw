@@ -15,6 +15,8 @@ public final class State
     private MultiValuedMap<Edge, AtomicPolygon> adjacentEdges = new HashSetValuedHashMap<>();
     private MultiValuedMap<AtomicPolygon, AtomicPolygon> adjacentPolygons = new HashSetValuedHashMap<>();
 
+    private int iteration = -1;
+
     public State(List<AtomicPolygon> atomicPolygons)
     {
         this.atomicPolygons = atomicPolygons;
@@ -62,7 +64,7 @@ public final class State
     }
 
     public double getHeuristic() {
-        return atomicPolygons.size();
+        return 1000 - atomicPolygons.size();
     }
 
     public Collection<Edge> getEdges()
@@ -125,5 +127,24 @@ public final class State
         }
 
         return visited.size() == atomicPolygons.size();
+    }
+
+    /**
+     * Returns true if current state is valid: all polygons are transitively adjacent, areas is not more than 1
+     * and linear size is less than sqrt(2)
+     */
+    public boolean isStateValid()
+    {
+        return allPolygonsAdjacent() && getSimpleArea() <= 1;
+    }
+
+    public int getIteration()
+    {
+        return iteration;
+    }
+
+    public void setIteration(int interation)
+    {
+        this.iteration = interation;
     }
 }
