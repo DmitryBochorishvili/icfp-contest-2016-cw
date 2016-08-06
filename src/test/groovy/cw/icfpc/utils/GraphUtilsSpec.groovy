@@ -59,4 +59,18 @@ class GraphUtilsSpec extends Specification
             null == GraphUtils.merge(p1, p2)
     }
 
+    def 'check for positive polygon or hole'()
+    {
+        given:
+            def hole1 = getFractionPointList('0,0 0,1 1,1 1,0')
+            def positive1 = getFractionPointList('0,0 1,0 1/2,1/2 0,1/2')
+            def positive2 = getFractionPointList('0,0 1/2,0 1/2,2/3 0,2/3')
+            def hole2 = getFractionPointList('0,2/3 1/2,2/3 1/2,0 0,0')
+        expect:
+            !GraphUtils.ifPositivePolygonInSilhouette(hole1)
+            GraphUtils.ifPositivePolygonInSilhouette(positive1)
+            GraphUtils.ifPositivePolygonInSilhouette(positive2)
+            !GraphUtils.ifPositivePolygonInSilhouette(hole2)
+    }
+
 }

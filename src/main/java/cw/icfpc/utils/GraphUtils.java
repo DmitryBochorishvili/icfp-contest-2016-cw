@@ -92,4 +92,27 @@ public class GraphUtils
         }
         return vertexNumber;
     }
+
+    public static boolean ifPositivePolygonInSilhouette(List<FractionPoint> vertices) {
+        double sumAngle = 0;
+
+        int pointsNumber = vertices.size();
+
+        if(pointsNumber < 3)
+            throw new RuntimeException("incorrect initial polygon in silhouette - less then 3 points");
+
+        for(int i = 0; i < pointsNumber - 2; i++) {
+            sumAngle += MathUtils.angleBetween(vertices.get(i), vertices.get(i+1), vertices.get(i+2));
+        }
+
+        sumAngle = MathUtils.angleBetween(vertices.get(pointsNumber-2),
+                vertices.get(pointsNumber-1),
+                vertices.get(0));
+
+        sumAngle = MathUtils.angleBetween(vertices.get(pointsNumber-1),
+                vertices.get(0),
+                vertices.get(1));
+
+        return (sumAngle > 0);
+    }
 }
