@@ -3,6 +3,7 @@ package cw.icfpc.model
 import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getEdge
+import static cw.icfpc.utils.PolyFormat.getFractionPoint
 import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class AtomicPolygonTest extends Specification {
@@ -35,6 +36,20 @@ class AtomicPolygonTest extends Specification {
 
     expect:
         getEdge('0,0 1,1') == p1.getAdjacentEdge(p2)
+  }
+  
+  def 'contains' () {
+    given:
+      def p1 = new AtomicPolygon(getFractionPointList('0,0 1,0 1/2,1'))
+      def p2 = new AtomicPolygon(getFractionPointList('0,0 -1,0 -1,-1 0,-1'))
+    expect:
+      p1.contains(getFractionPoint('0,0'))
+      !p1.contains(getFractionPoint('0,2'))
+      p1.contains(getFractionPoint('1/5,1/5'))
+      !p1.contains(getFractionPoint('2,0'))
+      p2.contains(getFractionPoint('-1/2,-1/2'))
+      !p2.contains(getFractionPoint('-1/2,1/2'))
+      !p2.contains(getFractionPoint('1/2,-1/2'))
   }
 
   def 'get area'()

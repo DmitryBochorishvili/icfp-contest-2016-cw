@@ -82,4 +82,7 @@ public class Edge implements Flipable<Edge>
         return a.hashCode() + b.hashCode();
     }
 
+    public double getLengthSquared() {
+        return a.subtract(b).absSquared();
+    }
 }
