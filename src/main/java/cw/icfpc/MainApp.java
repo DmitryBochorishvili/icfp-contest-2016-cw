@@ -7,9 +7,7 @@ import cw.icfpc.model.State;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class MainApp
 {
@@ -22,7 +20,6 @@ public class MainApp
             State s = r.readDefaultProblem();
             StateVisualizer vis = StateVisualizer.builder(s);
 
-
             List<State> nodes = new LinkedList<>();
 
             if (args.length > 0) {
@@ -30,17 +27,17 @@ public class MainApp
                     s = r.readProblemFromFile(file);
                     s.setIteration(0);
                     nodes.add(s);
+                    State solution = null;
 
                     vis.addScene(s, true);
                     if (s.isFinalState())
                     {
-                        System.out.println("Solution found!!!");
-                        break;
+                        solution = s;
+                        System.out.println(String.format("Solution for %s found immediately!!!", file));
                     }
 
                     int step = 0;
-                    boolean solutionFound[] = new boolean[1];
-                    while (!solutionFound[0] && !nodes.isEmpty() && step < 100)
+                    while (solution == null && !nodes.isEmpty() && step < 100)
                     {
                         step++;
                         State currentState = nodes.remove(0);
@@ -49,27 +46,36 @@ public class MainApp
                         List<State> decisions = DecisionTree.generateDecisionNodes(currentState);
                         System.out.println("Generated " + decisions.size() + " decision nodes on step: " + step
                                 + ". Total decisions to check: " + (nodes.size() + decisions.size()));
-                        decisions.forEach(d -> {
-                            if (d.isFinalState())
-                            {
-                                System.out.println("Solution found!!!");
-                                solutionFound[0] = true;
-                            }
-                        });
+                        
+                        solution = decisions.stream().filter(State::isFinalState).findFirst().orElse(null);
+                        if (solution != null) {
+                            System.out.println(String.format("Solution for %s found!!!", file));
+                            break;
+                        }
 
                         for (State n : decisions)
                         {
                             vis.addScene(n, true);
                         }
-
                         nodes.addAll(decisions);
 
                         // sort new states by heuristic
                         nodes.sort((o1, o2) -> o1.getHeuristic() < o2.getHeuristic() ? 1 : -1);
                     }
 
-                    if (!solutionFound[0])
-                        System.out.println("Solution not found :((");
+                    if (solution == null) {
+                        System.out.println(String.format("Solution for %s not found :((", file));
+                    } else {
+                        List<State> path = new ArrayList<>(solution.getIteration()+1);
+                        while (solution != null) {
+                            path.add(solution);
+                            solution = solution.getDerivedFrom();
+                        }
+                        Collections.reverse(path);
+                        for (State st: path) {
+                            vis.addScene(st, false);
+                        }
+                    }
                 }
             }
             vis.drawToFile(null);
@@ -77,6 +83,7 @@ public class MainApp
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
         System.out.println("Alive!");
     }
 

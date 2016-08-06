@@ -19,7 +19,9 @@ public class StateVisualizer {
 
     private List<Scene> scenes = new LinkedList<>();
     private Scene currentScene;
-    
+    private int row = 1;
+    private int rows = 1;
+
     private class Scene {
         private int offsetX = 0;
         private int offsetY = 0;
@@ -42,7 +44,10 @@ public class StateVisualizer {
         if (belowPrevious) {
             currentScene.offsetX = prevScene.offsetX;
             currentScene.offsetY = prevScene.offsetY + boardYScale + 2* MARGIN;
+            row++;
+            rows = Math.max(row, rows);
         } else {
+            row = 1;
             currentScene.offsetX = prevScene.offsetX + boardXScale + 2* MARGIN;
             currentScene.offsetY = 0;
         }
@@ -58,10 +63,12 @@ public class StateVisualizer {
 
     public void drawToFile(String fileName) throws IOException {
         String output = fileName == null ? "pic.png" : fileName;
+        
+        System.out.println(String.format("Drawing %d scenes to file %s", scenes.size(), output));
 
         BufferedImage img = new BufferedImage(
                 currentScene.offsetX + boardXScale + 2*MARGIN,
-                currentScene.offsetY + boardYScale + 2*MARGIN, 
+                (boardYScale + 2*MARGIN) * rows, 
                 BufferedImage.TYPE_INT_RGB);
         Graphics2D g2d = img.createGraphics();
         
@@ -92,7 +99,7 @@ public class StateVisualizer {
     {
         g2d.setColor(Color.WHITE);
         g2d.drawString("Iteration: " + s.getIteration() + ", Polygons: " + s.getAtomicPolygons().size(),
-                currentScene.offsetX + MARGIN, currentScene.offsetY + boardYScale - MARGIN / 2);
+                currentScene.offsetX + MARGIN, currentScene.offsetY + boardYScale + MARGIN * 3 / 2);
     }
 
     private void drawVertices(Graphics2D g2d, State s) {
@@ -111,7 +118,7 @@ public class StateVisualizer {
     }
 
     private int getDisplayPositionY(BigFraction y) {
-        return currentScene.offsetY + boardYScale - MARGIN - (int) Math.round(y.doubleValue() * boardYScale);
+        return currentScene.offsetY + boardYScale + MARGIN - (int) Math.round(y.doubleValue() * boardYScale);
     }
 
     private void drawEdges(Graphics2D g2d, State s) {
@@ -134,13 +141,13 @@ public class StateVisualizer {
                 BasicStroke.JOIN_MITER,
                 10.0f, dash1, 0.0f));
         g2d.drawLine(currentScene.offsetX + MARGIN, 
-                currentScene.offsetY + boardYScale - MARGIN, 
-                currentScene.offsetX + boardXScale + 2*MARGIN - 1, 
-                currentScene.offsetY + boardYScale - MARGIN);
+                currentScene.offsetY + boardYScale + MARGIN, 
+                currentScene.offsetX + boardXScale + MARGIN - 1, 
+                currentScene.offsetY + boardYScale + MARGIN);
         g2d.drawLine(currentScene.offsetX + MARGIN, 
-                currentScene.offsetY + MARGIN, 
+                currentScene.offsetY + MARGIN - 3, 
                 currentScene.offsetX + MARGIN, 
-                currentScene.offsetY + boardYScale - MARGIN - 1);
+                currentScene.offsetY + boardYScale + MARGIN - 1);
 
         g2d.setColor(Color.YELLOW);
         float dash2[] = {3.0f};
@@ -153,10 +160,10 @@ public class StateVisualizer {
         for(int x = MARGIN + currentScene.offsetX + boardXScale / 10; 
             x < currentScene.offsetX + boardXScale + MARGIN; 
             x += boardXScale / 10) {
-            g2d.drawLine(x, currentScene.offsetY + MARGIN, x, currentScene.offsetY + boardYScale - 1 - MARGIN);
+            g2d.drawLine(x, currentScene.offsetY + MARGIN, x, currentScene.offsetY + boardYScale - 1 + MARGIN);
         }
 
-        for(int y = currentScene.offsetY + boardYScale - MARGIN - boardYScale / 10;
+        for(int y = currentScene.offsetY + boardYScale + MARGIN - boardYScale / 10;
             y > currentScene.offsetY + MARGIN;
             y -= boardYScale / 10) 
         {

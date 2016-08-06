@@ -159,12 +159,20 @@ public final class State
         return iteration;
     }
 
+    @Deprecated
+    /** @deprecated Make it in constructor only, otherwise we will forget to update it. */
     public void setIteration(int interation)
     {
         this.iteration = interation;
     }
-    
+
+    @Deprecated
+    /** @deprecated Make it in constructor only, otherwise we will forget to update it. */
     public void setDerivedFrom(State parent) {
         this.derivedFrom = parent;
+    }
+
+    public State getDerivedFrom() {
+        return derivedFrom;
     }
 }
