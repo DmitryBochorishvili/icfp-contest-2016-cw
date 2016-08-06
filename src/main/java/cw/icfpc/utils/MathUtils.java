@@ -2,9 +2,9 @@ package cw.icfpc.utils;
 
 import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
-import org.apache.commons.lang3.math.Fraction;
 import org.apache.commons.math3.fraction.BigFraction;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -152,5 +152,56 @@ public class MathUtils
         FractionPoint v2 = c.subtract(b);
 
         return Math.atan2(FractionPoint.cross(v1, v2).doubleValue(), FractionPoint.dot(v1, v2).doubleValue());
+    }
+
+    /**
+     * http://math.stackexchange.com/a/1033561/67043
+     * @param centerA
+     * @param centerB
+     * @param radiusA
+     * @param radiusB
+     * @return 1..2 intersection points for the given circles (now only 1)
+     */
+    public static FractionPoint[] getCirclesIntersection(
+            FractionPoint centerA, FractionPoint centerB,
+            BigFraction radiusA, BigFraction radiusB)
+    {
+        BigFraction dSquared = centerA.subtract(centerB).absSquaredFraction();
+        BigFraction d = sqrt(dSquared);
+        BigFraction el = radiusA.pow(2).subtract(radiusB.pow(2)).add(dSquared).divide(2).divide(d);
+        BigFraction h = sqrt(radiusA.pow(2).subtract(el.pow(2)));
+
+        FractionPoint c2MinusC1 = centerB.subtract(centerA);
+
+        // We could generate 2 moints, but we actually need them to be on one side of the (c1, c2) line.
+        BigFraction x = el.divide(d).multiply(c2MinusC1.getX()).add(centerA.getX()) . add(h.divide(d).multiply(c2MinusC1.getY()));
+        BigFraction y = el.divide(d).multiply(c2MinusC1.getY()).add(centerA.getY()) . subtract(h.divide(d).multiply(c2MinusC1.getX()));
+        
+        return new FractionPoint[] {new FractionPoint(x, y)};
+    }
+
+    public static BigFraction sqrt(BigFraction x) {
+        // as we must get a rational fraction in the end, does this mean there 
+        // must exist a rational square root of the fraction?
+        BigInteger numeratorRoot = sqrt(x.getNumerator());
+        BigInteger denominatorRoot = sqrt(x.getDenominator());
+        assert numeratorRoot.pow(2).equals(x.getNumerator());
+        assert denominatorRoot.pow(2).equals(x.getDenominator());
+        return new BigFraction(numeratorRoot, denominatorRoot);
+    }
+
+    // http://stackoverflow.com/a/16804098/207791
+    public static BigInteger sqrt(BigInteger x) {
+        BigInteger div = BigInteger.ZERO.setBit(x.bitLength()/2);
+        BigInteger div2 = div;
+        // Loop until we hit the same value twice in a row, or wind
+        // up alternating.
+        for(;;) {
+            BigInteger y = div.add(x.divide(div)).shiftRight(1);
+            if (y.equals(div) || y.equals(div2))
+                return y;
+            div2 = div;
+            div = y;
+        }
     }
 }

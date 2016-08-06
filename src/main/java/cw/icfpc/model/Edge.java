@@ -85,4 +85,8 @@ public class Edge implements Flipable<Edge>
     public double getLengthSquared() {
         return a.subtract(b).absSquared();
     }
+
+    public boolean contains(FractionPoint v) {
+        return a.equals(v) || b.equals(v);
+    }
 }

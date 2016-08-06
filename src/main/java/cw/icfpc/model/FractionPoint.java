@@ -39,6 +39,10 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
         return getX().pow(2).add(getY().pow(2)).doubleValue();
     }
 
+    public BigFraction absSquaredFraction() {
+        return getX().pow(2).add(getY().pow(2));
+    }
+
     public static BigFraction dot(FractionPoint a, FractionPoint b)
     {
         return a.getX().multiply(b.getX()) . add( a.getY().multiply(b.getY()) );
