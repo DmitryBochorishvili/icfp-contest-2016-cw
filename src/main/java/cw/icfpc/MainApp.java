@@ -31,6 +31,7 @@ public class MainApp
                     s.setIteration(0);
                     nodes.add(s);
 
+                    vis.addScene(s, true);
                     if (s.isFinalState())
                     {
                         System.out.println("Solution found!!!");
@@ -56,9 +57,9 @@ public class MainApp
                             }
                         });
 
-                        for (State n : nodes)
+                        for (State n : decisions)
                         {
-                            //vis.addScene(n, true);
+                            vis.addScene(n, true);
                         }
 
                         nodes.addAll(decisions);
@@ -71,7 +72,7 @@ public class MainApp
                         System.out.println("Solution not found :((");
                 }
             }
-            //vis.drawToFile(null);
+            vis.drawToFile(null);
             
         } catch (IOException e) {
             e.printStackTrace();
