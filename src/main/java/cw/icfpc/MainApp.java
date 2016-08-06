@@ -34,7 +34,7 @@ public class MainApp
                     nodes.addAll(DecisionTree.generateDecisionNodes(s));
 
                     // sort new states by heuristic
-                    nodes.sort((o1, o2) -> o1.getHeuristic() - o2.getHeuristic());
+                    nodes.sort((o1, o2) -> o1.getHeuristic() > o2.getHeuristic() ? 1 : -1);
 
                     System.out.println("Generated decision nodes: " + nodes.size());
                     for (State n: nodes) {

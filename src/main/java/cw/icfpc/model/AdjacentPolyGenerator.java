@@ -44,7 +44,12 @@ public final class AdjacentPolyGenerator
         while (!s.empty()) {
             AtomicPolygon v = s.pop();
             List<AtomicPolygon> path = getPathTo(pathToFrom, v);
-            result.add(CompoundPolygon.valueOf(path));
+
+            if (path.size() < state.getAtomicPolygons().size())
+            {
+                // add path only if it doesn't include all atomics. In such case it would full flip of entire silhouette
+                result.add(CompoundPolygon.valueOf(path));
+            }
             
             if (!excluded.contains(v) && !s.contains(v)) {
                 excluded.add(v);
@@ -78,23 +83,19 @@ public final class AdjacentPolyGenerator
     }
 
     /**
-     * Returns list of possible atomic polygons to be retained in state after flip.
+     * Returns list of possible atomic polygons to be removed in state after flip.
+     * Suggests to remove all tailing polygons up to the first one.
      */
-    public static List<CompoundPolygon> getAllSourceSubCompounds(CompoundPolygon poly)
+    public static List<CompoundPolygon> getAllSourceSubCompoundsToRemove(CompoundPolygon poly)
     {
-        final int MAX_OPTIONS = 10;
-
         List<CompoundPolygon> result = new ArrayList<>();
 
-        for (int i = 0; i < Math.pow(2, poly.getPolygons().size()) && i < MAX_OPTIONS; i++)
+        for (int i = 0; i < poly.getPolygons().size(); i++)
         {
             List<AtomicPolygon> atomics = new ArrayList<>();
-            for (int k = 0; k < poly.getPolygons().size(); k++)
+            for (int k = i + 1; k < poly.getPolygons().size(); k++)
             {
-                if ((i & (1L << k)) != 0)
-                {
-                    atomics.add(poly.getPolygons().get(k));
-                }
+                atomics.add(poly.getPolygons().get(k));
             }
             result.add(new CompoundPolygon(atomics));
         }

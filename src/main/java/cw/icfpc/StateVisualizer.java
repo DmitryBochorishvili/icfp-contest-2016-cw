@@ -85,6 +85,14 @@ public class StateVisualizer {
         g2d.setStroke(new BasicStroke(2));
         drawVertices(g2d, s);
         drawEdges(g2d, s);
+        drawTitle(g2d, s);
+    }
+
+    private void drawTitle(Graphics2D g2d, State s)
+    {
+        g2d.setColor(Color.WHITE);
+        g2d.drawString("Polygons: " + s.getAtomicPolygons().size(),
+                currentScene.offsetX + MARGIN, currentScene.offsetY + boardYScale - MARGIN / 2);
     }
 
     private void drawVertices(Graphics2D g2d, State s) {

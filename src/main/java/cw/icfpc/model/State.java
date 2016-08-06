@@ -12,7 +12,8 @@ public final class State
 
     private List<AtomicPolygon> atomicPolygons;
 
-    private MultiValuedMap adjacentPolygons = new HashSetValuedHashMap<>();
+    private MultiValuedMap<Edge, AtomicPolygon> adjacentEdges = new HashSetValuedHashMap<>();
+    private MultiValuedMap<AtomicPolygon, AtomicPolygon> adjacentPolygons = new HashSetValuedHashMap<>();
 
     public State(List<AtomicPolygon> atomicPolygons)
     {
@@ -25,11 +26,16 @@ public final class State
 
         for (int i = 0; i < atomicPolygons.size(); i++)
             for (int k = i + 1; k < atomicPolygons.size(); k++)
-                if (atomicPolygons.get(i).isAdjacent(atomicPolygons.get(k)))
+            {
+                Edge adjacentEdge = atomicPolygons.get(i).getAdjacentEdge(atomicPolygons.get(k));
+                if (adjacentEdge != null)
                 {
+                    adjacentEdges.put(adjacentEdge, atomicPolygons.get(i));
+                    adjacentEdges.put(adjacentEdge, atomicPolygons.get(k));
                     adjacentPolygons.put(atomicPolygons.get(i), atomicPolygons.get(k));
                     adjacentPolygons.put(atomicPolygons.get(k), atomicPolygons.get(i));
                 }
+            }
     }
 
     public boolean isAdjacent(AtomicPolygon p1, AtomicPolygon p2)
@@ -55,7 +61,7 @@ public final class State
         return State.valueOf(atomicPolygons);
     }
 
-    public int getHeuristic() {
+    public double getHeuristic() {
         return atomicPolygons.size();
     }
 
@@ -91,5 +97,33 @@ public final class State
         atomicPolygons.addAll(toAdd.getPolygons());
         atomicPolygons.removeAll(toRemove.getPolygons());
         return State.valueOf(atomicPolygons);
+    }
+
+    /**
+     * Returns true only if there is 1 polygon adjacent to this edge;
+     */
+    public boolean isEdgeOuter(Edge edge)
+    {
+        return adjacentEdges.get(edge).isEmpty();
+    }
+
+    public boolean allPolygonsAdjacent()
+    {
+        Set<AtomicPolygon> visited = new HashSet<>();
+        Stack<AtomicPolygon> toVisit = new Stack<>();
+
+        toVisit.push(atomicPolygons.get(0));
+
+        while (!toVisit.empty())
+        {
+            AtomicPolygon p = toVisit.pop();
+            visited.add(p);
+            adjacentPolygons.get(p).forEach(adj -> {
+                if (!visited.contains(adj))
+                    toVisit.push(adj);
+            });
+        }
+
+        return visited.size() == atomicPolygons.size();
     }
 }

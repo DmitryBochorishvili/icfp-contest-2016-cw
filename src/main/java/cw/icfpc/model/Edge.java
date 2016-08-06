@@ -60,7 +60,7 @@ public class Edge implements Flipable<Edge>
     @Override
     public String toString()
     {
-        return "Edge{" + PolyFormat.format(getEndpoints()) + '}';
+        return "Edge[" + PolyFormat.format(getEndpoints()) + ']';
     }
 
     @Override

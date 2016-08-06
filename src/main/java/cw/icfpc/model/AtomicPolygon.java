@@ -1,6 +1,7 @@
 package cw.icfpc.model;
 
 import cw.icfpc.utils.MathUtils;
+import cw.icfpc.utils.PolyFormat;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -103,7 +104,6 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
     @Override
     public String toString() {
         return "AtomicPolygon{" +
-                "vertices=" + vertices +
-                '}';
+                "vertices=[" + PolyFormat.format(vertices) + "]}";
     }
 }

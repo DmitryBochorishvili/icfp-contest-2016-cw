@@ -1,6 +1,5 @@
 package cw.icfpc.model
 
-import cw.icfpc.StateVisualizer
 import cw.icfpc.utils.PolyFormat
 import spock.lang.Specification
 
@@ -8,7 +7,7 @@ class AdjacentPolyGeneratorSpec extends Specification
 {
 
 
-    def 'getAllSourceSubCompounds'()
+    def 'getAllSourceSubCompounds tries to remove tailing polygons'()
     {
         given:
             def polies = [
@@ -19,13 +18,19 @@ class AdjacentPolyGeneratorSpec extends Specification
             def compound = new CompoundPolygon(polies)
 
         when:
-            def result = AdjacentPolyGenerator.getAllSourceSubCompounds(compound)
+            def result = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(compound)
 
 //            def vis = StateVisualizer.builder(new State([]));
 //            result.each {vis.addScene(new State(it.getPolygons()), true)}
 //            vis.drawToFile(null);
 
         then:
-            result.size() == 8
+            result.size() == 3
+
+            result[0].polygons.size() == 2
+            result[1].polygons.size() == 1
+            result[2].polygons.empty
     }
+
+
 }
