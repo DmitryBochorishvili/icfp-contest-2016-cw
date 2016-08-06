@@ -1,0 +1,288 @@
+user_id:display_name
+216:Midorimushi
+217:TaupeGoons
+214:Team SSL
+215:Wagner-sama
+212:アヒル㌠
+213:Deterministic Market Ride
+210:ParseError
+211:ImaginaryCF
+264:kstm
+265:iFold
+218:Falt mal kurz
+219:¯\_(ツ)_/¯
+133:Little Bippy & Big Growler
+132:loop the hack
+131:typo
+130:試運転
+137:Snakes vs Lambdas
+136:GFlat
+135:OrigamiRaven
+134:Flexible Demeanour
+95:Frictionless Bananas
+139:Hemisphere
+138:豆腐祭り
+225:Freeball
+24:TusanHomichi
+25:yowa
+250:tcybe
+224:DNIWE :: a
+20:uguu.org
+21:Standard ML/Yeah!
+22:COBOL_lovers
+23:yowa
+223:nbu
+28:Raging Mushrooms
+29:Coding Monkeys
+222:covax
+289:The seekers of curiosity
+288:hakomo
+221:unfold
+281:Princess Molestia
+280:ALL TEAM MEMBERS ARE NEET
+283:r152
+220:TheWildLobsters
+285:kmc
+284:read & write
+287:🐍 String Invaders 👾
+286:112
+87:nobu
+66:Tsuru
+227:ggg
+120:framus
+121:pibe
+122:framus
+123:ALAFTW
+124:Xeniac
+125:kstm.org
+126:pro.elixir
+127:Team Wolfie
+128:LonelyNerd
+129:Cult of the Bound Variable
+269:びア部🍺
+268:kamikaze
+69:Small Opulent Shelducks
+91:d4o
+59:Invisible Imp
+58:天羽々斬
+55:Henchman #24
+54:foldCrane
+57:Pokebowl
+56:fixstars
+51:botrevenge
+276:Gassa & The Family
+53:😼̯__,
+52:Scala Ballas
+63:Jackstone
+296:naoys
+297:I'ZOO
+294:chiiia12
+295:chiiia12
+292:Biorigamics
+293:cauchym
+290:keizo
+291:blue-r
+201:Folds R Us
+199:LoneRanger
+198:lilik
+200:Menschenkindlein
+195:udfew
+194:Flying Teriyaki Monster
+197:Lilik
+196:Not bad team at all
+191:Zebra Infused Hamsters
+190:InforFun
+193:2ManGroup
+192:D3but
+115:Room 641a
+114:Lazy Owl
+117:NCPLUG
+116:paiv
+111:fotocopia-al-150
+110:prolab
+113:kittykoala
+112:Bears ate our brains
+278:vodka_bear_balalaika
+205:*ptr
+80:Wombatman
+81:ATS
+119:code-o-matic
+118:TBD
+84:hayato
+204:SteelRaven
+251:Team007
+207:The team formally known as
+256:side effect
+206:WOMBAT
+226:Lyrical Tokarev
+257:radupeca
+27:epriestley
+254:drop_table_users
+92:gzoluble
+255:診断人
+26:Barbarella
+245:yohmike
+244:O Caml, My Caml
+108:Wrong Endians
+109:peria
+241:ha2ne2
+240:lass1e
+243:Thommi
+242:FooBar
+102:ricknmorty
+103:Hydralisk eats taco
+100:Samurai Helmet of Origami
+101:big.Rat
+106:CTDElite
+107:sdb
+104:Powershop is hiring
+105:Blue Iris
+39:Celestial Dire Badger
+38:Too lazy to think of a name....
+33:Buy Ascension VR on Steam, $9.99
+32:pk
+31:Errol's Robots
+30:Canivsar
+37:Slow
+247:tanzaku
+35:NaruseJun
+34:nerunerunerune
+246:MIPT Lambda
+88:vsapsai
+282:cata
+252:診断人
+72:Junk Food
+93:THIRTEEN
+271:UPA
+86:perpetuum mobile
+70:teofr
+60:Team Super Legit
+61:cashto
+258:lopihuta
+259:pecaradu
+64:begot
+65:Deramer
+179:lambda-llama
+178:IKS
+177:sergeif
+176:Task Manager (Not Responding)
+175:TeamDev
+174:Limbo
+173:Olympia
+172:bystander.js
+171:wheezards
+170:The Higher Order Of Zeuxis
+203:Peeing Turtle
+249:BC
+253:診断人
+248:This is an albatrocity!
+182:rocco66_team
+183:KOLOBOLOK
+180:Fly On The Wall
+181:Pelmeshki
+186:Sedentary Mollusc
+187:Dao of the fold
+184:Solo 399
+185:cw
+188:Le doux cri du yak des cimes
+189:Wintermute
+202:Goto11
+97:kludgefactory
+83:O
+94:Pastillage Research
+99:Piggybank Software
+98:moray
+168:lopihuta
+169:Movio
+229:abcde
+228:Codermal
+164:suikkee
+165:A Storm of Minds
+166:mekajfire
+167:The $oun𝅗𝅥  of λ
+160:貴方、「怠惰」ですねえ
+161:Folding Functor
+162:xyz
+163:taxidriver
+11:Dis Functional
+270:uint32_t
+13:AZALEA
+12:Wandering Hobos
+15:Zygohistomorphic Preproxenomorph
+14:negainoido
+17:Stanfy+
+16:The Cat is #1!!
+19:NULL
+18:AtnNn
+272:CDT
+273:powder
+274:rover
+275:phantomancy
+151:Team Aerokraft
+150:Team Aerokraft
+153:Lens d'Ulm
+152:Team Aerokraft
+155:codingteam
+154:Son of a Lambda!
+157:notogawa
+156:Leg of Lambda
+159:LoLi Saikou
+158:Gyutan
+62:Möbius Swan
+277:Team Awesome
+36:Hemisphere
+82:xsd
+90:kami-waza
+238:orzr
+239:PartialOrder
+279:YOLOswag
+234:Paper Tiger
+235:yarunee
+236:アリクイ㌠
+237:R22b
+230:Leaf Pie
+231:Taupiqueur
+232:Not There Yet
+233:JavaScriptFullCompilation
+48:Riaqn
+49:Team Sampou
+46:Eger a Marson
+47:Team K&R
+44:Olakka
+45:trup16
+42:Unagi
+43:jabber.ru
+40:DiamondPrincess
+41:Skobochka
+85:sonna *baka* na
+146:GD Alumni
+147:why-five-aye
+144:ghost
+145:Belle Area
+142:Church of the Least Fixed Point
+143:Wowbagger6809
+140:AllIWantIsToSeeTheProblems
+141:Occupational Face Plant
+209:Cactus
+208:The Pragmatic Russians
+148:TIML6574
+149:WILD BASHKORT MAGES
+77:Rarest Pepe
+76:Byker Dave
+75:Oklahoma FC
+74:Temporary OCaml Team Name
+73:Team Mugit
+50:CubeClub
+71:Marooned Combiners
+68:301
+96:Sunspear
+79:Omega men
+78:モダン焼 フジ
+263:Hekul
+262:cereal
+261:Test team
+89:kontur.ru
+260:Wile E.
+267:test
+67:Aecium
+266:public static void main
