@@ -15,20 +15,16 @@ public class DecisionTree
             Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
             compounds.forEach(cp -> {
                 CompoundPolygon flippedCompound = cp.flip(edge);
-//                Iterable<CompoundPolygon> flippedCompoundSubsets = AdjacentPolyGenerator.getAllFlippedCompounds(flippedCompound);
                 Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompounds(cp);
-//                flippedCompoundSubsets.forEach(flipCpSubset -> {
-                    sourceCompoundSubsets.forEach(srcCpSubset -> {
-                        State newState = state.addRemoveCompound(flippedCompound, srcCpSubset);
+                sourceCompoundSubsets.forEach(srcCpSubset -> {
+                    State newState = state.addRemoveCompound(flippedCompound, srcCpSubset);
 
-                        // new state is valid only if its ares is bigger than area of previous state
-                        if (newState.getSimpleArea() > currentStateArea)
-                        {
-                            System.out.println("Old area: " + currentStateArea + ", new area: " + newState.getSimpleArea());
-                            nodes.add(newState);
-                        }
-                    });
-//                });
+                    // new state is valid only if its ares is bigger than area of previous state
+                    if (newState.getSimpleArea() > currentStateArea)
+                    {
+                        nodes.add(newState);
+                    }
+                });
             });
         });
 
