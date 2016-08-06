@@ -1,6 +1,7 @@
 package cw.icfpc.model;
 
 import cw.icfpc.utils.PolyFormat;
+import org.apache.commons.math3.fraction.BigFraction;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -84,6 +85,10 @@ public class Edge implements Flipable<Edge>
 
     public double getLengthSquared() {
         return a.subtract(b).absSquared();
+    }
+
+    public BigFraction getLengthSquaredFraction() {
+        return a.subtract(b).absSquaredFraction();
     }
 
     public boolean contains(FractionPoint v) {
