@@ -29,17 +29,18 @@ public class MainApp
             if (args.length > 0) {
                 for (String file : args) {
                     s = r.readProblemFromFile(file);
-                    vis.addScene(s, false);
+                    vis.addScene(s, true);
+                    if(false) {
+                        nodes.addAll(DecisionTree.generateDecisionNodes(s));
 
-                    nodes.addAll(DecisionTree.generateDecisionNodes(s));
+                        // sort new states by heuristic
+                        nodes.sort((o1, o2) -> o1.getHeuristic() - o2.getHeuristic());
 
-                    // sort new states by heuristic
-                    nodes.sort((o1, o2) -> o1.getHeuristic() - o2.getHeuristic());
-
-                    System.out.println("Generated decision nodes: " + nodes.size());
-                    for (State n: nodes) {
+                        System.out.println("Generated decision nodes: " + nodes.size());
+                        for (State n : nodes) {
 //                        System.out.println("Adding a new computed state");
-                        vis.addScene(n, true);
+                            vis.addScene(n, true);
+                        }
                     }
                 }
             }

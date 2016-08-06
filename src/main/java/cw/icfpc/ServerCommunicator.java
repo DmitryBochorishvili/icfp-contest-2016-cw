@@ -234,15 +234,17 @@ public class ServerCommunicator {
             System.out.println("owner:" + problem.getOwner() + "; problem_hash: " + problem.getProblem_spec_hash());
             String directory = "downloadedProblems\\" + problem.getOwner();
             new File(directory).mkdir();
-            String problemText = getTask(problem.getProblem_spec_hash());
-            try {
-                PrintWriter writer = new PrintWriter(directory + "\\" + problem.getProblem_id(), "UTF-8");
-                writer.println(problemText);
-                writer.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            if(!new File(directory + "\\" + problem.getProblem_id()).exists()) { // do not download in case if file exists
+                String problemText = getTask(problem.getProblem_spec_hash());
+                try {
+                    PrintWriter writer = new PrintWriter(directory + "\\" + problem.getProblem_id(), "UTF-8");
+                    writer.println(problemText);
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
