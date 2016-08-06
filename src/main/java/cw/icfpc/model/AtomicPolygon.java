@@ -143,7 +143,27 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
         return result;
     }
     
+    public FractionPoint getCenter() {
+        FractionPoint sum = this.vertices.stream()
+                .reduce(FractionPoint.ZERO, FractionPoint::add);
+        return sum.divide(this.vertices.size());
+    }
+    
     public boolean overlaps(AtomicPolygon other) {
-        return vertices.stream().anyMatch(other::contains);
+        
+        for (FractionPoint p: vertices) {
+            if (other.contains(p)) {
+                return true;
+            }
+        }
+
+        for (FractionPoint p: other.vertices) {
+            if (this.contains(p)) {
+                return true;
+            }
+        }
+        
+        // Can be sped up by keeping the center.
+        return other.contains(this.getCenter()) || this.contains(other.getCenter());
     }
 }

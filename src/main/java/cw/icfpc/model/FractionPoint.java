@@ -10,7 +10,9 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
 {
     private BigFraction x;
     private BigFraction y;
-
+    
+    public static final FractionPoint ZERO = FractionPoint.valueOf(BigFraction.ZERO, BigFraction.ZERO);
+    
     private static FractionPoint valueOf(BigFraction x, BigFraction y) {
         return new FractionPoint(x, y);
     }
@@ -31,10 +33,18 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
         return y;
     }
 
+    public FractionPoint add(FractionPoint b) {
+        return FractionPoint.valueOf(this.x.add(b.getX()), this.y.add(b.getY()));
+    }
+    
     public FractionPoint subtract(FractionPoint b) {
         return FractionPoint.valueOf(this.x.subtract(b.getX()), this.y.subtract(b.getY()));
     }
-    
+
+    public FractionPoint divide(int by) {
+        return FractionPoint.valueOf(this.x.divide(by), this.y.divide(by));
+    }
+
     public double absSquared() {
         return getX().pow(2).add(getY().pow(2)).doubleValue();
     }
