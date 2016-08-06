@@ -8,13 +8,36 @@ import org.openscience.cdk.graph.MinimumCycleBasis;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GraphUtils
 {
+
+    public static AtomicPolygon merge(AtomicPolygon p1, AtomicPolygon p2)
+    {
+        Edge edge = p1.getAdjacentEdge(p2);
+        if (edge == null)
+            return null; // polygons are not adjacent
+
+        Set<Edge> edges = new HashSet<>();
+        edges.addAll(p1.getEdges());
+        edges.addAll(p2.getEdges());
+        edges.remove(edge);
+
+        List<AtomicPolygon> merged = minimumCycles(edges);
+        if (merged.size() != 1)
+            throw new RuntimeException("Polygons cannot be merged properly");
+
+        // TODO remove vertices if 2 edges lay on the same line after merge
+
+        return merged.get(0);
+    }
+
     public static List<AtomicPolygon> minimumCycles(Collection<Edge> edges)
     {
         Map<FractionPoint, Integer> verticesMap = new HashMap<>();

@@ -25,6 +25,28 @@ public class DecisionTree
                         nodes.add(newState);
                     }
                 });
+
+                // compound contains only 1 atomic polygon. Try to merge it with background
+                if (cp.getPolygons().size() == 1)
+                {
+                    AtomicPolygon p = cp.getPolygons().get(0);
+                    state.getAdjacentPolygons(p).forEach(adjacent -> {
+                        State newState = state.mergePolygons(p, adjacent).addCompound(flippedCompound);
+                        nodes.add(newState);
+                    });
+                }
+
+                // Try to merge first atomic in flipped compound with bg
+                List<State> mergedFlippedCompound = new LinkedList<State>();
+                nodes.forEach(st -> {
+                    AtomicPolygon p = flippedCompound.getPolygons().get(0);
+                    st.getAdjacentPolygons(p).forEach(adjacent -> {
+                        State newState = st.mergePolygons(p, adjacent).addCompound(flippedCompound);
+                        mergedFlippedCompound.add(newState);
+                    });
+                });
+                nodes.addAll(mergedFlippedCompound);
+
             });
         });
 

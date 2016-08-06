@@ -21,11 +21,11 @@ class AdjacentPolyGeneratorSpec extends Specification
         when:
             def result = AdjacentPolyGenerator.getAllSourceSubCompounds(compound)
 
-            def vis = StateVisualizer.builder(new State([]));
-            result.each {vis.addScene(new State(it.getPolygons()), true)}
-            vis.drawToFile(null);
+//            def vis = StateVisualizer.builder(new State([]));
+//            result.each {vis.addScene(new State(it.getPolygons()), true)}
+//            vis.drawToFile(null);
 
         then:
-            result.size() == 1
+            result.size() == 8
     }
 }

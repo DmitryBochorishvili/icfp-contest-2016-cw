@@ -40,16 +40,7 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
     }
     
     public boolean isAdjacent(AtomicPolygon other) {
-        if (other == this) {
-            return false;
-        }
-        
-        for (Edge f : this.edges) {
-            if (other.getEdges().contains(f)) {
-                return true;
-            }
-        }
-        return false;
+        return getAdjacentEdge(other) != null;
     }
 
     public Edge getAdjacentEdge(AtomicPolygon other) {
