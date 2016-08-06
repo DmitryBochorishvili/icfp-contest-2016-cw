@@ -1,7 +1,7 @@
 package cw.icfpc.utils
 
 import cw.icfpc.model.FractionPoint
-import org.apache.commons.lang3.math.Fraction
+import org.apache.commons.math3.fraction.BigFraction
 import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getEdge
@@ -125,6 +125,18 @@ class MathUtilsSpec extends Specification
             MathUtils.angleBetween(p('0,0'), p('0,1'), p('1,1')) == -Math.PI/2
             MathUtils.angleBetween(p('1,0'), p('0,0'), p('1,1')) == -3*Math.PI/4
             MathUtils.angleBetween(p('1,0'), p('1/2,1/2'), p('0,0')) == Math.PI/2
+    }
+    
+    def 'Circles intersection' ()
+    {
+        given:
+            def c1 = new FractionPoint(BigFraction.ZERO, BigFraction.ZERO)
+            def r1 = BigFraction.ONE
+            def c2 = new FractionPoint(BigFraction.ONE, BigFraction.ONE)
+            def r2 = BigFraction.ONE
+        expect:
+            def inter = MathUtils.getCirclesIntersection(c1, c2, r1, r2)
+            inter == new FractionPoint(1/4, 3/4)
     }
 
 }

@@ -18,20 +18,16 @@ class PartialSolution {
     }
 
     private static PartialSolution valueOf(List<AtomicPolygon> tiles) {
+        // TODO: memoize
         return new PartialSolution(tiles);
     }
     
     public List<Edge> getConnectableEdges() {
-        return null;
-    }
-
-    AtomicPolygon[] rotateToMatch(AtomicPolygon tile, Edge tileEdge, Edge connectable) {
         throw new NotImplementedException("");
     }
 
     /**
      * @param tile An already rotated and finely positioned polygon to add to our square.
-     * @return
      */
     boolean canPlace(AtomicPolygon tile) {
         if (exceedsOneSquare(tile)) {
