@@ -7,8 +7,9 @@ import java.util.stream.Collectors;
 
 public class AtomicPolygon implements Flipable<AtomicPolygon>
 {
-    private LinkedHashSet<FractionPoint> vertices;
+    private List<FractionPoint> vertices;
     private List<Edge> edges;
+    private double area = -1;
     
     public static AtomicPolygon valueOf(List<FractionPoint> vertices) {
         // FIXME: memoize
@@ -17,7 +18,7 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
 
     public AtomicPolygon(List<FractionPoint> vertices)
     {
-        this.vertices = new LinkedHashSet<>(vertices);
+        this.vertices = new ArrayList<>(vertices);
         this.edges = new ArrayList<>(vertices.size());
         for (int i=1; i<vertices.size(); i++) {
             Edge f = Edge.valueOf(vertices.get(i-1), vertices.get(i));
@@ -64,6 +65,26 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
         return null;
     }
 
+    public double getArea()
+    {
+        if (area < 0) // area has not been initialized yet
+        {
+            area = 0;
+            int j = vertices.size() - 1;  // The last vertex is the 'previous' one to the first
+
+            for (int i = 0; i < vertices.size(); i++)
+            {
+                // area = area +  (X[j]+X[i]) * (Y[j]-Y[i]);
+                area += (vertices.get(j).getX().doubleValue() + vertices.get(i).getX().doubleValue())
+                        * (vertices.get(j).getY().doubleValue() - vertices.get(i).getY().doubleValue());
+                j = i;  //j is previous vertex to i
+            }
+            area /= 2;
+            area = Math.abs(area);
+        }
+        return area;
+    }
+
     @Override
     public AtomicPolygon flip(Edge relativeTo) {
         List<FractionPoint> flippedVertexes = vertices.stream()
@@ -80,12 +101,12 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
             return false;
 
         AtomicPolygon that = (AtomicPolygon) o;
-        return vertices.equals(that.vertices);
+        return new HashSet<>(vertices).equals(new HashSet<>(that.vertices));
     }
 
     @Override
     public int hashCode() {
-        return vertices.hashCode();
+        return new HashSet<>(vertices).hashCode();
     }
 
     @Override

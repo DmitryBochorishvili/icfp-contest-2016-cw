@@ -36,6 +36,13 @@ public final class State
         return new State(polygons);
     }
 
+    // returns sum of all atomic polygons areas
+    // doens't take into account a possibility that a polygon could present in multiple layers.
+    public double getSimpleArea()
+    {
+        return atomicPolygons.stream().mapToDouble(p -> p.getArea()).sum();
+    }
+
     public State addCompound(CompoundPolygon flippedCompound) {
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
         atomicPolygons.addAll(flippedCompound.getPolygons());

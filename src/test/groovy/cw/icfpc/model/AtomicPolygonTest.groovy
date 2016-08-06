@@ -37,4 +37,10 @@ class AtomicPolygonTest extends Specification {
         getEdge('0,0 1,1') == p1.getAdjacentEdge(p2)
   }
 
+  def 'get area'()
+  {
+    expect:
+        1.0d == new AtomicPolygon(getFractionPointList('0,0 0,1 1,1 1,0')).getArea()
+        0.25d == new AtomicPolygon(getFractionPointList('1/2,1/2 0,0 1,0')).getArea()
+  }
 }

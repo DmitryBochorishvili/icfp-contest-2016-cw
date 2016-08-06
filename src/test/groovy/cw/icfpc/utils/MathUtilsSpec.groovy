@@ -89,7 +89,7 @@ class MathUtilsSpec extends Specification
 
         then:
             split as Set == [
-                    getEdge('0,0 5,5'),
+                    getEdge('5,5 0,0'),
                     getEdge('0,10 5,5'),
                     getEdge('5,5 10,0'),
                     getEdge('5,5 10,10')
