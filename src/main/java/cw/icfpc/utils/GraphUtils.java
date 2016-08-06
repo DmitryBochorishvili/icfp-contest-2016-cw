@@ -115,4 +115,9 @@ public class GraphUtils
 
         return (sumAngle > 0);
     }
+
+//    public static List<Edge> getInitialPolygonEdges(List<FractionPoint> initialPolygon, List<Edge> allEdges) {
+//        // perhaps, this is not needed. Assumption is that all edges specified in skeleton are owned by positive polygons
+          // (holes are not specified)
+//    }
 }

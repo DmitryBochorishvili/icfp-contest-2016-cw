@@ -92,88 +92,93 @@ public class ProblemReader {
         }
     }
 
-    private List<AtomicPolygon> atomizePolygons2(List<List<FractionPoint>> polygons, List<Edge> edges) {
-        //TODO: once again, find out by polygons if it's sorted clock or counter-clock-wise.
-        // For now, don't care
-
-        return GraphUtils.minimumCycles((List<Edge>)MathUtils.splitByIntersections(edges));
-    }
-
-    private List<AtomicPolygon> atomizePolygons(List<List<FractionPoint>> polygons, List<Edge> edges) {
-        List<AtomicPolygon> polygonsFound = new ArrayList<>();
-
-        List<EdgeWithVisitMark> edgesWithVisitMark = new ArrayList<>();
-        edges.forEach(origEdge -> {
-            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getA(), origEdge.getB()));
-            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getB(), origEdge.getA()));
-        });
+    public static List<AtomicPolygon> atomizePolygons2(List<List<FractionPoint>> polygons, List<Edge> edges) {
+        List<AtomicPolygon> allPolygons = GraphUtils.minimumCycles((List<Edge>)MathUtils.splitByIntersections(edges));
 
         polygons.forEach(polygon -> {
-            // TODO: first find out, is polygon sorted clock-wise or counter-clock-wise
-
-            // for each vertex in our polygon, try to create atomic polygon using available edges
-            polygon.forEach(startingPoint -> {
-                //AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, edges);
-
-                List<FractionPoint> vertices = new ArrayList<>();
-                vertices.add(startingPoint);
-                EdgeWithVisitMark currentEdge = visitNextEdge(null, startingPoint, edgesWithVisitMark);
-                while(currentEdge != null) {
-                    FractionPoint nextPoint = currentEdge.getB();
-                    if(vertices.contains(nextPoint)) {// found result
-                        polygonsFound.add(new AtomicPolygon(vertices));
-                        break;
-                    }
-                    vertices.add(nextPoint);
-                    EdgeWithVisitMark nextEdge = visitNextEdge(currentEdge, nextPoint, edgesWithVisitMark);
-                    currentEdge = nextEdge;
-                }
-
-            });
+            if(!GraphUtils.ifPositivePolygonInSilhouette(polygon)) {
+                AtomicPolygon hole = new AtomicPolygon(polygon);
+                allPolygons.removeIf(p -> p.overlaps(hole));
+            }
         });
-        return polygonsFound;
+        return allPolygons;
     }
 
-
-    private EdgeWithVisitMark visitNextEdge(EdgeWithVisitMark previousEdge, FractionPoint point, List<EdgeWithVisitMark> edgesWithVisitMark) {
-        double maxAngle = -Math.PI * 2;
-        int maxAngleEdgeIndex = -1;
-
-        List<EdgeWithVisitMark> edgesToConsider = new ArrayList<>();
-        for(int e = 0; e < edgesWithVisitMark.size(); e++) {
-            EdgeWithVisitMark edge = edgesWithVisitMark.get(e);
-            if(edge.isVisited())
-                continue;
-            if(previousEdge == null) { // this is going to be first edge of figure. Then return first good
-                if(edge.getA().equals(point)) {//found needed edge
-                    edge.visit();
-                    return edge;
-                }
-            }
-            else {
-                if(edge.getA().equals(point)) {
-                    edgesToConsider.add(edge);
-                }
-            }
-        }
-        if(edgesToConsider.size() == 0) // walked through all edges but all of them connected to this point are visited
-            return null;
-
-        //TODO: find edge with minimal angle
-        for(int e = 0; e < edgesToConsider.size(); e++) {
-            double curAngle =  MathUtils.angleBetween(previousEdge.getA(), edgesToConsider.get(e).getA(), edgesToConsider.get(e).getB());
-            if(curAngle >= 0 && curAngle > maxAngle && curAngle < Math.PI - 1e-6) {
-                maxAngle = curAngle;
-                maxAngleEdgeIndex = e;
-            }
-        }
-//        minAngleEdgeIndex = edgesToConsider.size() - 1; // TEMPORARY
-        if(maxAngleEdgeIndex != -1) {
-            edgesToConsider.get(maxAngleEdgeIndex).visit();
-            return edgesToConsider.get(maxAngleEdgeIndex);
-        }
-        return null;
-    }
+//    private List<AtomicPolygon> atomizePolygons(List<List<FractionPoint>> polygons, List<Edge> edges) {
+//        List<AtomicPolygon> polygonsFound = new ArrayList<>();
+//
+//        List<EdgeWithVisitMark> edgesWithVisitMark = new ArrayList<>();
+//        edges.forEach(origEdge -> {
+//            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getA(), origEdge.getB()));
+//            edgesWithVisitMark.add(new EdgeWithVisitMark(origEdge.getB(), origEdge.getA()));
+//        });
+//
+//        polygons.forEach(polygon -> {
+//            // TODO: first find out, is polygon sorted clock-wise or counter-clock-wise
+//
+//            // for each vertex in our polygon, try to create atomic polygon using available edges
+//            polygon.forEach(startingPoint -> {
+//                //AtomicPolygon poly = findAtomicPolygonStartingWith(i, polygon, edges);
+//
+//                List<FractionPoint> vertices = new ArrayList<>();
+//                vertices.add(startingPoint);
+//                EdgeWithVisitMark currentEdge = visitNextEdge(null, startingPoint, edgesWithVisitMark);
+//                while(currentEdge != null) {
+//                    FractionPoint nextPoint = currentEdge.getB();
+//                    if(vertices.contains(nextPoint)) {// found result
+//                        polygonsFound.add(new AtomicPolygon(vertices));
+//                        break;
+//                    }
+//                    vertices.add(nextPoint);
+//                    EdgeWithVisitMark nextEdge = visitNextEdge(currentEdge, nextPoint, edgesWithVisitMark);
+//                    currentEdge = nextEdge;
+//                }
+//
+//            });
+//        });
+//        return polygonsFound;
+//    }
+//
+//
+//    private EdgeWithVisitMark visitNextEdge(EdgeWithVisitMark previousEdge, FractionPoint point, List<EdgeWithVisitMark> edgesWithVisitMark) {
+//        double maxAngle = -Math.PI * 2;
+//        int maxAngleEdgeIndex = -1;
+//
+//        List<EdgeWithVisitMark> edgesToConsider = new ArrayList<>();
+//        for(int e = 0; e < edgesWithVisitMark.size(); e++) {
+//            EdgeWithVisitMark edge = edgesWithVisitMark.get(e);
+//            if(edge.isVisited())
+//                continue;
+//            if(previousEdge == null) { // this is going to be first edge of figure. Then return first good
+//                if(edge.getA().equals(point)) {//found needed edge
+//                    edge.visit();
+//                    return edge;
+//                }
+//            }
+//            else {
+//                if(edge.getA().equals(point)) {
+//                    edgesToConsider.add(edge);
+//                }
+//            }
+//        }
+//        if(edgesToConsider.size() == 0) // walked through all edges but all of them connected to this point are visited
+//            return null;
+//
+//        //TODO: find edge with minimal angle
+//        for(int e = 0; e < edgesToConsider.size(); e++) {
+//            double curAngle =  MathUtils.angleBetween(previousEdge.getA(), edgesToConsider.get(e).getA(), edgesToConsider.get(e).getB());
+//            if(curAngle >= 0 && curAngle > maxAngle && curAngle < Math.PI - 1e-6) {
+//                maxAngle = curAngle;
+//                maxAngleEdgeIndex = e;
+//            }
+//        }
+////        minAngleEdgeIndex = edgesToConsider.size() - 1; // TEMPORARY
+//        if(maxAngleEdgeIndex != -1) {
+//            edgesToConsider.get(maxAngleEdgeIndex).visit();
+//            return edgesToConsider.get(maxAngleEdgeIndex);
+//        }
+//        return null;
+//    }
 
 
 

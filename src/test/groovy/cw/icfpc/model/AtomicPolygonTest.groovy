@@ -65,4 +65,14 @@ class AtomicPolygonTest extends Specification {
         1.0d == new AtomicPolygon(getFractionPointList('0,0 0,1 1,1 1,0')).getArea()
         0.25d == new AtomicPolygon(getFractionPointList('1/2,1/2 0,0 1,0')).getArea()
   }
+
+  def 'test overlapping' () {
+    given:
+    def p1 = new AtomicPolygon(getFractionPointList('1/4,1/4 1/8,1/4 1/8,1/8 1/4,1/8'))
+    def p2 = new AtomicPolygon(getFractionPointList('1/8,1/8 1/8,1/4 1/4,1/4 1/4,1/8'))
+
+    expect:
+      p1.overlaps(p2)
+  }
+
 }
