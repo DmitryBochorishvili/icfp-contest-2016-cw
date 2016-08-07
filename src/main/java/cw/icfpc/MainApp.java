@@ -133,6 +133,7 @@ public class MainApp
             if (solution == null) {
 //                System.out.println(String.format("Solution for %s not found :((", file));
             } else {
+                solution = solution.alignToUnit();
                 List<State> path = new ArrayList<>(solution.getIteration()+1);
 
                 State pathPointer = solution;
