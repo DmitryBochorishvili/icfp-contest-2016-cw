@@ -109,6 +109,10 @@ public final class State
         ArrayList<AtomicPolygon> polygons = new ArrayList<>();
         polygons.addAll(adjacentPolygons);
         AtomicPolygon merged = GraphUtils.merge(polygons.get(0), polygons.get(1));
+
+        if(merged == null)
+            return null;
+
         atomicPolygons.remove(polygons.get(0));
         atomicPolygons.remove(polygons.get(1));
         atomicPolygons.add(merged);
@@ -136,9 +140,11 @@ public final class State
         if(merge) {
             AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
             AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
+            AtomicPolygon merged = GraphUtils.merge(p1, p2);
+            if(merged == null)
+                return null;
             atomicPolygons.remove(p1);
             atomicPolygons.remove(p2);
-            AtomicPolygon merged = GraphUtils.merge(p1, p2);
             atomicPolygons.add(merged);
         }
 

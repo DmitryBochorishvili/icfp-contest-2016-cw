@@ -30,8 +30,13 @@ public class GraphUtils
         edges.remove(edge);
 
         List<AtomicPolygon> merged = minimumCycles(edges);
+
         if (merged.size() != 1)
-            throw new RuntimeException("Polygons cannot be merged properly");
+            return null;
+            //throw new RuntimeException("Polygons cannot be merged properly");
+
+        if(!merged.get(0).isValidConvex())
+            return null;
 
         return merged.get(0);
     }

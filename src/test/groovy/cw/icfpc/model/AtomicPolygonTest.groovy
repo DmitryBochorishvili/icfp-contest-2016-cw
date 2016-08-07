@@ -90,4 +90,20 @@ class AtomicPolygonTest extends Specification {
       !p1.overlaps(p4)
   }
 
+  def 'test method that checks valid convexes' () {
+    given:
+    def valid1 = new AtomicPolygon(getFractionPointList('0,0 0,1 1,1 1,0'))
+    def valid2 = new AtomicPolygon(getFractionPointList('0,0 1,0 1,1 0,1'))
+    def valid3 = new AtomicPolygon(getFractionPointList('0,0 1/2,1/2 1/2,0'))
+    def valid4 = new AtomicPolygon(getFractionPointList('0,0 1,0 1/2,1/2 0,1'))
+    def invalid1 = new AtomicPolygon(getFractionPointList('0,0 1,0 1,1/2 1/2,1/2 1/2,1 0,1'))
+    def invalid2 = new AtomicPolygon(getFractionPointList('0,0 0,1/2 0,1 1,1 1/2,1/2 1,0'))
+    expect:
+    valid1.isValidConvex()
+    valid2.isValidConvex()
+    valid3.isValidConvex()
+    valid4.isValidConvex()
+    !invalid1.isValidConvex()
+    !invalid2.isValidConvex()
+  }
 }

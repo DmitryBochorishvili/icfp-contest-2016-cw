@@ -28,7 +28,7 @@ public class DecisionTree
         Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
 
         State newState = state.mergeAdjacentAtomicPolygons(edge);
-        if (newState.getSimpleArea() > currentStateArea && newState.isStateValid())
+        if (newState != null && newState.isStateValid())
         {
             proposedStates.add(newState);
         }
@@ -51,13 +51,13 @@ public class DecisionTree
                 State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, true);
 
                 // new state is valid only if its ares is bigger than area of previous state
-                if (newStateMerged.getSimpleArea() > currentStateArea && newStateMerged.isStateValid())
+                if (newStateMerged != null && newStateMerged.getSimpleArea() > currentStateArea && newStateMerged.isStateValid())
                 {
                     proposedStates.add(newStateMerged);
                 }
                 else { // then, if merged was not successful, try once again but with non-merged
                     State newStateNotMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, false);
-                    if (newStateNotMerged.getSimpleArea() > currentStateArea && newStateNotMerged.isStateValid())
+                    if (newStateNotMerged != null && newStateNotMerged.getSimpleArea() > currentStateArea && newStateNotMerged.isStateValid())
                     {
                         proposedStates.add(newStateNotMerged);
                     }

@@ -6,6 +6,8 @@ import cw.icfpc.utils.PolyFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.lang.Math.abs;
+
 public class AtomicPolygon implements Flipable<AtomicPolygon>
 {
     private List<FractionPoint> vertices;
@@ -72,7 +74,7 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
                 j = i;  //j is previous vertex to i
             }
             area /= 2;
-            area = Math.abs(area);
+            area = abs(area);
         }
         return area;
     }
@@ -165,5 +167,47 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
         
         // Can be sped up by keeping the center.
         return other.contains(this.getCenter()) || this.contains(other.getCenter());
+    }
+
+    public boolean isValidConvex() {
+        boolean counterWise = true;
+
+        List<FractionPoint> orderedPolygonPoints = new ArrayList<FractionPoint>();
+
+        FractionPoint previousFractionPoint = edges.get(0).getA();
+        FractionPoint currentFractionPoint = edges.get(0).getB();
+
+        orderedPolygonPoints.add(previousFractionPoint);
+        orderedPolygonPoints.add(currentFractionPoint);
+
+        while(currentFractionPoint != orderedPolygonPoints.get(0)) {
+            for(Edge e : edges) {
+                if( (e.getA() == currentFractionPoint && e.getB() == previousFractionPoint)
+                  ||(e.getB() == currentFractionPoint && e.getA() == previousFractionPoint))
+                    continue;
+                if(e.getA() == currentFractionPoint) {
+                    previousFractionPoint = currentFractionPoint;
+                    currentFractionPoint = e.getB();
+                    orderedPolygonPoints.add(currentFractionPoint);
+                }
+                else if(e.getB() == currentFractionPoint) {
+                    previousFractionPoint = currentFractionPoint;
+                    currentFractionPoint = e.getA();
+                    orderedPolygonPoints.add(currentFractionPoint);
+                }
+            }
+        }
+
+        counterWise = (MathUtils.angleBetween(orderedPolygonPoints.get(0), orderedPolygonPoints.get(1), orderedPolygonPoints.get(2)) > 0);
+
+        for(int i = 0; i < orderedPolygonPoints.size() - 2; i++) {
+            double currentAngle = MathUtils.angleBetween(orderedPolygonPoints.get(i), orderedPolygonPoints.get(i+1), orderedPolygonPoints.get(i+2));
+            if(abs(currentAngle) < 1e-6) // it means next edge is collinear to previous, this is valid
+                continue;
+            boolean currentCounterWise = (currentAngle > 0);
+            if(currentCounterWise != counterWise)
+                return false;
+        }
+        return true;
     }
 }

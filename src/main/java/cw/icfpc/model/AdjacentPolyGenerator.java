@@ -45,7 +45,7 @@ public final class AdjacentPolyGenerator
             AtomicPolygon v = s.pop();
             List<AtomicPolygon> path = getPathTo(pathToFrom, v);
 
-            if (path.size() < state.getAtomicPolygons().size())
+            //if (path.size() < state.getAtomicPolygons().size())
             {
                 // add path only if it doesn't include all atomics. In such case it would full flip of entire silhouette
                 result.add(CompoundPolygon.valueOf(path));
