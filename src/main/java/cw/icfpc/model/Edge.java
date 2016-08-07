@@ -6,7 +6,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.ArrayList;
 import java.util.Collection;
 
-public class Edge implements Flipable<Edge>
+public class Edge implements Geometry<Edge>
 {
     private FractionPoint a;
     private FractionPoint b;
@@ -48,6 +48,16 @@ public class Edge implements Flipable<Edge>
     @Override
     public Edge flip(Edge relativeTo) {
         return valueOf(a.flip(relativeTo), b.flip(relativeTo));
+    }
+    
+    @Override
+    public Edge rotate(FractionPoint angleTangent) {
+        return valueOf(a.rotate(angleTangent), b.rotate(angleTangent));
+    }
+
+    @Override
+    public Edge move(FractionPoint by) {
+        return valueOf(a.move(by), b.move(by));
     }
 
     public Collection<FractionPoint> getEndpoints()

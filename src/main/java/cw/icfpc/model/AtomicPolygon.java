@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.abs;
 
-public class AtomicPolygon implements Flipable<AtomicPolygon>
+public class AtomicPolygon implements Geometry<AtomicPolygon>
 {
     private List<FractionPoint> vertices;
     private List<Edge> edges;
@@ -87,6 +87,22 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
     public AtomicPolygon flip(Edge relativeTo) {
         List<FractionPoint> flippedVertexes = vertices.stream()
                 .map(p -> MathUtils.reflect(p, relativeTo))
+                .collect(Collectors.toList());
+        return valueOf(flippedVertexes);
+    }
+    
+    @Override
+    public AtomicPolygon rotate(FractionPoint angleTangent) {
+        List<FractionPoint> flippedVertexes = vertices.stream()
+                .map(p -> MathUtils.rotate(p, angleTangent))
+                .collect(Collectors.toList());
+        return valueOf(flippedVertexes);
+    }
+
+    @Override
+    public AtomicPolygon move(FractionPoint by) {
+        List<FractionPoint> flippedVertexes = vertices.stream()
+                .map(p -> p.move(by))
                 .collect(Collectors.toList());
         return valueOf(flippedVertexes);
     }

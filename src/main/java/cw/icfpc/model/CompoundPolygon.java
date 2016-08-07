@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CompoundPolygon implements Flipable<CompoundPolygon>
+public class CompoundPolygon implements Geometry<CompoundPolygon>
 {
     // TODO: Do we actually need their order? Especially that it's not always in adjacency order.
     private List<AtomicPolygon> polygons;
@@ -29,6 +29,22 @@ public class CompoundPolygon implements Flipable<CompoundPolygon>
     public CompoundPolygon flip(Edge relativeTo) {
         List<AtomicPolygon> flipped = this.polygons.stream()
                 .map(p -> p.flip(relativeTo))
+                .collect(Collectors.toList());
+        return valueOf(flipped);
+    }
+
+    @Override
+    public CompoundPolygon rotate(FractionPoint angleTangent) {
+        List<AtomicPolygon> flipped = this.polygons.stream()
+                .map(p -> p.rotate(angleTangent))
+                .collect(Collectors.toList());
+        return valueOf(flipped);
+    }
+
+    @Override
+    public CompoundPolygon move(FractionPoint by) {
+        List<AtomicPolygon> flipped = this.polygons.stream()
+                .map(p -> p.move(by))
                 .collect(Collectors.toList());
         return valueOf(flipped);
     }

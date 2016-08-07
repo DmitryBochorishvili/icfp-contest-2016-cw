@@ -6,7 +6,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FractionPoint implements Comparable<FractionPoint>, Flipable<FractionPoint>
+public class FractionPoint implements Comparable<FractionPoint>, Geometry<FractionPoint>
 {
     private BigFraction x;
     private BigFraction y;
@@ -73,6 +73,20 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
         FractionPoint reflected = MathUtils.reflect(this, relativeTo);
         reflected.destId = destId;
         return reflected;
+    }
+
+    @Override
+    public FractionPoint rotate(FractionPoint angleTangent) {
+        FractionPoint rotated = MathUtils.rotate(this, angleTangent);
+        rotated.destId = destId;
+        return rotated;
+    }
+
+    @Override
+    public FractionPoint move(FractionPoint by) {
+        FractionPoint moved = add(by);
+        moved.destId = destId;
+        return moved;
     }
     
     private static String fractionToString(BigFraction f)
