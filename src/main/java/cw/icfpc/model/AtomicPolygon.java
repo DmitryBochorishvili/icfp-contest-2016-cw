@@ -2,7 +2,9 @@ package cw.icfpc.model;
 
 import cw.icfpc.utils.MathUtils;
 import cw.icfpc.utils.PolyFormat;
+import org.apache.commons.math3.fraction.BigFraction;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,18 +65,20 @@ public class AtomicPolygon implements Flipable<AtomicPolygon>
     {
         if (area < 0) // area has not been initialized yet
         {
-            area = 0;
+            BigFraction bigArea = new BigFraction(BigInteger.ZERO);
             int j = vertices.size() - 1;  // The last vertex is the 'previous' one to the first
 
             for (int i = 0; i < vertices.size(); i++)
             {
                 // area = area +  (X[j]+X[i]) * (Y[j]-Y[i]);
-                area += (vertices.get(j).getX().doubleValue() + vertices.get(i).getX().doubleValue())
-                        * (vertices.get(j).getY().doubleValue() - vertices.get(i).getY().doubleValue());
+                BigFraction addedX = vertices.get(j).getX().add(vertices.get(i).getX());
+                BigFraction substractedY = vertices.get(j).getY().subtract(vertices.get(i).getY());
+                BigFraction multiplied = addedX.multiply(substractedY);
+                bigArea = bigArea.add(multiplied);
                 j = i;  //j is previous vertex to i
             }
-            area /= 2;
-            area = abs(area);
+            bigArea = bigArea.divide(BigFraction.TWO);
+            area = abs(bigArea.doubleValue());
         }
         return area;
     }
