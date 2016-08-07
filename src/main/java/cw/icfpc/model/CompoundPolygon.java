@@ -47,7 +47,7 @@ public class CompoundPolygon implements Flipable<CompoundPolygon>
 
     @Override
     public int hashCode() {
-        return polygons.hashCode();
+        return new HashSet<>(polygons).hashCode();
     }
 
     @Override

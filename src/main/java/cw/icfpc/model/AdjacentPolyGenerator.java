@@ -82,6 +82,64 @@ public final class AdjacentPolyGenerator
         return generateAllSubsets(state, root, excluded);
     }
 
+    static List<Set<AtomicPolygon>> generateAllSubtrees(
+            State state,
+            AtomicPolygon currentNode,
+            Set<AtomicPolygon> parentTree,
+            Set<AtomicPolygon> excluded)
+    {
+        List<Set<AtomicPolygon>> result = new ArrayList<>();
+
+        // don't go deeper than 5 nodes
+        if (parentTree.size() >= 5)
+            return result;
+
+        Set<AtomicPolygon> currentTree = new HashSet<AtomicPolygon>(parentTree);
+        currentTree.add(currentNode);
+        result.add(currentTree);
+
+        state.getAdjacentPolygons(currentNode).stream()
+                .filter(n -> !parentTree.contains(n) && !excluded.contains(n))
+                .forEach(n -> {
+                    result.addAll(generateAllSubtrees(state, n, currentTree, excluded));
+                });
+
+        return result;
+    }
+
+
+    public static Set<CompoundPolygon> getAllCompounds2(State state, Edge edge)
+    {
+        List<AtomicPolygon> adjacent = getAdjacentTo(state, edge);
+        if (adjacent.size() < 1) {
+            return Collections.emptySet();
+        }
+
+        AtomicPolygon root = adjacent.get(0);
+        adjacent.remove(0);
+        assert adjacent.size() <= 1;
+        Set<AtomicPolygon> excluded = new LinkedHashSet<>();
+        excluded.addAll(adjacent);
+
+        List<Set<AtomicPolygon>> subtrees = generateAllSubtrees(state, root, Collections.emptySet(), excluded);
+
+        // generate all combinations of subtrees
+        long n = 1 << subtrees.size();
+
+        Set<CompoundPolygon> result = new HashSet<>();
+        for (long i = 1; i < n; i++)
+        {
+            Set<AtomicPolygon> atoms = new HashSet<>();
+            for (int k = 0; k < subtrees.size(); k++)
+            {
+                if ((i & (1L << k)) != 0)
+                    atoms.addAll(subtrees.get(k));
+            }
+            result.add(new CompoundPolygon(new ArrayList<AtomicPolygon>(atoms)));
+        }
+        return result;
+    }
+
     /**
      * Returns list of possible atomic polygons to be removed in state after flip.
      * Suggests to remove all tailing polygons up to the first one.

@@ -1,5 +1,6 @@
 package cw.icfpc.utils;
 
+import cw.icfpc.model.AtomicPolygon;
 import cw.icfpc.model.Edge;
 import cw.icfpc.model.FractionPoint;
 import org.apache.commons.lang3.math.Fraction;
@@ -55,6 +56,11 @@ public class PolyFormat
         return Stream.of(str.split(" "))
                 .map(PolyFormat::getFractionPoint)
                 .collect(Collectors.toList());
+    }
+
+    public static AtomicPolygon getAtomic(String str)
+    {
+        return new AtomicPolygon(getFractionPointList(str));
     }
 
     public static Edge getEdge(String str)

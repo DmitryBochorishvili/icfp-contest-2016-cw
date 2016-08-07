@@ -163,12 +163,6 @@ public class MainApp
                 }
             }
 
-            if (drawStates)
-            {
-                String simpleFileName = new File(problemFile).getName();
-                String picFileName = "pic_" + simpleFileName + ".png";
-                vis.drawToFile(picFileName);
-            }
         }
         catch (IOException e) {
             System.out.println("Got an exception while trying to solve problem " + problemFile);
@@ -178,6 +172,20 @@ public class MainApp
         finally {
             System.out.flush();
             System.err.flush();
+
+            if (drawStates)
+            {
+                String simpleFileName = new File(problemFile).getName();
+                String picFileName = "pic_" + simpleFileName + ".png";
+                try
+                {
+                    vis.drawToFile(picFileName);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return solution;
