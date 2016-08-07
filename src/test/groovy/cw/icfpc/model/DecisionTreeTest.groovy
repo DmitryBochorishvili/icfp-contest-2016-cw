@@ -1,11 +1,13 @@
 package cw.icfpc.model
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class DecisionTreeTestSpec extends Specification
 {
+    @Ignore
     def 'check if generateDecisionNodes() is advancing to solution'()
     {
         given:
