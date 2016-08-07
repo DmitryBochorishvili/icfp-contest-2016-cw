@@ -1,5 +1,6 @@
 package cw.icfpc.model;
 
+import cw.icfpc.utils.FacetSplitter;
 import cw.icfpc.utils.GraphUtils;
 import cw.icfpc.utils.MathUtils;
 import org.apache.commons.collections4.MultiValuedMap;
@@ -16,7 +17,7 @@ public final class State
     
     private List<AtomicPolygon> destFacets;
     private List<AtomicPolygon> facets;
-    private List<AtomicPolygon> neverMoved;
+//    private List<AtomicPolygon> neverMoved;
 
     private List<FractionPoint> destinationVertexes;
     private Map<FractionPoint, FractionPoint[]> destinationVertexUnfolded;
@@ -32,8 +33,8 @@ public final class State
      */
     public static State createNew(List<AtomicPolygon> polygons) {
         State state = new State(polygons);
-        state.facets = new ArrayList<>();
-        state.destFacets = new ArrayList<>();
+        state.facets = new ArrayList<>(GraphUtils.minimumCycles(state.edges));
+        state.destFacets = Collections.unmodifiableList(new ArrayList<>(state.facets));
         return state;
     }
 
@@ -44,7 +45,7 @@ public final class State
     private State(List<AtomicPolygon> atomicPolygons)
     {
         this.atomicPolygons = atomicPolygons;
-        this.neverMoved = new ArrayList<>(atomicPolygons);
+//        this.neverMoved = new ArrayList<>(atomicPolygons);
 
         edges = new HashSet<>();
         atomicPolygons.forEach(polygon -> edges.addAll(polygon.getEdges()));
@@ -139,6 +140,16 @@ public final class State
             CompoundPolygon toRemove,
             FlipOptions merge)
     {
+//        AtomicPolygon brokenFacet = this.facets.stream()
+//                .filter(f -> sourceCompound.overlaps(f))
+//                .findAny()
+//                .orElse(null);
+//        
+//        // we're trying to bend a facet
+//        if (brokenFacet != null) {
+//            return null;
+//        }
+
         // merge first flipped atomic with first compound atomic
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
 
@@ -165,15 +176,20 @@ public final class State
         newState.derivedFrom = this;
         
         newState.facets = new ArrayList<>(this.facets);
-        AtomicPolygon flippedFacet = flippedCompound.getContour();
-        newState.facets.add(flippedFacet);
+//        AtomicPolygon flippedFacet = flippedCompound.getContour();
         
-        newState.destFacets = new ArrayList<>(this.destFacets);
-        AtomicPolygon origFacet = sourceCompound.getContour();
-        newState.destFacets.add(origFacet);
+        LinkedList<AtomicPolygon> flippedFacets = this.facets.stream()
+                .filter(f -> flippedCompound.covers(f));
         
-        newState.neverMoved = new ArrayList<>(this.neverMoved);
-        newState.neverMoved.removeAll(toRemove.getPolygons());
+        newState.facets.add(flippedFacets);
+        
+        newState.destFacets = this.destFacets;
+        // destination facets never change.
+//        AtomicPolygon origFacet = sourceCompound.getContour();
+//        newState.destFacets.add(origFacet);
+        
+//        newState.neverMoved = new ArrayList<>(this.neverMoved);
+//        newState.neverMoved.removeAll(toRemove.getPolygons());
         
         return newState;
     }
@@ -276,9 +292,9 @@ public final class State
         moved.destFacets = new ArrayList<>(this.destFacets.stream()
                 .map(p -> translate(p, movement, tangent))
                 .collect(Collectors.toList()));
-        moved.neverMoved = new ArrayList<>(this.neverMoved.stream()
-                .map(p -> translate(p, movement, tangent))
-                .collect(Collectors.toList()));
+//        moved.neverMoved = new ArrayList<>(this.neverMoved.stream()
+//                .map(p -> translate(p, movement, tangent))
+//                .collect(Collectors.toList()));
 
         return moved;
     }
@@ -293,9 +309,9 @@ public final class State
     }
     
     public String toSolution() {
-        assert this.neverMoved.size() == 1;
+//        assert this.neverMoved.size() == 1;
         assert this.facets.size() <= 1;
-        this.facets.addAll(this.neverMoved);
+//        this.facets.addAll(this.neverMoved);
 
         State sourceState = this;
         
@@ -344,8 +360,6 @@ public final class State
             }
             sb.append('\n');
         }
-
-        List<AtomicPolygon> a = sourceState.neverMoved;
 
         // Destination positions
         for (int i=0; i<sourcePoints.size(); i++) {

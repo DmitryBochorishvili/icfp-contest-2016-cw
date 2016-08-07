@@ -135,7 +135,7 @@ public final class AdjacentPolyGenerator
                 if ((i & (1L << k)) != 0)
                     atoms.addAll(subtrees.get(k));
             }
-            result.add(new CompoundPolygon(new ArrayList<AtomicPolygon>(atoms)));
+            result.add(new CompoundPolygon(new ArrayList<>(atoms)));
         }
         return result;
     }

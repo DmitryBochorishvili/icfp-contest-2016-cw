@@ -1,26 +1,13 @@
 package cw.icfpc.model
 
+import static cw.icfpc.StateTestUtils.*
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import static cw.icfpc.utils.PolyFormat.getFractionPoint
 import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class StateSpec extends Specification
 {
-    private State state(String... poly) {
-        State s = State.createNew(
-                poly.collect{
-                    new AtomicPolygon(getFractionPointList(it))})
-        int destId = 0
-        s.atomicPolygons[0].vertices.forEach{it.destId = destId++}
-        s
-    }
-    
-    private FractionPoint p(String s) {
-        getFractionPoint(s)
-    }
-
     def 'final state: true for initial square'()
     {
         expect:
@@ -64,7 +51,7 @@ class StateSpec extends Specification
     def 'toSolution - just a square'()
     {
         expect:
-            state('0,0 0,1 1,1 1,0').toSolution() == """4
+        state('0,0 0,1 1,1 1,0').toSolution() == """4
 1,0
 0,0
 1,1
@@ -81,7 +68,7 @@ class StateSpec extends Specification
     def 'toSolution - problem #1'()
     {
         expect:
-            state('0,0 1,0 1,1 0,1').toSolution() == """4
+        state('0,0 1,0 1,1 0,1').toSolution() == """4
 1,0
 0,0
 1,1

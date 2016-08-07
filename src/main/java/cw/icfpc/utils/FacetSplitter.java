@@ -7,10 +7,6 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.*;
 
-/**
- * Doesn't work (and probably shouldn't)
- */
-@Deprecated
 public class FacetSplitter {
 
     List<Edge> edges;
@@ -27,53 +23,60 @@ public class FacetSplitter {
             if (!pointEdges.containsKey(e.getA())) {
                 pointEdges.put(e.getA(), new HashSet<>());
             }
+            if (!pointEdges.containsKey(e.getB())) {
+                pointEdges.put(e.getB(), new HashSet<>());
+            }
             pointEdges.get(e.getA()).add(e);
             pointEdges.get(e.getB()).add(e);
         }
     }
     
-    void addEdgeToCycle(List<Edge> cycle, Edge e) {
+    void addEdgeToCycle(List<Edge> cycle, List<FractionPoint> cyclePoints, Edge e) {
+        if (cycle.contains(e)) {
+            throw new IllegalStateException("What, again?");
+        }
         edgeUsage.put(e, edgeUsage.getOrDefault(e, 0)+1);
         totalEdgeUsage++;
-        cycle.add(e);
-    }
-    
-    FractionPoint getCycleEnd(List<Edge> cycle) {
-        Edge lastEdge = cycle.get(cycle.size()-1);
         
-        FractionPoint cycleEnd = lastEdge.getB();
-        if (cycle.size() > 1) {
-            Edge prevEdge = cycle.get(cycle.size()-2);
-            if (prevEdge.contains(cycleEnd)) {
-                cycleEnd = lastEdge.getA();
-            }
-            if (prevEdge.contains(cycleEnd)) {
-                throw new IllegalStateException("OutOfBrainException: Found a loop and didn't notice it");
-            }
+        if (cyclePoints.isEmpty()) {
+            cyclePoints.add(e.getA());
+            cyclePoints.add(e.getB());
         }
-        return cycleEnd;
+        else if (cyclePoints.get(cyclePoints.size()-1).equals(e.getA())) {
+            cyclePoints.add(e.getB());
+        }
+        
+        cycle.add(e);
     }
     
     List<Edge> findCycle() {
         List<Edge> cycle = new LinkedList<>();
+        List<FractionPoint> cyclePoints = new LinkedList<>();
 
         Edge lastEdge = edges.stream()
-                .filter(e -> edgeUsage.getOrDefault(e, 0) < 2)
+                .filter(e -> edgeUsage.getOrDefault(e, 0) == 0)
                 .findAny()
                 .orElseThrow(() -> new IllegalStateException("Bad graph or me?"));
 
-        addEdgeToCycle(cycle, lastEdge);
+        addEdgeToCycle(cycle, cyclePoints, lastEdge);
         
         while (true) {
-            FractionPoint cycleEnd = getCycleEnd(cycle);
-            for (Edge nextEdge: pointEdges.get(cycleEnd)) {
-                if (edgeUsage.getOrDefault(nextEdge, 0) == 2) {
+            FractionPoint cycleEnd = cyclePoints.get(cyclePoints.size()-1);
+            for (Edge nextEdge: edges) {
+                // Somewhy doesn't retrieve proper entry.
+//            for (Edge nextEdge: pointEdges.get(cycleEnd)) {
+                if (nextEdge == lastEdge 
+                        || edgeUsage.getOrDefault(nextEdge, 0) == 2
+                        || !nextEdge.contains(cycleEnd)
+                        || cycle.contains(nextEdge)) 
+                {
                     continue;
                 }
 
-                addEdgeToCycle(cycle, nextEdge);
+                addEdgeToCycle(cycle, cyclePoints, nextEdge);
+                cycleEnd = cyclePoints.get(cyclePoints.size()-1);
 
-                if (cycle.get(0).contains(getCycleEnd(cycle))) {
+                if (cyclePoints.get(0).equals(cycleEnd)) {
                     if (cycle.size() > 2) {
                         return cycle;
                     } else {
@@ -86,8 +89,10 @@ public class FacetSplitter {
 
     public List<AtomicPolygon> intoFacets()
     {
+        List<List<Edge>> cycles = new ArrayList<>();
         while (totalEdgeUsage < edges.size()*2) {
-            findCycle();
+            List<Edge> c = findCycle();
+            cycles.add(c);
         }
         
         throw new NotImplementedException("nothing to see here!");

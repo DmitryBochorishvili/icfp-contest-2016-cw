@@ -11,7 +11,7 @@ public class CompoundPolygon implements Geometry<CompoundPolygon>
     // TODO: Do we actually need their order? Especially that it's not always in adjacency order.
     private List<AtomicPolygon> polygons;
 
-    public CompoundPolygon(List<AtomicPolygon> polygons)
+    public CompoundPolygon(List<AtomicPolygon> polygons, List<AtomicPolygon> facets)
     {
         this.polygons = polygons;
     }
