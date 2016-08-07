@@ -14,6 +14,12 @@ public final class State
     private Set<Edge> edges;
 
     private List<AtomicPolygon> atomicPolygons;
+    
+    private List<AtomicPolygon> facets;
+    private List<AtomicPolygon> neverMoved;
+
+    private List<FractionPoint> destinationVertexes;
+    private Map<FractionPoint, FractionPoint[]> destinationVertexUnfolded;
 
     private MultiValuedMap<Edge, AtomicPolygon> adjacentEdges = new HashSetValuedHashMap<>();
     private MultiValuedMap<AtomicPolygon, AtomicPolygon> adjacentPolygons = new HashSetValuedHashMap<>();
@@ -35,6 +41,8 @@ public final class State
     private State(List<AtomicPolygon> atomicPolygons)
     {
         this.atomicPolygons = atomicPolygons;
+        this.neverMoved = new ArrayList<>(atomicPolygons);
+        this.facets = new ArrayList<>();
 
         edges = new HashSet<>();
         atomicPolygons.forEach(polygon -> edges.addAll(polygon.getEdges()));
@@ -115,18 +123,18 @@ public final class State
 
     public State addRemoveFlippedCompound(
             CompoundPolygon sourceCompound, 
-            CompoundPolygon toAdd, 
+            CompoundPolygon flippedCompound, 
             CompoundPolygon toRemove,
             boolean merge)
     {
         // merge first flipped atomic with first compound atomic
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
 
-        atomicPolygons.addAll(toAdd.getPolygons());
+        atomicPolygons.addAll(flippedCompound.getPolygons());
         atomicPolygons.removeAll(toRemove.getPolygons());
 
         if(merge) {
-            AtomicPolygon p1 = toAdd.getPolygons().get(0);
+            AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
             AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
             atomicPolygons.remove(p1);
             atomicPolygons.remove(p2);
@@ -138,6 +146,11 @@ public final class State
 
         newState.iteration = this.getIteration() + 1;
         newState.derivedFrom = this;
+        
+        newState.facets = new ArrayList<>(this.facets);
+        newState.facets.add(flippedCompound.getContour());
+        newState.neverMoved = new ArrayList<>(this.neverMoved);
+        newState.neverMoved.removeAll(toRemove.getPolygons());
         
         return newState;
     }
@@ -201,5 +214,54 @@ public final class State
     
     public State getDerivedFrom() {
         return derivedFrom;
+    }
+    
+    public String toSolution() {
+//        AtomicPolygon unmovedFacet = GraphUtils.merge(this.neverMoved);
+        assert this.neverMoved.size() == 1;
+        assert this.facets.size() <= 1;
+        this.facets.addAll(this.neverMoved);
+
+        State sourceState = this;
+        State destinationState = this;
+        while (destinationState.derivedFrom != null) {
+            destinationState = destinationState.derivedFrom; 
+        }
+        
+        Map<FractionPoint, Integer> pointIds = new LinkedHashMap<>();
+        for (AtomicPolygon f: sourceState.facets) {
+            for (FractionPoint p: f.getVertices()) {
+                int id = pointIds.getOrDefault(p, pointIds.size());
+                pointIds.put(p, id);
+            }
+        }
+        
+        // Source positions
+        StringBuilder sb = new StringBuilder();
+        sb.append(pointIds.size()).append('\n');
+        for (FractionPoint p: pointIds.keySet()) {
+            sb.append(p.toSimpleString()).append('\n');
+        }
+
+        // Source facets
+        sb.append(sourceState.facets.size()).append('\n');
+        for (AtomicPolygon f: sourceState.facets) {
+            String separator = "";
+            sb.append(f.getVertices().size()).append(' ');
+            for (FractionPoint p: f.getVertices()) {
+                sb.append(separator);
+                separator = " ";
+                sb.append(pointIds.get(p));
+            }
+            sb.append('\n');
+        }
+
+        // Destination positions
+        // FIXME 1st: Account for the point mapping.
+        for (FractionPoint p: pointIds.keySet()) {
+            sb.append(p.toSimpleString()).append('\n');
+        }
+        
+        return sb.toString();
     }
 }

@@ -65,6 +65,9 @@ public class MainApp
                     if (solution == null) {
                         System.out.println(String.format("Solution for %s not found :((", file));
                     } else {
+                        System.out.println("Solution: ");
+                        System.out.println(solution.toSolution());
+                        
                         List<State> path = new ArrayList<>(solution.getIteration()+1);
                         while (solution != null) {
                             path.add(solution);

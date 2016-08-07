@@ -36,6 +36,38 @@ public class GraphUtils
         return merged.get(0);
     }
 
+    public static AtomicPolygon merge(Collection<AtomicPolygon> polys)
+    {
+        Set<Edge> edges = new HashSet<>();
+        for (AtomicPolygon p: polys) {
+            edges.addAll(p.getEdges());
+        }
+        final int edgesTotal = edges.size();
+
+        for (AtomicPolygon p1: polys) {
+            for (AtomicPolygon p2: polys) {
+                if (p1 == p2) {
+                    continue;
+                }
+                Edge edge = p1.getAdjacentEdge(p2);
+                if (edge != null) {
+                    edges.remove(edge);
+                }
+            }
+        }
+
+        List<AtomicPolygon> merged = minimumCycles(edges);
+        if (merged.size() != 1)
+            throw new RuntimeException("Polygons cannot be merged properly");
+
+//        No, a bad assertion
+//        if (merged.get(0).getEdges().size() != edgesTotal - polys.size() + 1) {
+//            throw new RuntimeException("We apparently lost an outer edge when merging");
+//        }
+
+        return merged.get(0);
+    }
+
     public static List<AtomicPolygon> minimumCycles(Collection<Edge> edges)
     {
         Map<FractionPoint, Integer> verticesMap = new HashMap<>();

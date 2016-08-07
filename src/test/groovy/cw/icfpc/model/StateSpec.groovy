@@ -1,6 +1,5 @@
 package cw.icfpc.model
 
-import cw.icfpc.utils.PolyFormat
 import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getFractionPointList
@@ -32,6 +31,25 @@ class StateSpec extends Specification
 
         expect:
             State.createNew([poly]).isFinalState() == false
+    }
+    
+    def 'toSolution - just a square'()
+    {
+        given:
+            def state = State.createNew([new AtomicPolygon(getFractionPointList('0,0 0,1 1,1 1,0'))])
+        expect:
+            state.toSolution() == """4
+0,0
+0,1
+1,1
+1,0
+1
+4 0 1 2 3
+0,0
+0,1
+1,1
+1,0
+""" 
     }
 
     // To consider, do not delete this test

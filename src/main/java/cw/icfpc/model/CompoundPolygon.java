@@ -1,5 +1,7 @@
 package cw.icfpc.model;
 
+import cw.icfpc.utils.GraphUtils;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -51,5 +53,12 @@ public class CompoundPolygon implements Flipable<CompoundPolygon>
     @Override
     public String toString() {
         return "CompoundPolygon{" + polygons + '}';
+    }
+
+    public AtomicPolygon getContour() {
+        if (polygons.size() == 1) {
+            return polygons.get(0);
+        }
+        return GraphUtils.merge(polygons);
     }
 }
