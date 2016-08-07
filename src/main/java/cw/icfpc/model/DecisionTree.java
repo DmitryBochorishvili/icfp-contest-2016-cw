@@ -40,7 +40,7 @@ public class DecisionTree
         Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edge);
         compounds.forEach(sourceCompound -> {
             CompoundPolygon flippedCompound = sourceCompound.flip(edge);
-            Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);
+            Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(state, sourceCompound);
             sourceCompoundSubsets.forEach(srcCpSubset -> {
                 // first try to prepare state where we merge atomics by which we unfold
             State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.TryMerge);

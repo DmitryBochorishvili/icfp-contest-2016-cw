@@ -144,11 +144,17 @@ public final class AdjacentPolyGenerator
      * Returns list of possible atomic polygons to be removed in state after flip.
      * Suggests to remove all tailing polygons up to the first one.
      */
-    public static List<CompoundPolygon> getAllSourceSubCompoundsToRemove(CompoundPolygon poly)
+    public static List<CompoundPolygon> getAllSourceSubCompoundsToRemove(State state, CompoundPolygon poly)
     {
         List<CompoundPolygon> result = new ArrayList<>();
 
         long n = 1 << poly.getPolygons().size();
+
+        // if poly contains all problem atomics then it doesn't make sense to return an option to remove all of them.
+        // it will lead just to a dump flip of entire state
+        if (poly.getPolygons().size() == state.getAtomicPolygons().size())
+            n--;
+
         for (int i = 0; i < n; i++)
         {
             List<AtomicPolygon> atomics = new ArrayList<>();
