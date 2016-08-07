@@ -27,6 +27,7 @@ public class MainApp
         Options options = new Options();
         options.addOption("f", true, "file with problem description");
         options.addOption("d", true, "directory with problems");
+        options.addOption("i", false, "generate state images");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -40,11 +41,13 @@ public class MainApp
             return;
         }
 
+        boolean drawStateImages = cmd.hasOption('i');
+
         if (cmd.hasOption('f'))
         {
             long time = System.currentTimeMillis();
             String file = cmd.getOptionValue('f');
-            State solution = solveProblem(file, false);
+            State solution = solveProblem(file, drawStateImages);
             System.out.println("Problem " + file + (solution == null ? " NOT" : "") + " solved in " + (System.currentTimeMillis() - time));
         }
 
@@ -57,7 +60,7 @@ public class MainApp
                     State solution = null;
                     try
                     {
-                        solution = solveProblem(filePath.toString(), false);
+                        solution = solveProblem(filePath.toString(), drawStateImages);
                     } catch (Exception e)
                     {
                         e.printStackTrace();

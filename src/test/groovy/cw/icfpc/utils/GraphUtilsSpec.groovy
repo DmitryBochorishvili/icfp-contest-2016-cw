@@ -92,6 +92,13 @@ class GraphUtilsSpec extends Specification
             getFractionPointList('0,0 1/2,1/2 -1/2,1/2') == GraphUtils.mergeSameLineVertices(p)
     }
 
+    def 'merge edges on the same line with different length'()
+    {
+        expect:
+            getFractionPointList('0,0 0,1') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,0 0,1/3 0,1'))
+            getFractionPointList('0,1 0,0') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,1 0,1/3 0,0'))
+    }
+
     def 'merge 2 adjacent polygons'()
     {
         given:
@@ -134,13 +141,6 @@ class GraphUtilsSpec extends Specification
             GraphUtils.ifPositivePolygonInSilhouette(positive1)
             GraphUtils.ifPositivePolygonInSilhouette(positive2)
             !GraphUtils.ifPositivePolygonInSilhouette(hole2)
-    }
-
-    def 'merge edges on the same line'()
-    {
-        expect:
-            getFractionPointList('0,0 0,1') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,0 0,1/3 0,1'))
-            getFractionPointList('0,1 0,0') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,1 0,1/3 0,0'))
     }
 
 }
