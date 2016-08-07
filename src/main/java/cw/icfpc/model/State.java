@@ -14,6 +14,7 @@ public final class State
 
     private List<AtomicPolygon> atomicPolygons;
     
+    private List<AtomicPolygon> destFacets;
     private List<AtomicPolygon> facets;
     private List<AtomicPolygon> neverMoved;
 
@@ -30,7 +31,10 @@ public final class State
      * Makes sure it's a first-generation State with all the proper indexes.
      */
     public static State createNew(List<AtomicPolygon> polygons) {
-        return new State(polygons);
+        State state = new State(polygons);
+        state.facets = new ArrayList<>();
+        state.destFacets = new ArrayList<>();
+        return state;
     }
 
     /**
@@ -41,7 +45,6 @@ public final class State
     {
         this.atomicPolygons = atomicPolygons;
         this.neverMoved = new ArrayList<>(atomicPolygons);
-        this.facets = new ArrayList<>();
 
         edges = new HashSet<>();
         atomicPolygons.forEach(polygon -> edges.addAll(polygon.getEdges()));
@@ -162,7 +165,13 @@ public final class State
         newState.derivedFrom = this;
         
         newState.facets = new ArrayList<>(this.facets);
-        newState.facets.add(flippedCompound.getContour());
+        AtomicPolygon flippedFacet = flippedCompound.getContour();
+        newState.facets.add(flippedFacet);
+        
+        newState.destFacets = new ArrayList<>(this.destFacets);
+        AtomicPolygon origFacet = sourceCompound.getContour();
+        newState.destFacets.add(origFacet);
+        
         newState.neverMoved = new ArrayList<>(this.neverMoved);
         newState.neverMoved.removeAll(toRemove.getPolygons());
         
@@ -227,35 +236,35 @@ public final class State
     {
         return iteration;
     }
-    
+
     public State getDerivedFrom() {
         return derivedFrom;
     }
     
     public String toSolution() {
-//        AtomicPolygon unmovedFacet = GraphUtils.merge(this.neverMoved);
         assert this.neverMoved.size() == 1;
         assert this.facets.size() <= 1;
         this.facets.addAll(this.neverMoved);
 
         State sourceState = this;
-        State destinationState = this;
-        while (destinationState.derivedFrom != null) {
-            destinationState = destinationState.derivedFrom; 
-        }
         
-        Map<FractionPoint, Integer> pointIds = new LinkedHashMap<>();
+        Set<FractionPoint> sourcePointSet = new HashSet<>();
         for (AtomicPolygon f: sourceState.facets) {
+            sourcePointSet.addAll(f.getVertices());
+        }
+        List<FractionPoint> sourcePoints = new ArrayList<>(sourcePointSet);
+        
+        Map<Integer, FractionPoint> destPoints = new HashMap<>();
+        for (AtomicPolygon f: sourceState.destFacets) {
             for (FractionPoint p: f.getVertices()) {
-                int id = pointIds.getOrDefault(p, pointIds.size());
-                pointIds.put(p, id);
+                destPoints.put(p.destId, p);
             }
         }
         
         // Source positions
         StringBuilder sb = new StringBuilder();
-        sb.append(pointIds.size()).append('\n');
-        for (FractionPoint p: pointIds.keySet()) {
+        sb.append(sourcePoints.size()).append('\n');
+        for (FractionPoint p: sourcePoints) {
             sb.append(p.toSimpleString()).append('\n');
         }
 
@@ -265,17 +274,23 @@ public final class State
             String separator = "";
             sb.append(f.getVertices().size()).append(' ');
             for (FractionPoint p: f.getVertices()) {
+                
+                // FIXME: Use a better structure.
+                int sourceIndex = sourcePoints.indexOf(p);
+                
                 sb.append(separator);
                 separator = " ";
-                sb.append(pointIds.get(p));
+                sb.append(sourceIndex);
             }
             sb.append('\n');
         }
 
+        List<AtomicPolygon> a = sourceState.neverMoved;
+
         // Destination positions
-        // FIXME 1st: Account for the point mapping.
-        for (FractionPoint p: pointIds.keySet()) {
-            sb.append(p.toSimpleString()).append('\n');
+        for (int i=0; i<sourcePoints.size(); i++) {
+            FractionPoint destPoint = destPoints.get( sourcePoints.get(i).destId );
+            sb.append(destPoint.toSimpleString()).append('\n');
         }
         
         return sb.toString();

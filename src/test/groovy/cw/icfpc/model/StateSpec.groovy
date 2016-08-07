@@ -6,31 +6,31 @@ import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class StateSpec extends Specification
 {
+    private State state(String... poly) {
+        State s = State.createNew(
+                poly.collect{
+                    new AtomicPolygon(getFractionPointList(it))})
+        int destId = 0
+        s.atomicPolygons[0].vertices.forEach{it.destId = destId++}
+        s
+    }
+
     def 'final state: true for initial square'()
     {
-        given:
-            def poly = new AtomicPolygon(getFractionPointList('0,0 1,0 1,1 0,1'))
-
         expect:
-            State.createNew([poly]).isFinalState() == true
+            state('0,0 1,0 1,1 0,1').isFinalState()
     }
 
     def 'final state: true for moved square'()
     {
-        given:
-            def poly = new AtomicPolygon(getFractionPointList('1/2,0 3/2,0 3/2,1 1/2,1'))
-
         expect:
-            State.createNew([poly]).isFinalState() == true
+            state('1/2,0 3/2,0 3/2,1 1/2,1').isFinalState()
     }
 
     def 'final state: false for not a square'()
     {
-        given:
-            def poly = new AtomicPolygon(getFractionPointList('0,0 1,1 2,1 1,0'))
-
         expect:
-            State.createNew([poly]).isFinalState() == false
+            !state('0,0 1,1 2,1 1,0').isFinalState()
     }
 
     def 'final state: adjacent polygons'()
@@ -46,9 +46,9 @@ class StateSpec extends Specification
     def 'toSolution - just a square'()
     {
         given:
-            def state = State.createNew([new AtomicPolygon(getFractionPointList('0,0 0,1 1,1 1,0'))])
+            def st = state('0,0 0,1 1,1 1,0')
         expect:
-            state.toSolution() == """4
+            st.toSolution() == """4
 0,0
 0,1
 1,1
@@ -60,6 +60,33 @@ class StateSpec extends Specification
 1,1
 1,0
 """ 
+    }
+    
+    def 'toSolution - one unfold'()
+    {
+        given:
+            def currentState = state('0,0 1/2,0 1/2,1 0,1')
+            def decisions = DecisionTree.generateDecisionNodes(currentState)
+            def solution = decisions.find{it.isFinalState()} 
+        
+        expect:
+            solution != null
+            solution.toSolution() == """6
+0,0
+0,1
+1,1
+1,0
+1/2,0
+1/2,1
+1
+4 0 1 2 3
+0,0
+0,1
+0,1
+0,0
+1/2,0
+1/2,1
+"""
     }
 
     // To consider, do not delete this test

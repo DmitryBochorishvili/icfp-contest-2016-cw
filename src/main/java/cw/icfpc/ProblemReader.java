@@ -73,6 +73,7 @@ public class ProblemReader {
 
     private List<List<FractionPoint>> readPolygonVertices(int polygonsNumber, BufferedReader input) throws IOException {
         List<List<FractionPoint>> polygons = new ArrayList<>(); 
+        int destId = 0;
         for(int i = 0; i < polygonsNumber; i++)
         {
             String verticesNumberAsString = input.readLine();
@@ -82,6 +83,8 @@ public class ProblemReader {
             {
                 String vertexCoordinatesAsString = input.readLine();
                 FractionPoint vertex = PolyFormat.getFractionPoint(vertexCoordinatesAsString);
+                vertex.destId = destId;
+                destId++;
                 vertices.add(vertex);
             }
             polygons.add(vertices);

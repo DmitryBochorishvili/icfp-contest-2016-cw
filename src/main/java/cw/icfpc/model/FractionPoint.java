@@ -1,15 +1,13 @@
 package cw.icfpc.model;
 
 import cw.icfpc.utils.MathUtils;
-import org.apache.commons.lang3.math.Fraction;
 import org.apache.commons.math3.fraction.BigFraction;
-
-import java.math.BigInteger;
 
 public class FractionPoint implements Comparable<FractionPoint>, Flipable<FractionPoint>
 {
     private BigFraction x;
     private BigFraction y;
+    public int destId = -1;
     
     public static final FractionPoint ZERO = FractionPoint.valueOf(BigFraction.ZERO, BigFraction.ZERO);
     
@@ -65,7 +63,9 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
 
     @Override
     public FractionPoint flip(Edge relativeTo) {
-        return MathUtils.reflect(this, relativeTo);
+        FractionPoint reflected = MathUtils.reflect(this, relativeTo);
+        reflected.destId = destId;
+        return reflected;
     }
     
     private static String fractionToString(BigFraction f)

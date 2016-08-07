@@ -30,7 +30,9 @@ public class MathUtils
         BigFraction x2 = a.multiply(p.getX().subtract(x0)) . add( b.multiply(p.getY().subtract(y0)) ) . add(x0);
         BigFraction y2 = b.multiply(p.getX().subtract(x0)) . subtract( a.multiply(p.getY().subtract(y0)) ) . add(y0);
 
-        return new FractionPoint(x2, y2);
+        FractionPoint reflection = new FractionPoint(x2, y2);
+        reflection.destId = p.destId;
+        return reflection;
     }
     
     public static boolean isClockwise(List<FractionPoint> loop) 
