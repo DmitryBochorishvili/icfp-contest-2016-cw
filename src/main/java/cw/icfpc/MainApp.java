@@ -107,17 +107,18 @@ public class MainApp
 //                System.out.println("Generated " + decisions.size() + " decision nodes on step: " + step
 //                        + ". Total decisions to check: " + (nodes.size() + decisions.size()));
 
-                solution = decisions.stream().filter(State::isFinalState).findFirst().orElse(null);
-                if (solution != null) {
-//                    System.out.println(String.format("Solution for %s found!!!", problemFile));
-                    break;
-                }
 
                 if (drawStates)
                     for (State n : decisions)
                     {
                         vis.addScene(n, true);
                     }
+
+                solution = decisions.stream().filter(State::isFinalState).findFirst().orElse(null);
+                if (solution != null) {
+//                    System.out.println(String.format("Solution for %s found!!!", problemFile));
+                    break;
+                }
 
                 nodes.addAll(decisions);
 
