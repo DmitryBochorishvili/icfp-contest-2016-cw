@@ -177,42 +177,44 @@ public class MainApp
                         : o1.getHeuristic() == o2.getHeuristic() ? 0 : -1);
             }
 
-//            if (solution == null) {
-////                System.out.println(String.format("Solution for %s not found :((", file));
-//            } else {
-//                solution = solution.alignToUnit();
-//                List<State> path = new ArrayList<>(solution.getIteration()+1);
-//
-//                State pathPointer = solution;
-//                while (pathPointer != null) {
-//                    path.add(pathPointer);
-//                    pathPointer = pathPointer.getDerivedFrom();
-//                }
-//                Collections.reverse(path);
-//
-//                if (drawStates) {
-//                    for (State st: path) {
-//                        vis.addScene(st, false);
-//                    }
-//                }
-//
-//                if (submitToServer) {
-//                    String sol = solution.toSolution();
-//                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
-//                    String result = ServerCommunicator.submitSolution(strId, sol);
-//                    
-//                    if (result.contains("\"ok\":true,\"resemblance\":1.0")) {
-//                        new File(submittedDirPath).mkdirs();
-//                        touch(submittedPath);
-//                    }
-//                }
-//            }
+            if (solution != null)
+            {
+                solution = solution.alignToUnit();
+                List<State> path = new ArrayList<>(solution.getIteration()+1);
+
+                State pathPointer = solution;
+                while (pathPointer != null) {
+                    path.add(pathPointer);
+                    pathPointer = pathPointer.getDerivedFrom();
+                }
+                Collections.reverse(path);
+
+                if (drawStates) {
+                    for (State st: path) {
+                        vis.addScene(st, false);
+                    }
+                }
+
+                if (submitToServer) {
+                    String sol = solution.toSolution();
+                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
+                    String submitResult = ServerCommunicator.submitSolution(strId, sol);
+
+                    if (submitResult.contains("\"ok\":true,\"resemblance\":1.0")) {
+                        new File(submittedDirPath).mkdirs();
+                        touch(submittedPath);
+                    }
+                }
+            }
 
         }
-        catch (IOException e) {
+        catch (Exception e) {
             System.out.println("Got an exception while trying to solve problem " + problemFile);
             e.printStackTrace();
-            return null;
+
+            result.time = System.currentTimeMillis() - result.time;
+            result.solution = solution;
+            return result;
         }
         finally {
             System.out.flush();
