@@ -124,11 +124,17 @@ public final class State
         return newState;
     }
 
+    public enum FlipOptions {
+        TryMerge,
+        FlipOnly,
+        Duplicate
+    }
+
     public State addRemoveFlippedCompound(
             CompoundPolygon sourceCompound, 
             CompoundPolygon flippedCompound, 
             CompoundPolygon toRemove,
-            boolean merge)
+            FlipOptions merge)
     {
         // merge first flipped atomic with first compound atomic
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
@@ -136,7 +142,7 @@ public final class State
         atomicPolygons.addAll(flippedCompound.getPolygons());
         atomicPolygons.removeAll(toRemove.getPolygons());
 
-        if(merge) {
+        if(merge == FlipOptions.TryMerge) {
             AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
             AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
             AtomicPolygon merged = GraphUtils.merge(p1, p2);
@@ -145,6 +151,9 @@ public final class State
             atomicPolygons.remove(p1);
             atomicPolygons.remove(p2);
             atomicPolygons.add(merged);
+        }
+        else if(merge == FlipOptions.FlipOnly) {
+            atomicPolygons.removeAll(sourceCompound.getPolygons());
         }
 
         State newState = State.createNew(atomicPolygons);
@@ -202,12 +211,13 @@ public final class State
      */
     public boolean isFinalState()
     {
-        if (Math.abs(1 - getSimpleArea()) < MathUtils.EPSILON
-            && edges.size() - adjacentEdges.keySet().size() == 4)
-        {
-            List<Edge> outerEdges = edges.stream().filter(e -> adjacentEdges.get(e).isEmpty()).collect(Collectors.toList());
-            double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
-            return outerEdges.stream().allMatch(e -> MathUtils.distance(e.getA(), e.getB()) == distance);
+        if (Math.abs(1 - getSimpleArea()) < MathUtils.EPSILON) {
+            AtomicPolygon merged = GraphUtils.merge(atomicPolygons);
+            if (merged.getVertices().size() == 4) {
+                List<Edge> outerEdges = merged.getEdges();
+                double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
+                return outerEdges.stream().allMatch(e -> MathUtils.distance(e.getA(), e.getB()) == distance);
+            }
         }
         return false;
     }

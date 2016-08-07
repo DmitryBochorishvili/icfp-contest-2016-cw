@@ -127,8 +127,7 @@ public class GraphUtils
             FractionPoint c = vertices.get((i + 2) % vertices.size());
 
             // xa - xb == xb - xc && ya - yb == yb - yc
-            if (a.getX() .subtract (b.getX()) .equals (b.getX() .subtract (c.getX()))
-                    && a.getY() .subtract (b.getY()) .equals (b.getY() .subtract (c.getY())))
+            if (Math.abs(MathUtils.angleBetween(a, b, c)) < MathUtils.EPSILON)
             {
                 // create a copy of vertices without middle point
                 if (verticesFiltered == null)

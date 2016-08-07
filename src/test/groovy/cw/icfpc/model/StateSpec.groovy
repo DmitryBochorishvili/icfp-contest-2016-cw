@@ -32,7 +32,17 @@ class StateSpec extends Specification
         expect:
             State.createNew([poly]).isFinalState() == false
     }
-    
+
+    def 'final state: adjacent polygons'()
+    {
+        given:
+            def p1 = new AtomicPolygon(getFractionPointList('0,0 0,1 1/2,1 1,1/2 1,0'))
+            def p2 = new AtomicPolygon(getFractionPointList('1/2,1 1,1/2 1,1'))
+
+        expect:
+            State.createNew([p1, p2]).isFinalState() == true
+    }
+
     def 'toSolution - just a square'()
     {
         given:

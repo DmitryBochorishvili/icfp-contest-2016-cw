@@ -136,4 +136,11 @@ class GraphUtilsSpec extends Specification
             !GraphUtils.ifPositivePolygonInSilhouette(hole2)
     }
 
+    def 'merge edges on the same line'()
+    {
+        expect:
+            getFractionPointList('0,0 0,1') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,0 0,1/3 0,1'))
+            getFractionPointList('0,1 0,0') == GraphUtils.mergeSameLineVertices(getFractionPointList('0,1 0,1/3 0,0'))
+    }
+
 }

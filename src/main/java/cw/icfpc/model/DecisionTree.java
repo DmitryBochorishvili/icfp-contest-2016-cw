@@ -43,21 +43,25 @@ public class DecisionTree
             Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);
             sourceCompoundSubsets.forEach(srcCpSubset -> {
                 // first try to prepare state where we merge atomics by which we unfold
-                State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, true);
+            State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.TryMerge);
 
                 // new state is valid only if its ares is bigger than area of previous state
-                if (newStateMerged != null && newStateMerged.getSimpleArea() > currentStateArea && newStateMerged.isStateValid())
+                if (newStateMerged != null && newStateMerged.getSimpleArea() >= currentStateArea && newStateMerged.isStateValid())
                 {
                     proposedStates.add(newStateMerged);
                 }
 
-                State newStateNotMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, false);
-                if (newStateNotMerged != null && newStateNotMerged.getSimpleArea() > currentStateArea && newStateNotMerged.isStateValid())
+                State newStateNotMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.Duplicate);
+                if (newStateNotMerged != null && newStateNotMerged.getSimpleArea() >= currentStateArea && newStateNotMerged.isStateValid())
                 {
                     proposedStates.add(newStateNotMerged);
                 }
 
-
+                State newStateJustFlipped = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.FlipOnly);
+                if (newStateJustFlipped != null && newStateJustFlipped.getSimpleArea() >= currentStateArea && newStateJustFlipped.isStateValid())
+                {
+                    proposedStates.add(newStateJustFlipped);
+                }
 
             });
 
