@@ -1,6 +1,9 @@
 package cw.icfpc.utils
 
 import cw.icfpc.model.AtomicPolygon
+import cw.icfpc.model.Edge
+import cw.icfpc.model.FractionPoint
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static cw.icfpc.utils.PolyFormat.getEdge
@@ -27,6 +30,59 @@ class GraphUtilsSpec extends Specification
             ['2,0 0,0 1,1', '2,0 0,0 1,-1'] == cycles.collect{PolyFormat.format(it.getVertices())}
     }
 
+    Edge e(String s) { getEdge(s) }
+    
+    List<Edge> pointsToEdgesSeq(s) {
+        List<FractionPoint> points = getFractionPointList(s)
+        
+        FractionPoint prev = null
+        List<Edge> result = []
+        for (FractionPoint p: points) {
+            if (prev != null) {
+                result.add(new Edge(prev, p))
+            }
+            prev = p
+        }
+
+        result
+    }
+    
+    def 'atomics simple envelope'()
+    {
+        given:
+            List<Edge> skeleton = pointsToEdgesSeq('0,0 0,1 1,1 1,0 0,0 1,1') + e('0,1 1,0')
+            List<Edge> atomicEdges = MathUtils.splitByIntersections(skeleton)
+            List<AtomicPolygon> atomics = GraphUtils.minimumCycles(atomicEdges)
+        expect:
+            atomics.size() == 4
+    }
+
+    def 'atomics holed envelope'()
+    {
+        given:
+            List<Edge> skeleton = 
+                    pointsToEdgesSeq('0,0 0,1 1,1 1,0 0,0 1/3,1/3 1/3,2/3 2/3,2/3 2/3,1/3 1/3,1/3') +
+                    [e('0,1 1/3,2/3'), e('1,1 2/3,2/3'), e('1,0 2/3,1/3')]
+            List<Edge> atomicEdges = MathUtils.splitByIntersections(skeleton)
+            List<AtomicPolygon> atomics = GraphUtils.minimumCycles(atomicEdges)
+        expect:
+            atomics.size() == 5
+    }
+
+    @Ignore
+    def 'intersecting facets'()
+    {
+        given:
+            List<Edge> skeleton = pointsToEdgesSeq('0,0 0,1 1,1 1,0 0,0 1,1') + e('0,1 1,0')
+            List<AtomicPolygon> facets = GraphUtils.minimumCycles(skeleton)
+        expect:
+            skeleton.size() == 6
+            skeleton[5].getLengthSquared() == 2
+            skeleton[4].getLengthSquared() == 2
+
+            facets.size() == 4
+    }
+    
     def 'merge edges on the same line'()
     {
         given:
