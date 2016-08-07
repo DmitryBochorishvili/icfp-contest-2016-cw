@@ -70,16 +70,18 @@ public class FractionPoint implements Comparable<FractionPoint>, Flipable<Fracti
     
     private static String fractionToString(BigFraction f)
     {
-        if (f.getDenominator() == BigInteger.ONE) {
-            return String.valueOf(f.getNumerator());
-        }
-        return f.toString();
+        return f.toString().replaceAll(" ", "");
+    }
+    
+    public String toSimpleString() 
+    {
+        return fractionToString(x) + "," + fractionToString(y);
     }
 
     @Override
     public String toString()
     {
-        return "FractionPoint{" + fractionToString(x) + "," + fractionToString(y) + '}';
+        return "FractionPoint{" + toSimpleString() + '}';
     }
     
     public boolean closeTo(FractionPoint other) 
