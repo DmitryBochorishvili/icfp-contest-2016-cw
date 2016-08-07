@@ -41,13 +41,15 @@ public final class State
         for (int i = 0; i < atomicPolygons.size(); i++)
             for (int k = i + 1; k < atomicPolygons.size(); k++)
             {
-                Edge adjacentEdge = atomicPolygons.get(i).getAdjacentEdge(atomicPolygons.get(k));
+                AtomicPolygon pi = atomicPolygons.get(i);
+                AtomicPolygon pk = atomicPolygons.get(k);
+                Edge adjacentEdge = pi.getAdjacentEdge(pk);
                 if (adjacentEdge != null)
                 {
-                    adjacentEdges.put(adjacentEdge, atomicPolygons.get(i));
-                    adjacentEdges.put(adjacentEdge, atomicPolygons.get(k));
-                    adjacentPolygons.put(atomicPolygons.get(i), atomicPolygons.get(k));
-                    adjacentPolygons.put(atomicPolygons.get(k), atomicPolygons.get(i));
+                    adjacentEdges.put(adjacentEdge, pi);
+                    adjacentEdges.put(adjacentEdge, pk);
+                    adjacentPolygons.put(pi, pk);
+                    adjacentPolygons.put(pk, pi);
                 }
             }
     }

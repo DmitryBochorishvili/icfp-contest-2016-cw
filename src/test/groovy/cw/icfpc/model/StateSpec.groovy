@@ -34,4 +34,20 @@ class StateSpec extends Specification
             State.createNew([poly]).isFinalState() == false
     }
 
+    // To consider, do not delete this test
+//    def 'calculate adjacent atomics correctly'()
+//    {
+//        given:
+//            def p1 = new AtomicPolygon(getFractionPointList('0,1 0,0 1/2,1/2'))
+//            def p2 = new AtomicPolygon(getFractionPointList('1,0 1,1 0,0'))
+//            def p3 = new AtomicPolygon(getFractionPointList('0,1 1,1 1/2,1/2'))
+//
+//        when:
+//            def state = new State([p1, p2, p3]);
+//
+//        then:
+//            state.getAdjacentPolygons(p1).size() == 2
+//            state.getAdjacentPolygons(p2).size() == 2
+//            state.getAdjacentPolygons(p3).size() == 2
+//    }
 }
