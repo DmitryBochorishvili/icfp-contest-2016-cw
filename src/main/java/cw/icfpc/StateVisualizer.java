@@ -210,6 +210,12 @@ public class StateVisualizer {
                     if (!Files.isDirectory(subdir)) {
                         return;
                     }
+                    
+                    if (Files.exists(Paths.get(subdir.toString(), "/problems.png"))) {
+                        System.out.println("Directory: " + subdir + "Already has an image");
+                        return;
+                    }
+                    
                     System.out.println("Drawing directory: " + subdir);
                     final StateVisualizer vis = StateVisualizer.builder();
                     
