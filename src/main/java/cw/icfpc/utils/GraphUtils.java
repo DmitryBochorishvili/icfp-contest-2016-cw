@@ -63,7 +63,8 @@ public class GraphUtils
 
         List<AtomicPolygon> merged = minimumCycles(edges);
         if (merged.size() != 1)
-            throw new RuntimeException("Polygons cannot be merged properly");
+            return null;
+//            throw new RuntimeException("Polygons cannot be merged properly");
 
 //        No, a bad assertion
 //        if (merged.get(0).getEdges().size() != edgesTotal - polys.size() + 1) {

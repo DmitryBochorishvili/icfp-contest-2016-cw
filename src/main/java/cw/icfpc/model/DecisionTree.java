@@ -24,7 +24,7 @@ public class DecisionTree
 
     private static List<State> trytoMergeByInnerEdge(State state, double currentStateArea, Edge edge) {
         List<State> proposedStates = new LinkedList<State>();
-        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
+        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edge);
 
         State newState = state.mergeAdjacentAtomicPolygons(edge);
         if (newState != null && newState.isStateValid())
@@ -37,7 +37,7 @@ public class DecisionTree
     private static List<State> tryUnfoldByEdge(State state, double currentStateArea, Edge edge) {
         List<State> proposedStates = new LinkedList<State>();
 
-        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
+        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edge);
         compounds.forEach(sourceCompound -> {
             CompoundPolygon flippedCompound = sourceCompound.flip(edge);
             Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);

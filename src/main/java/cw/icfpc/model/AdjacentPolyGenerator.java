@@ -148,12 +148,14 @@ public final class AdjacentPolyGenerator
     {
         List<CompoundPolygon> result = new ArrayList<>();
 
-        for (int i = 0; i < poly.getPolygons().size(); i++)
+        long n = 1 << poly.getPolygons().size();
+        for (int i = 0; i < n; i++)
         {
             List<AtomicPolygon> atomics = new ArrayList<>();
-            for (int k = i + 1; k < poly.getPolygons().size(); k++)
+            for (int k = 0; k < poly.getPolygons().size(); k++)
             {
-                atomics.add(poly.getPolygons().get(k));
+                if ((i & (1L << k)) != 0)
+                    atomics.add(poly.getPolygons().get(k));
             }
             result.add(new CompoundPolygon(atomics));
         }

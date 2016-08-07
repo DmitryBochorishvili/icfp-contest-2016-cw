@@ -16,9 +16,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MainApp
 {
+
+    private static class SolutionResult
+    {
+        public State solution;
+        public long time;
+        public long statesGenerated;
+    }
 
     public static void main(String[] args) throws ParseException, IOException
     {
@@ -44,11 +52,10 @@ public class MainApp
 
         if (cmd.hasOption('f'))
         {
-            long time = System.currentTimeMillis();
             String file = cmd.getOptionValue('f');
-            State solution = solveProblem(file, drawStateImages, cmd.hasOption('s'));
-            System.out.printf("Problem %s%s solved in %dms", file, solution == null ? " NOT" : "",
-                    System.currentTimeMillis() - time);
+            SolutionResult solution = solveProblem(file, drawStateImages, cmd.hasOption('s'));
+            System.out.printf("Problem %s%s solved in %dms, states generated %d\n", file, solution.solution == null ? " NOT" : "",
+                    solution.time, solution.statesGenerated);
         }
 
         if (cmd.hasOption('d'))
@@ -56,16 +63,18 @@ public class MainApp
             String directory = cmd.getOptionValue('d');
             Files.walk(Paths.get(directory)).forEach(filePath -> {
                 if (Files.isRegularFile(filePath)) {
-                    long time = System.currentTimeMillis();
-                    State solution = null;
+                    SolutionResult solution = null;
                     try
                     {
                         solution = solveProblem(filePath.toString(), drawStateImages, cmd.hasOption('s'));
+                        System.out.printf("Problem %s%s solved in %dms, states generated %d\n", filePath, solution.solution == null ? " NOT" : "",
+                                solution.time, solution.statesGenerated);
+
                     } catch (Exception e)
                     {
                         e.printStackTrace();
+                        System.out.printf("Problem %s NOT solved, exception\n", filePath);
                     }
-                    System.out.println("Problem " + filePath + (solution == null ? " NOT" : "") + " solved in " + (System.currentTimeMillis() - time));
                 }
             });
         }
@@ -73,11 +82,17 @@ public class MainApp
         System.out.println("Finished");
     }
 
-    private static State solveProblem(String problemFile, boolean drawStates, boolean submitToServer)
+    private static SolutionResult solveProblem(String problemFile, boolean drawStates, boolean submitToServer)
     {
+        SolutionResult result = new SolutionResult();
+        result.time = System.currentTimeMillis();
+
         State solution = null;
 
         StateVisualizer vis = null;
+
+        Set<Integer> foundStates = new HashSet<>();
+
         try
         {
             ProblemReader r = new ProblemReader();
@@ -85,6 +100,7 @@ public class MainApp
 
             List<State> nodes = new LinkedList<>();
             nodes.add(s);
+            foundStates.add(s.stateHash());
 
             if (drawStates)
             {
@@ -99,7 +115,7 @@ public class MainApp
             }
 
             int step = 0;
-            while (solution == null && !nodes.isEmpty() && step < 20)
+            while (solution == null && !nodes.isEmpty() && step < 100)
             {
                 step++;
                 State currentState = nodes.remove(0);
@@ -107,62 +123,65 @@ public class MainApp
                     vis.addScene(currentState, false);
 
                 List<State> decisions = DecisionTree.generateDecisionNodes(currentState);
-//                System.out.println("Generated " + decisions.size() + " decision nodes on step: " + step
-//                        + ". Total decisions to check: " + (nodes.size() + decisions.size()));
-
+                decisions = decisions.stream().filter(d -> !foundStates.contains(d.stateHash())).collect(Collectors.toList());
+                result.statesGenerated += decisions.size();
 
                 if (drawStates)
+                {
+                    int i = 0;
                     for (State n : decisions)
                     {
                         vis.addScene(n, true);
+                        if (i++ > 50)
+                            break;
                     }
+                }
 
                 solution = decisions.stream().filter(State::isFinalState).findFirst().orElse(null);
                 if (solution != null) {
-//                    System.out.println(String.format("Solution for %s found!!!", problemFile));
                     break;
                 }
 
                 nodes.addAll(decisions);
+                decisions.forEach(d -> foundStates.add(d.stateHash()));
 
                 // sort new states by heuristic
                 nodes.sort((o1, o2) -> o1.getHeuristic() < o2.getHeuristic() ? 1
                         : o1.getHeuristic() == o2.getHeuristic() ? 0 : -1);
             }
 
-            if (solution == null) {
-//                System.out.println(String.format("Solution for %s not found :((", file));
-            } else {
-                solution = solution.alignToUnit();
-                List<State> path = new ArrayList<>(solution.getIteration()+1);
-
-                State pathPointer = solution;
-                while (pathPointer != null) {
-                    path.add(pathPointer);
-                    pathPointer = pathPointer.getDerivedFrom();
-                }
-                Collections.reverse(path);
-
-                if (drawStates) {
-                    for (State st: path) {
-                        vis.addScene(st, false);
-                    }
-                }
-
-                if (submitToServer) {
-                    String strId = new File(problemFile).getName();
-                    
-                    try {
-                        int id = Integer.parseInt(strId);
-                    }
-                    catch (NumberFormatException e) {
-                        System.out.println("It's apparently not a problem file: " + strId);
-                    }
-                    String sol = solution.toSolution();
-                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
-                    ServerCommunicator.submitSolution(strId, sol);
-                }
-            }
+//            if (solution != null)
+//            {
+//                solution = solution.alignToUnit();
+//                List<State> path = new ArrayList<>(solution.getIteration()+1);
+//
+//                State pathPointer = solution;
+//                while (pathPointer != null) {
+//                    path.add(pathPointer);
+//                    pathPointer = pathPointer.getDerivedFrom();
+//                }
+//                Collections.reverse(path);
+//
+//                if (drawStates) {
+//                    for (State st: path) {
+//                        vis.addScene(st, false);
+//                    }
+//                }
+//
+//                if (submitToServer) {
+//                    String strId = new File(problemFile).getName();
+//
+//                    try {
+//                        int id = Integer.parseInt(strId);
+//                    }
+//                    catch (NumberFormatException e) {
+//                        System.out.println("It's apparently not a problem file: " + strId);
+//                    }
+//                    String sol = solution.toSolution();
+//                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
+//                    ServerCommunicator.submitSolution(strId, sol);
+//                }
+//            }
 
         }
         catch (IOException e) {
@@ -173,6 +192,9 @@ public class MainApp
         finally {
             System.out.flush();
             System.err.flush();
+
+            result.time = System.currentTimeMillis() - result.time;
+            result.solution = solution;
 
             if (drawStates)
             {
@@ -189,7 +211,7 @@ public class MainApp
             }
         }
 
-        return solution;
+        return result;
     }
 
     private static State createExampleState() {

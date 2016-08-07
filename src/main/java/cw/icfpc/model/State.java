@@ -226,6 +226,9 @@ public final class State
     {
         if (Math.abs(1 - getSimpleArea()) < MathUtils.EPSILON) {
             AtomicPolygon merged = GraphUtils.merge(atomicPolygons);
+            if (merged == null)
+                return false;
+
             if (merged.getVertices().size() == 4) {
                 this.outerEdges = merged.getEdges();
                 double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
@@ -355,4 +358,10 @@ public final class State
         
         return sb.toString();
     }
+
+    public int stateHash()
+    {
+        return atomicPolygons.hashCode();
+    }
+
 }
