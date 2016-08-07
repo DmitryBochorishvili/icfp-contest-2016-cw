@@ -12,6 +12,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.fraction.BigFraction;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -81,12 +82,36 @@ public class MainApp
 
         System.out.println("Finished");
     }
+    
+    private static void touch(String fileName) throws IOException {
+        File f = new File(fileName);
+        if (!f.exists()) {
+            new FileOutputStream(f).close();
+        }
+        f.setLastModified(System.currentTimeMillis());
+    }
 
     private static SolutionResult solveProblem(String problemFile, boolean drawStates, boolean submitToServer)
     {
         SolutionResult result = new SolutionResult();
         result.time = System.currentTimeMillis();
 
+        String strId = new File(problemFile).getName();
+        try {
+            int id = Integer.parseInt(strId);
+        }
+        catch (NumberFormatException e) {
+            System.out.println("It's apparently not a problem file: " + strId);
+            return result;
+        }
+        String submittedDirPath = "downloadedProblems/.submitted/";
+        String submittedPath = submittedDirPath + strId;
+
+        if (new File(submittedPath).exists()) {
+            System.out.printf("Problem #%s already submitted to server, doing nothing%n", strId);
+            return result;
+        }
+        
         State solution = null;
 
         StateVisualizer vis = null;
@@ -150,8 +175,9 @@ public class MainApp
                         : o1.getHeuristic() == o2.getHeuristic() ? 0 : -1);
             }
 
-//            if (solution != null)
-//            {
+//            if (solution == null) {
+////                System.out.println(String.format("Solution for %s not found :((", file));
+//            } else {
 //                solution = solution.alignToUnit();
 //                List<State> path = new ArrayList<>(solution.getIteration()+1);
 //
@@ -169,17 +195,14 @@ public class MainApp
 //                }
 //
 //                if (submitToServer) {
-//                    String strId = new File(problemFile).getName();
-//
-//                    try {
-//                        int id = Integer.parseInt(strId);
-//                    }
-//                    catch (NumberFormatException e) {
-//                        System.out.println("It's apparently not a problem file: " + strId);
-//                    }
 //                    String sol = solution.toSolution();
 //                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
-//                    ServerCommunicator.submitSolution(strId, sol);
+//                    String result = ServerCommunicator.submitSolution(strId, sol);
+//                    
+//                    if (result.contains("\"ok\":true,\"resemblance\":1.0")) {
+//                        new File(submittedDirPath).mkdirs();
+//                        touch(submittedPath);
+//                    }
 //                }
 //            }
 

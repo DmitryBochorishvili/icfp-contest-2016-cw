@@ -7,3 +7,4 @@ tests-output
 *.iml
 /*.png
 /downloadedProblems/set_*.png
+/downloadedProblems/.submitted
