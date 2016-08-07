@@ -15,7 +15,7 @@ import java.io.IOException;
 public class StateVisualizer {
     private final int boardXScale = 500;
     private final int boardYScale = 500;
-    private static final int MARGIN = 30;
+    private static final int MARGIN = 80;
 
     private List<Scene> scenes = new LinkedList<>();
     private Scene currentScene;

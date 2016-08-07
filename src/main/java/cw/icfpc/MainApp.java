@@ -25,7 +25,6 @@ public class MainApp
             if (args.length > 0) {
                 for (String file : args) {
                     s = r.readProblemFromFile(file);
-                    s.setIteration(0);
                     nodes.add(s);
                     State solution = null;
 

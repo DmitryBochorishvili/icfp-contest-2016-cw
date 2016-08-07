@@ -17,7 +17,7 @@ public final class State
     private MultiValuedMap<Edge, AtomicPolygon> adjacentEdges = new HashSetValuedHashMap<>();
     private MultiValuedMap<AtomicPolygon, AtomicPolygon> adjacentPolygons = new HashSetValuedHashMap<>();
 
-    private int iteration = -1;
+    private int iteration = 0;
     private State derivedFrom;
 
     public State(List<AtomicPolygon> atomicPolygons)
@@ -51,19 +51,6 @@ public final class State
         return adjacentPolygons.get(p);
     }
 
-    public State mergePolygons(AtomicPolygon p1, AtomicPolygon p2)
-    {
-        if (!isAdjacent(p1, p2))
-            throw new RuntimeException("Cannot merge not adjacent polygons");
-
-        AtomicPolygon merged = GraphUtils.merge(p1, p2);
-        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
-        atomicPolygons.remove(p1);
-        atomicPolygons.remove(p2);
-        atomicPolygons.add(merged);
-        return State.valueOf(atomicPolygons);
-    }
-
     public double getHeuristic() {
         return 1000 - atomicPolygons.size() - iteration;
     }
@@ -95,11 +82,30 @@ public final class State
         return State.valueOf(atomicPolygons);
     }
 
-    public State addRemoveCompound(CompoundPolygon toAdd, CompoundPolygon toRemove) {
+    public State addRemoveFlippedCompound(
+            CompoundPolygon sourceCompound, 
+            CompoundPolygon toAdd, 
+            CompoundPolygon toRemove) 
+    {
+        // merge first flipped atomic with first compound atomic
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
+
+        AtomicPolygon p1 = toAdd.getPolygons().remove(0);
         atomicPolygons.addAll(toAdd.getPolygons());
         atomicPolygons.removeAll(toRemove.getPolygons());
-        return State.valueOf(atomicPolygons);
+
+        AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
+
+        atomicPolygons.remove(p2);
+        AtomicPolygon merged = GraphUtils.merge(p1, p2);
+        atomicPolygons.add(merged);
+
+        State newState = State.valueOf(atomicPolygons);
+
+        newState.iteration = this.getIteration() + 1;
+        newState.derivedFrom = this;
+        
+        return newState;
     }
 
     /**
@@ -158,20 +164,7 @@ public final class State
     {
         return iteration;
     }
-
-    @Deprecated
-    /** @deprecated Make it in constructor only, otherwise we will forget to update it. */
-    public void setIteration(int interation)
-    {
-        this.iteration = interation;
-    }
-
-    @Deprecated
-    /** @deprecated Make it in constructor only, otherwise we will forget to update it. */
-    public void setDerivedFrom(State parent) {
-        this.derivedFrom = parent;
-    }
-
+    
     public State getDerivedFrom() {
         return derivedFrom;
     }

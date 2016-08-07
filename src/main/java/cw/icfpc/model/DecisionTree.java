@@ -18,29 +18,23 @@ public class DecisionTree
                 return;
 
             Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
-            compounds.forEach(cp -> {
-                CompoundPolygon flippedCompound = cp.flip(edge);
-                Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(cp);
+            compounds.forEach(sourceCompound -> {
+                CompoundPolygon flippedCompound = sourceCompound.flip(edge);
+                Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);
                 sourceCompoundSubsets.forEach(srcCpSubset -> {
-                    State newState = state.addRemoveCompound(flippedCompound, srcCpSubset);
+                    State newState = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset);
 
                     // new state is valid only if its ares is bigger than area of previous state
                     if (newState.getSimpleArea() > currentStateArea && newState.isStateValid())
                     {
-                        // merge first flipped atomic with first compound atomic
-                        AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
-                        AtomicPolygon p2 = cp.getPolygons().get(0);
-                        newState = newState.mergePolygons(p1, p2);
-                        newState.setIteration(state.getIteration() + 1);
-                        newState.setDerivedFrom(state);
                         nodes.add(newState);
                     }
                 });
 
 //                // compound contains only 1 atomic polygon. Try to merge it with background
-//                if (cp.getPolygons().size() == 1)
+//                if (sourceCompound.getPolygons().size() == 1)
 //                {
-//                    AtomicPolygon p = cp.getPolygons().get(0);
+//                    AtomicPolygon p = sourceCompound.getPolygons().get(0);
 //                    state.getAdjacentPolygons(p).forEach(adjacent -> {
 //                        State newState = state.mergePolygons(p, adjacent).addCompound(flippedCompound);
 //                        nodes.add(newState);
