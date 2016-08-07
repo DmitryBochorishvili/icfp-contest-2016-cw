@@ -46,16 +46,31 @@ class StateSpec extends Specification
 
     def 'toSolution - just a square'()
     {
-        given:
-            def st = state('0,0 0,1 1,1 1,0')
         expect:
-            st.toSolution() == """4
+            state('0,0 0,1 1,1 1,0').toSolution() == """4
 1,0
 0,0
 1,1
 0,1
 1
 4 1 3 2 0
+1,0
+0,0
+1,1
+0,1
+""" 
+    }
+    
+    def 'toSolution - problem #1'()
+    {
+        expect:
+            state('0,0 1,0 1,1 0,1').toSolution() == """4
+1,0
+0,0
+1,1
+0,1
+1
+4 1 0 2 3
 1,0
 0,0
 1,1

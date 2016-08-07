@@ -47,7 +47,7 @@ public class PolyFormat
             throw new RuntimeException("Invalid fraction point to parse: " + str);
 
         BigFractionFormat format = new BigFractionFormat();
-        return new FractionPoint(format.parse(fractions[0]), format.parse(fractions[1]));
+        return FractionPoint.valueOf(format.parse(fractions[0]), format.parse(fractions[1]));
     }
 
     public static List<FractionPoint> getFractionPointList(String str)

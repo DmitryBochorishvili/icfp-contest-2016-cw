@@ -9,8 +9,7 @@ import cw.icfpc.utils.MathUtils;
 import cw.icfpc.utils.PolyFormat;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ProblemReader {
 
@@ -27,6 +26,8 @@ public class ProblemReader {
             "0,1/2 0,0\n"+
             "0,0 1/2,1/2\n";
 
+    private int destId = 0;
+
     public State readDefaultProblem() throws IOException {
         return parseProblem(new BufferedReader(new StringReader(defaultProblem)));
     }
@@ -40,7 +41,23 @@ public class ProblemReader {
     public State parseProblem(BufferedReader input) throws IOException {
         int polygonsNumber = readPolygonsNumber(input);
         List<List<FractionPoint>> polygons = readPolygonVertices(polygonsNumber, input);
+
+        Map<FractionPoint, FractionPoint> allPoints = new HashMap<>();
+        polygons.forEach(poly -> poly.forEach(p -> allPoints.put(p, p)));
+        
         List<Edge> edges = readEdges(input);
+        for (Edge e: edges) {
+            if (allPoints.containsKey(e.getA())) {
+                e.getA().destId = allPoints.get(e.getA()).destId;
+            } else {
+                e.getA().destId = destId++;
+            }
+            if (allPoints.containsKey(e.getB())) {
+                e.getB().destId = allPoints.get(e.getB()).destId;
+            } else {
+                e.getB().destId = destId++;
+            }
+        }
 
         List<AtomicPolygon> atomicPolygons = atomizePolygons2(polygons, edges);
         return State.createNew(atomicPolygons);
@@ -59,7 +76,7 @@ public class ProblemReader {
     }
 
     private List<Edge> readEdges(BufferedReader input) throws IOException {
-        List<Edge> edges = new ArrayList<Edge>();
+        List<Edge> edges = new ArrayList<>();
         String edgeNumberAsString = input.readLine();
         int edgeNumber = Integer.parseInt(edgeNumberAsString);
         for(int j = 0; j < edgeNumber; j++)
@@ -73,7 +90,6 @@ public class ProblemReader {
 
     private List<List<FractionPoint>> readPolygonVertices(int polygonsNumber, BufferedReader input) throws IOException {
         List<List<FractionPoint>> polygons = new ArrayList<>(); 
-        int destId = 0;
         for(int i = 0; i < polygonsNumber; i++)
         {
             String verticesNumberAsString = input.readLine();

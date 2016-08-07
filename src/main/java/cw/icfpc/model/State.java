@@ -263,6 +263,7 @@ public final class State
         
         for (AtomicPolygon f: sourceState.destFacets) {
             for (FractionPoint p: f.getVertices()) {
+                assert p.destId >= 0;
                 destPoints.put(p.destId, p);
             }
         }
@@ -296,6 +297,10 @@ public final class State
         // Destination positions
         for (int i=0; i<sourcePoints.size(); i++) {
             FractionPoint destPoint = destPoints.get( sourcePoints.get(i).destId );
+            if (destPoint == null) {
+                System.err.println("Ouch");
+            }
+            assert destPoint != null;
             sb.append(destPoint.toSimpleString()).append('\n');
         }
         

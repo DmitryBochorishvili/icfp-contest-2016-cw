@@ -3,16 +3,23 @@ package cw.icfpc.model;
 import cw.icfpc.utils.MathUtils;
 import org.apache.commons.math3.fraction.BigFraction;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FractionPoint implements Comparable<FractionPoint>, Flipable<FractionPoint>
 {
     private BigFraction x;
     private BigFraction y;
     public int destId = -1;
     
-    public static final FractionPoint ZERO = FractionPoint.valueOf(BigFraction.ZERO, BigFraction.ZERO);
+    public static final FractionPoint ZERO = new FractionPoint(BigFraction.ZERO, BigFraction.ZERO);
     
-    private static FractionPoint valueOf(BigFraction x, BigFraction y) {
-        return new FractionPoint(x, y);
+    private final static Map<FractionPoint, FractionPoint> instances = new HashMap<>(); 
+    
+    public static FractionPoint valueOf(BigFraction x, BigFraction y) {
+        FractionPoint p = new FractionPoint(x, y);
+//        return instances.getOrDefault(p, p);
+        return p;
     }
 
     public FractionPoint(BigFraction x, BigFraction y)

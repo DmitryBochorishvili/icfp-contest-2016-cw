@@ -47,7 +47,8 @@ public class MainApp
             long time = System.currentTimeMillis();
             String file = cmd.getOptionValue('f');
             State solution = solveProblem(file, drawStateImages, cmd.hasOption('s'));
-            System.out.println("Problem " + file + (solution == null ? " NOT" : "") + " solved in " + (System.currentTimeMillis() - time));
+            System.out.printf("Problem %s%s solved in %dms", file, solution == null ? " NOT" : "",
+                    System.currentTimeMillis() - time);
         }
 
         if (cmd.hasOption('d'))
@@ -152,12 +153,13 @@ public class MainApp
                     
                     try {
                         int id = Integer.parseInt(strId);
-                        System.out.println("Submitting! Ta-da!..");
-                        ServerCommunicator.submitSolution(strId, solution.toSolution());
                     }
                     catch (NumberFormatException e) {
                         System.out.println("It's apparently not a problem file: " + strId);
                     }
+                    String sol = solution.toSolution();
+                    System.out.printf("Submitting #%s! Ta-da!..\n%s%n", strId, sol);
+                    ServerCommunicator.submitSolution(strId, sol);
                 }
             }
 
@@ -172,6 +174,10 @@ public class MainApp
             System.out.println("Got an exception while trying to solve problem " + problemFile);
             e.printStackTrace();
             return null;
+        }
+        finally {
+            System.out.flush();
+            System.err.flush();
         }
 
         return solution;
