@@ -186,6 +186,28 @@ public final class State
         return adjacentEdges.get(edge).isEmpty();
     }
 
+    public Edge getFullEdge(Edge edge, List<Edge> atomicEdgesInFullEdgeToFill) {
+        Edge fullEdge = edge;
+        atomicEdgesInFullEdgeToFill.add(edge);
+
+        boolean mergedSmth = true;
+        while(mergedSmth) {
+            mergedSmth = false;
+            for(Edge e : edges) {
+                if(e.equals(fullEdge))
+                    continue;
+                Edge merged = e.mergeWith(fullEdge);
+                if(merged != null) {
+                    atomicEdgesInFullEdgeToFill.add(e);
+                    mergedSmth = true;
+                    fullEdge = merged;
+                }
+            }
+
+        }
+        return fullEdge;
+    }
+
     public boolean allPolygonsAdjacent()
     {
         Set<AtomicPolygon> visited = new HashSet<>();

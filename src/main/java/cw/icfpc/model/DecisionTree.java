@@ -1,6 +1,6 @@
 package cw.icfpc.model;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,8 +20,10 @@ public class DecisionTree
         state.getEdges().forEach(edge -> {
             if (System.currentTimeMillis() - startTime > 1000)
                 return;
+            List<Edge> atomicEdges = new ArrayList<>();
+            Edge fullEdge = state.getFullEdge(edge, atomicEdges);
+            nodes.addAll(tryUnfoldByEdge(state, currentStateArea, atomicEdges, fullEdge));
 
-            nodes.addAll(tryUnfoldByEdge(state, currentStateArea, edge));
             if (!state.isEdgeOuter(edge)) {
                 nodes.addAll(trytoMergeByInnerEdge(state, currentStateArea, edge));
             }
@@ -42,13 +44,13 @@ public class DecisionTree
         return proposedStates;
     }
 
-    private static List<State> tryUnfoldByEdge(State state, double currentStateArea, Edge edge) {
+    private static List<State> tryUnfoldByEdge(State state, double currentStateArea, List<Edge> edges, Edge combinedEdge) {
         List<State> proposedStates = new LinkedList<State>();
 
-        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edge);
+        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edges);
         compounds.forEach(sourceCompound -> {
-            CompoundPolygon flippedCompound = sourceCompound.flip(edge);
-            Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(state, sourceCompound);
+            CompoundPolygon flippedCompound = sourceCompound.flip(combinedEdge);
+            Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);
             sourceCompoundSubsets.forEach(srcCpSubset -> {
                 // first try to prepare state where we merge atomics by which we unfold
             State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.TryMerge);

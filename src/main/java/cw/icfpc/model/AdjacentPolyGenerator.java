@@ -9,11 +9,13 @@ import java.util.stream.Collector;
 public final class AdjacentPolyGenerator
 {
 
-    private static List<AtomicPolygon> getAdjacentTo(State state, Edge edge) {
+    private static List<AtomicPolygon> getAdjacentTo(State state, List<Edge> edges) {
         List<AtomicPolygon> adjacent = new ArrayList<>(2);
         for (AtomicPolygon a : state.getAtomicPolygons()) {
-            if (a.getEdges().contains(edge)) {
-                adjacent.add(a);
+            for(Edge e : edges) {
+                if (a.getEdges().contains(e)) {
+                    adjacent.add(a);
+                }
             }
         }
         return adjacent;
@@ -65,10 +67,15 @@ public final class AdjacentPolyGenerator
         return result;
     }
     
-    
-    public static List<CompoundPolygon> getAllCompounds(State state, Edge edge) 
+    public static List<CompoundPolygon> getAllCompounds(State state, Edge edge) {
+        List<Edge> edges = new ArrayList<>();
+        edges.add(edge);
+        return getAllCompounds(state, edges);
+    }
+
+    public static List<CompoundPolygon> getAllCompounds(State state, List<Edge> edges)
     {
-        List<AtomicPolygon> adjacent = getAdjacentTo(state, edge);
+        List<AtomicPolygon> adjacent = getAdjacentTo(state, edges);
         if (adjacent.size() < 1) {
             return Collections.emptyList();
         }
@@ -108,9 +115,9 @@ public final class AdjacentPolyGenerator
     }
 
 
-    public static Set<CompoundPolygon> getAllCompounds2(State state, Edge edge)
+    public static Set<CompoundPolygon> getAllCompounds2(State state, List<Edge> edges)
     {
-        List<AtomicPolygon> adjacent = getAdjacentTo(state, edge);
+        List<AtomicPolygon> adjacent = getAdjacentTo(state, edges);
         if (adjacent.size() < 1) {
             return Collections.emptySet();
         }
