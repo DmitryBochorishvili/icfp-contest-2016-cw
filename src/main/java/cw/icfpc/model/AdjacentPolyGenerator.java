@@ -9,13 +9,11 @@ import java.util.stream.Collector;
 public final class AdjacentPolyGenerator
 {
 
-    private static List<AtomicPolygon> getAdjacentTo(State state, List<Edge> edges) {
+    private static List<AtomicPolygon> getAdjacentTo(State state, Edge edge) {
         List<AtomicPolygon> adjacent = new ArrayList<>(2);
         for (AtomicPolygon a : state.getAtomicPolygons()) {
-            for(Edge e : edges) {
-                if (a.getEdges().contains(e)) {
-                    adjacent.add(a);
-                }
+            if (a.getEdges().contains(edge)) {
+                adjacent.add(a);
             }
         }
         return adjacent;
@@ -67,27 +65,27 @@ public final class AdjacentPolyGenerator
         return result;
     }
     
-    public static List<CompoundPolygon> getAllCompounds(State state, Edge edge) {
-        List<Edge> edges = new ArrayList<>();
-        edges.add(edge);
-        return getAllCompounds(state, edges);
-    }
-
-    public static List<CompoundPolygon> getAllCompounds(State state, List<Edge> edges)
-    {
-        List<AtomicPolygon> adjacent = getAdjacentTo(state, edges);
-        if (adjacent.size() < 1) {
-            return Collections.emptyList();
-        }
-
-        AtomicPolygon root = adjacent.get(0);
-        adjacent.remove(0);
-        assert adjacent.size() <= 1;
-        Set<AtomicPolygon> excluded = new LinkedHashSet<>();
-        excluded.addAll(adjacent);
-        
-        return generateAllSubsets(state, root, excluded);
-    }
+//    public static List<CompoundPolygon> getAllCompounds(State state, Edge edge) {
+//        List<Edge> edges = new ArrayList<>();
+//        edges.add(edge);
+//        return getAllCompounds(state, edges);
+//    }
+//
+//    public static List<CompoundPolygon> getAllCompounds(State state, List<Edge> edges)
+//    {
+//        List<AtomicPolygon> adjacent = getAdjacentTo(state, edges);
+//        if (adjacent.size() < 1) {
+//            return Collections.emptyList();
+//        }
+//
+//        AtomicPolygon root = adjacent.get(0);
+//        adjacent.remove(0);
+//        assert adjacent.size() <= 1;
+//        Set<AtomicPolygon> excluded = new LinkedHashSet<>();
+//        excluded.addAll(adjacent);
+//
+//        return generateAllSubsets(state, root, excluded);
+//    }
 
     static List<Set<AtomicPolygon>> generateAllSubtrees(
             State state,
@@ -98,7 +96,7 @@ public final class AdjacentPolyGenerator
         List<Set<AtomicPolygon>> result = new ArrayList<>();
 
         // don't go deeper than 5 nodes
-        if (parentTree.size() >= 3)
+        if (parentTree.size() >= 5)
             return result;
 
         Set<AtomicPolygon> currentTree = new HashSet<AtomicPolygon>(parentTree);
@@ -115,20 +113,33 @@ public final class AdjacentPolyGenerator
     }
 
 
+    public static Set<CompoundPolygon> getAllCompounds2(State state, Edge edge) {
+        List<Edge> edges = new ArrayList<>();
+        edges.add(edge);
+        return getAllCompounds2(state, edges);
+    }
+
     public static Set<CompoundPolygon> getAllCompounds2(State state, List<Edge> edges)
     {
-        List<AtomicPolygon> adjacent = getAdjacentTo(state, edges);
-        if (adjacent.size() < 1) {
-            return Collections.emptySet();
-        }
-
-        AtomicPolygon root = adjacent.get(0);
-        adjacent.remove(0);
-        assert adjacent.size() <= 1;
         Set<AtomicPolygon> excluded = new LinkedHashSet<>();
-        excluded.addAll(adjacent);
+        AtomicPolygon root = null;
+        Set<AtomicPolygon> initialTree = new HashSet<AtomicPolygon>();
 
-        List<Set<AtomicPolygon>> subtrees = generateAllSubtrees(state, root, Collections.emptySet(), excluded);
+        for(Edge e : edges) {
+            List<AtomicPolygon> adjacent = getAdjacentTo(state, e);
+            if (adjacent.size() < 1) {
+                return Collections.emptySet();
+            }
+
+            root = adjacent.get(0);
+            initialTree.add(root);
+            adjacent.remove(0);
+            assert adjacent.size() <= 1;
+            excluded.addAll(adjacent);
+        }
+        initialTree.remove(root); // I know, dirty hack...
+
+        List<Set<AtomicPolygon>> subtrees = generateAllSubtrees(state, root, initialTree, excluded);
 
         // generate all combinations of subtrees
         long n = 1 << subtrees.size();
@@ -151,17 +162,11 @@ public final class AdjacentPolyGenerator
      * Returns list of possible atomic polygons to be removed in state after flip.
      * Suggests to remove all tailing polygons up to the first one.
      */
-    public static List<CompoundPolygon> getAllSourceSubCompoundsToRemove(State state, CompoundPolygon poly)
+    public static List<CompoundPolygon> getAllSourceSubCompoundsToRemove(CompoundPolygon poly)
     {
         List<CompoundPolygon> result = new ArrayList<>();
 
         long n = 1 << poly.getPolygons().size();
-
-        // if poly contains all problem atomics then it doesn't make sense to return an option to remove all of them.
-        // it will lead just to a dump flip of entire state
-        if (poly.getPolygons().size() == state.getAtomicPolygons().size())
-            n--;
-
         for (int i = 0; i < n; i++)
         {
             List<AtomicPolygon> atomics = new ArrayList<>();

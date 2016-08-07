@@ -76,7 +76,7 @@ public final class State
     }
 
     public double getHeuristic() {
-        return 1000 - atomicPolygons.size() - iteration;
+        return 1000 - atomicPolygons.size()*3 - iteration;
     }
 
     public Collection<Edge> getEdges()
@@ -146,14 +146,16 @@ public final class State
         atomicPolygons.removeAll(toRemove.getPolygons());
 
         if(merge == FlipOptions.TryMerge) {
-            AtomicPolygon p1 = flippedCompound.getPolygons().get(0);
-            AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
-            AtomicPolygon merged = GraphUtils.merge(p1, p2);
-            if(merged == null)
-                return null;
-            atomicPolygons.remove(p1);
-            atomicPolygons.remove(p2);
-            atomicPolygons.add(merged);
+            for(int i = 0; i < flippedCompound.getPolygons().size(); i++) {
+                AtomicPolygon p1 = flippedCompound.getPolygons().get(i);
+                AtomicPolygon p2 = sourceCompound.getPolygons().get(i);
+                AtomicPolygon merged = GraphUtils.merge(p1, p2);
+                if (merged == null)
+                    return null;
+                atomicPolygons.remove(p1);
+                atomicPolygons.remove(p2);
+                atomicPolygons.add(merged);
+            }
         }
         else if(merge == FlipOptions.FlipOnly) {
             atomicPolygons.removeAll(sourceCompound.getPolygons());
