@@ -1,5 +1,6 @@
 package cw.icfpc.model;
 
+import com.sun.corba.se.impl.orbutil.graph.Graph;
 import cw.icfpc.utils.GraphUtils;
 import cw.icfpc.utils.MathUtils;
 import org.apache.commons.collections4.MultiValuedMap;
@@ -91,23 +92,47 @@ public final class State
         return State.createNew(atomicPolygons);
     }
 
+//    public State mergeAdjacentAtomicPolygons(Edge edge) {
+//        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
+//        Collection<AtomicPolygon> adjacentPolygons = adjacentEdges.get(edge);
+//
+//        assert adjacentPolygons.size() == 2;
+//
+//        ArrayList<AtomicPolygon> polygons = new ArrayList<>();
+//        polygons.addAll(adjacentPolygons);
+//        AtomicPolygon merged = GraphUtils.merge(polygons.get(0), polygons.get(1));
+//        atomicPolygons.remove(polygons.get(0));
+//        atomicPolygons.remove(polygons.get(1));
+//        atomicPolygons.add(merged);
+//
+//        State newState = State.createNew(atomicPolygons);
+//
+//        newState.iteration = this.getIteration() + 1;
+//        newState.derivedFrom = this;
+//
+//        return newState;
+//    }
+
     public State addRemoveFlippedCompound(
             CompoundPolygon sourceCompound, 
             CompoundPolygon toAdd, 
-            CompoundPolygon toRemove) 
+            CompoundPolygon toRemove,
+            boolean merge)
     {
         // merge first flipped atomic with first compound atomic
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
 
-        AtomicPolygon p1 = toAdd.getPolygons().remove(0);
         atomicPolygons.addAll(toAdd.getPolygons());
         atomicPolygons.removeAll(toRemove.getPolygons());
 
-        AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
-
-        atomicPolygons.remove(p2);
-        AtomicPolygon merged = GraphUtils.merge(p1, p2);
-        atomicPolygons.add(merged);
+        if(merge) {
+            AtomicPolygon p1 = toAdd.getPolygons().get(0);
+            AtomicPolygon p2 = sourceCompound.getPolygons().get(0);
+            atomicPolygons.remove(p1);
+            atomicPolygons.remove(p2);
+            AtomicPolygon merged = GraphUtils.merge(p1, p2);
+            atomicPolygons.add(merged);
+        }
 
         State newState = State.createNew(atomicPolygons);
 
