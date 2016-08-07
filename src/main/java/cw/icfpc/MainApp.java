@@ -142,9 +142,11 @@ public class MainApp
             int step = 0;
             while (solution == null && !nodes.isEmpty()
                     && (System.currentTimeMillis() - result.time < 5000)
-                    && step < 100)
+                    && step < 500)
             {
                 step++;
+                if((step%100) == 0)
+                    System.out.print(".." + step);
                 State currentState = nodes.remove(0);
                 if (drawStates)
                     vis.addScene(currentState, false);
