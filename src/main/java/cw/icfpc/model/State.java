@@ -255,6 +255,12 @@ public final class State
         List<FractionPoint> sourcePoints = new ArrayList<>(sourcePointSet);
         
         Map<Integer, FractionPoint> destPoints = new HashMap<>();
+        
+        // An "already the solution" case
+        if (sourceState.derivedFrom == null) {
+            sourceState.destFacets.addAll(sourceState.facets);
+        }
+        
         for (AtomicPolygon f: sourceState.destFacets) {
             for (FractionPoint p: f.getVertices()) {
                 destPoints.put(p.destId, p);
