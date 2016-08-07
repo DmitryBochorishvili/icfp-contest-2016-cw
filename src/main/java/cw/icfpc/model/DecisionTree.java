@@ -6,6 +6,7 @@ import java.util.List;
 
 public class DecisionTree
 {
+    private static final int THRESHOLD_TIME = 1000;
 
     private static long startTime;
 
@@ -18,7 +19,7 @@ public class DecisionTree
         startTime = System.currentTimeMillis();
 
         state.getEdges().forEach(edge -> {
-            if (System.currentTimeMillis() - startTime > 1000)
+            if (System.currentTimeMillis() - startTime > THRESHOLD_TIME)
                 return;
             List<Edge> atomicEdges = new ArrayList<>();
             Edge fullEdge = state.getFullEdge(edge, atomicEdges);
@@ -49,11 +50,17 @@ public class DecisionTree
 
         Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds2(state, edges);
         compounds.forEach(sourceCompound -> {
+            if (System.currentTimeMillis() - startTime > THRESHOLD_TIME)
+                return;
+
             CompoundPolygon flippedCompound = sourceCompound.flip(combinedEdge);
             Iterable<CompoundPolygon> sourceCompoundSubsets = AdjacentPolyGenerator.getAllSourceSubCompoundsToRemove(sourceCompound);
             sourceCompoundSubsets.forEach(srcCpSubset -> {
+                if (System.currentTimeMillis() - startTime > THRESHOLD_TIME)
+                    return;
+
                 // first try to prepare state where we merge atomics by which we unfold
-            State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.TryMerge);
+                State newStateMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, State.FlipOptions.TryMerge);
 
                 // new state is valid only if its ares is bigger than area of previous state
                 if (newStateMerged != null && newStateMerged.getSimpleArea() >= currentStateArea && newStateMerged.isStateValid())
