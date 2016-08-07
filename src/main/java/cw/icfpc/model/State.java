@@ -215,7 +215,10 @@ public final class State
         return allPolygonsAdjacent() && getSimpleArea() <= 1
                 && (atomicPolygons.size() > 1 || getSimpleArea() <= 0.5);
     }
-
+    
+    // I'm not proud of this.
+    private List<Edge> outerEdges;
+    
     /**
      * Returns true if the state is final i.e. 1x1 square
      */
@@ -224,12 +227,57 @@ public final class State
         if (Math.abs(1 - getSimpleArea()) < MathUtils.EPSILON) {
             AtomicPolygon merged = GraphUtils.merge(atomicPolygons);
             if (merged.getVertices().size() == 4) {
-                List<Edge> outerEdges = merged.getEdges();
+                this.outerEdges = merged.getEdges();
                 double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
                 return outerEdges.stream().allMatch(e -> Math.abs(MathUtils.distance(e.getA(), e.getB()) - distance) < MathUtils.EPSILON);
             }
         }
         return false;
+    }
+    
+    private AtomicPolygon translate(AtomicPolygon what, FractionPoint movement, FractionPoint tangent) {
+        return what.move(movement).rotate(tangent);
+    }
+
+    /**
+     * Prerequisite: #isFinalState() returned true.
+     * @return a State translated to a unit (0,0-1,1) square.
+     */
+    public State alignToUnit() {
+
+        FractionPoint leftmost = outerEdges.stream()
+                .map(Edge::getA)
+                .min((a, b) -> (a.getX().doubleValue() - b.getX().doubleValue()) > 0 ? 1 : -1)
+                .orElseThrow(() -> new IllegalStateException("What, no leftmost edge?"));
+
+        FractionPoint lowest = outerEdges.stream()
+                .map(Edge::getA)
+                .min((a, b) -> (a.getY().doubleValue() - b.getY().doubleValue()) > 0 ? 1 : -1)
+                .orElseThrow(() -> new IllegalStateException("What, no lowest edge?"));
+        
+        FractionPoint movement = leftmost.negate();
+        FractionPoint tangent = lowest.move(movement);
+
+        State moved = State.createNew(
+                atomicPolygons.stream()
+                        .map(p -> translate(p, movement, tangent))
+                        .collect(Collectors.toList())
+        );
+
+        moved.iteration = this.getIteration();
+        moved.derivedFrom = this.derivedFrom;
+
+        moved.facets = new ArrayList<>(this.facets.stream()
+                .map(p -> translate(p, movement, tangent))
+                .collect(Collectors.toList()));
+        moved.destFacets = new ArrayList<>(this.destFacets.stream()
+                .map(p -> translate(p, movement, tangent))
+                .collect(Collectors.toList()));
+        moved.neverMoved = new ArrayList<>(this.neverMoved.stream()
+                .map(p -> translate(p, movement, tangent))
+                .collect(Collectors.toList()));
+
+        return moved;
     }
 
     public int getIteration()

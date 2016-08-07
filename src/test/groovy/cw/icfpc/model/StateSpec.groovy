@@ -3,6 +3,7 @@ package cw.icfpc.model
 import spock.lang.Ignore
 import spock.lang.Specification
 
+import static cw.icfpc.utils.PolyFormat.getFractionPoint
 import static cw.icfpc.utils.PolyFormat.getFractionPointList
 
 class StateSpec extends Specification
@@ -14,6 +15,10 @@ class StateSpec extends Specification
         int destId = 0
         s.atomicPolygons[0].vertices.forEach{it.destId = destId++}
         s
+    }
+    
+    private FractionPoint p(String s) {
+        getFractionPoint(s)
     }
 
     def 'final state: true for initial square'()
@@ -42,6 +47,18 @@ class StateSpec extends Specification
 
         expect:
             State.createNew([p1, p2]).isFinalState() == true
+    }
+    
+    def 'alignToUnit' ()
+    {
+        given:
+            // problem #6
+            def rotated = state('15/29,-6/29 35/29,15/29 14/29,35/29 -6/29,14/29')
+            assert rotated.isFinalState()
+            def uni = rotated.alignToUnit()
+        expect:
+            uni.isFinalState()
+            uni.edges.collect{it.getA()} as Set == [p("0,0"), p("0,1"), p("1,1"), p("1,0")] as Set
     }
 
     def 'toSolution - just a square'()

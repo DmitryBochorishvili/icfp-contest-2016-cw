@@ -46,6 +46,10 @@ public class FractionPoint implements Comparable<FractionPoint>, Geometry<Fracti
         return FractionPoint.valueOf(this.x.subtract(b.getX()), this.y.subtract(b.getY()));
     }
 
+    public FractionPoint negate() {
+        return FractionPoint.valueOf(this.x.negate(), this.y.negate());
+    }
+
     public FractionPoint divide(int by) {
         return FractionPoint.valueOf(this.x.divide(by), this.y.divide(by));
     }
