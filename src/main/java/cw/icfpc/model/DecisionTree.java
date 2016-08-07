@@ -13,9 +13,8 @@ public class DecisionTree
         List<State> nodes = new LinkedList<>();
 
         state.getEdges().forEach(edge -> {
-            if (state.isEdgeOuter(edge))
-                nodes.addAll(tryUnfoldByEdge(state, currentStateArea, edge));
-            else {
+            nodes.addAll(tryUnfoldByEdge(state, currentStateArea, edge));
+            if (!state.isEdgeOuter(edge)) {
                 nodes.addAll(trytoMergeByInnerEdge(state, currentStateArea, edge));
             }
         });
@@ -38,10 +37,6 @@ public class DecisionTree
     private static List<State> tryUnfoldByEdge(State state, double currentStateArea, Edge edge) {
         List<State> proposedStates = new LinkedList<State>();
 
-        // we try to fold only across outer edges
-        if (!state.isEdgeOuter(edge))
-            return proposedStates;
-
         Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
         compounds.forEach(sourceCompound -> {
             CompoundPolygon flippedCompound = sourceCompound.flip(edge);
@@ -55,14 +50,15 @@ public class DecisionTree
                 {
                     proposedStates.add(newStateMerged);
                 }
-                else { // then, if merged was not successful, try once again but with non-merged
-                    State newStateNotMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, false);
-                    if (newStateNotMerged != null && newStateNotMerged.getSimpleArea() > currentStateArea && newStateNotMerged.isStateValid())
-                    {
-                        proposedStates.add(newStateNotMerged);
-                    }
 
+                State newStateNotMerged = state.addRemoveFlippedCompound(sourceCompound, flippedCompound, srcCpSubset, false);
+                if (newStateNotMerged != null && newStateNotMerged.getSimpleArea() > currentStateArea && newStateNotMerged.isStateValid())
+                {
+                    proposedStates.add(newStateNotMerged);
                 }
+
+
+
             });
 
 //                // compound contains only 1 atomic polygon. Try to merge it with background
