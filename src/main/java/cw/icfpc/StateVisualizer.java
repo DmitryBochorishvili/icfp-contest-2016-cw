@@ -1,6 +1,7 @@
 package cw.icfpc;
 
 import cw.icfpc.model.AtomicPolygon;
+import cw.icfpc.model.Edge;
 import cw.icfpc.model.State;
 import org.apache.commons.math3.fraction.BigFraction;
 
@@ -30,6 +31,7 @@ public class StateVisualizer {
         private State state;
         private String title;
         private List<AtomicPolygon> facets = new LinkedList<>();
+        private List<Edge> edges = new LinkedList<>();
         private Color overrideColor;
     }
 
@@ -76,6 +78,12 @@ public class StateVisualizer {
 
     public StateVisualizer addFacets(List<AtomicPolygon> facets, java.awt.Color overrideColor) {
         currentScene.facets.addAll(facets);
+        currentScene.overrideColor = overrideColor;
+        return this;
+    }
+
+    public StateVisualizer addEdges(List<Edge> edges, java.awt.Color overrideColor) {
+        currentScene.edges.addAll(edges);
         currentScene.overrideColor = overrideColor;
         return this;
     }
@@ -157,6 +165,30 @@ public class StateVisualizer {
                     getDisplayPositionY(edge.getB().getY())
             );
         });
+        
+        if (!currentScene.edges.isEmpty()) {
+            g2d.setColor(currentScene.overrideColor);
+            currentScene.edges.forEach( edge -> {
+                g2d.drawLine(getDisplayPositionX(edge.getA().getX()),
+                        getDisplayPositionY(edge.getA().getY()),
+                        getDisplayPositionX(edge.getB().getX()),
+                        getDisplayPositionY(edge.getB().getY())
+                );
+            });
+        }
+        
+        if (!currentScene.facets.isEmpty()) {
+            g2d.setColor(currentScene.overrideColor);
+            currentScene.facets.forEach( facet -> {
+                facet.getEdges().forEach( edge -> {
+                    g2d.drawLine(getDisplayPositionX(edge.getA().getX()),
+                            getDisplayPositionY(edge.getA().getY()),
+                            getDisplayPositionX(edge.getB().getX()),
+                            getDisplayPositionY(edge.getB().getY())
+                    );
+                });
+            });
+        }
     }
 
     private void drawAxes(Graphics2D g2d) {
@@ -210,9 +242,10 @@ public class StateVisualizer {
                     if (!Files.isDirectory(subdir)) {
                         return;
                     }
-                    
-                    if (Files.exists(Paths.get(subdir.toString(), "/problems.png"))) {
-                        System.out.println("Directory: " + subdir + "Already has an image");
+
+                    String imageFileName = directory + "/set_" + subdir.getFileName() + ".png";
+                    if (Files.exists(Paths.get(imageFileName))) {
+                        System.out.println("Directory: " + subdir + " already has an image");
                         return;
                     }
                     
@@ -228,10 +261,11 @@ public class StateVisualizer {
                             } catch (IOException | IllegalArgumentException e) {
                                 e.printStackTrace();
                             }
-                            vis.addScene(s, false, "Problem: " + problemPath.getFileName());
+                            vis.addScene(s, false, "Problem: " + problemPath.getFileName())
+                                .addEdges(r.edges, Color.CYAN);
                         });
-
-                        vis.drawToFile(subdir + "/problems.png");
+                        
+                        vis.drawToFile(imageFileName);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

@@ -27,6 +27,8 @@ public class ProblemReader {
             "0,0 1/2,1/2\n";
 
     private int destId = 0;
+    
+    public List<Edge> edges;
 
     public State readDefaultProblem() throws IOException {
         return parseProblem(new BufferedReader(new StringReader(defaultProblem)));
@@ -46,6 +48,7 @@ public class ProblemReader {
         polygons.forEach(poly -> poly.forEach(p -> allPoints.put(p, p)));
         
         List<Edge> edges = readEdges(input);
+        this.edges = edges;
         for (Edge e: edges) {
             if (allPoints.containsKey(e.getA())) {
                 e.getA().destId = allPoints.get(e.getA()).destId;
