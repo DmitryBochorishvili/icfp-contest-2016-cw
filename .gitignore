@@ -6,3 +6,4 @@ tests-output
 
 *.iml
 /*.png
+/downloadedProblems/*/problems.png

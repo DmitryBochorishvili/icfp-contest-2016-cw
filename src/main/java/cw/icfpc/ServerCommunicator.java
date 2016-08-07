@@ -262,17 +262,15 @@ public class ServerCommunicator {
 
         snapshot.getProblems().forEach(problem -> {
             System.out.println("owner:" + problem.getOwner() + "; problem_hash: " + problem.getProblem_spec_hash());
-            String directory = "downloadedProblems\\" + problem.getOwner();
+            String directory = "downloadedProblems/" + problem.getOwner();
             new File(directory).mkdir();
-            if(!new File(directory + "\\" + problem.getProblem_id()).exists()) { // do not download in case if file exists
+            if(!new File(directory + "/" + problem.getProblem_id()).exists()) { // do not download in case if file exists
                 String problemText = getTask(problem.getProblem_spec_hash());
                 try {
-                    PrintWriter writer = new PrintWriter(directory + "\\" + problem.getProblem_id(), "UTF-8");
+                    PrintWriter writer = new PrintWriter(directory + "/" + problem.getProblem_id(), "UTF-8");
                     writer.println(problemText);
                     writer.close();
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
+                } catch (FileNotFoundException | UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
             }
@@ -282,7 +280,7 @@ public class ServerCommunicator {
 
     private static void saveProblemAuthorsInfo(ArrayList<usersEntity> users) {
         try {
-            PrintWriter writer = new PrintWriter("downloadedProblems\\authors.txt", "UTF-8");
+            PrintWriter writer = new PrintWriter("downloadedProblems/authors.txt", "UTF-8");
             writer.println("user_id:display_name");
 
             users.forEach(user -> {

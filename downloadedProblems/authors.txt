@@ -39,7 +39,7 @@ user_id:display_name
 288:hakomo
 221:unfold
 281:Princess Molestia
-280:ALL TEAM MEMBERS ARE NEET
+280:am faulsten
 283:r152
 220:TheWildLobsters
 285:kmc
@@ -52,7 +52,7 @@ user_id:display_name
 120:framus
 121:pibe
 122:framus
-123:ALAFTW
+123:ALAMBDA
 124:Xeniac
 125:kstm.org
 126:pro.elixir
@@ -61,7 +61,7 @@ user_id:display_name
 129:Cult of the Bound Variable
 269:びア部🍺
 268:kamikaze
-69:Small Opulent Shelducks
+69:Small Opulent Shelducks 💨
 91:d4o
 59:Invisible Imp
 58:天羽々斬
@@ -72,7 +72,7 @@ user_id:display_name
 51:botrevenge
 276:Gassa & The Family
 53:😼̯__,
-52:Scala Ballas
+52:Scala Ballas 🏀
 63:Jackstone
 298:dumbojet
 299:on vacation
@@ -83,7 +83,7 @@ user_id:display_name
 292:Biorigamics
 293:cauchym
 290:keizo
-291:blue-r
+291:👸💕 We Love Chiiia 💕👸
 201:Folds R Us
 199:LoneRanger
 198:lilik
@@ -110,7 +110,7 @@ user_id:display_name
 81:ATS
 119:code-o-matic
 118:TBD
-84:hayato
+84:🌟 kirakira 🌟
 204:SteelRaven
 251:Team007
 207:The team formally known as
@@ -122,6 +122,10 @@ user_id:display_name
 254:drop_table_users
 92:gzoluble
 255:診断人
+300:Far away from Gallifrey
+301:Lightning
+302:Mischa
+303:ヒッキープログラミングするスレ
 26:Barbarella
 245:yohmike
 244:O Caml, My Caml
@@ -256,8 +260,8 @@ user_id:display_name
 43:jabber.ru
 40:DiamondPrincess
 41:Skobochka
-85:sonna *baka* na
-146:GD Alumni
+85:sonna*baka*na
+146:GD and Alumni
 147:why-five-aye
 144:ghost
 145:Belle Area
