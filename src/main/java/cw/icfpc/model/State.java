@@ -100,26 +100,26 @@ public final class State
         return State.createNew(atomicPolygons);
     }
 
-//    public State mergeAdjacentAtomicPolygons(Edge edge) {
-//        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
-//        Collection<AtomicPolygon> adjacentPolygons = adjacentEdges.get(edge);
-//
-//        assert adjacentPolygons.size() == 2;
-//
-//        ArrayList<AtomicPolygon> polygons = new ArrayList<>();
-//        polygons.addAll(adjacentPolygons);
-//        AtomicPolygon merged = GraphUtils.merge(polygons.get(0), polygons.get(1));
-//        atomicPolygons.remove(polygons.get(0));
-//        atomicPolygons.remove(polygons.get(1));
-//        atomicPolygons.add(merged);
-//
-//        State newState = State.createNew(atomicPolygons);
-//
-//        newState.iteration = this.getIteration() + 1;
-//        newState.derivedFrom = this;
-//
-//        return newState;
-//    }
+    public State mergeAdjacentAtomicPolygons(Edge edge) {
+        List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
+        Collection<AtomicPolygon> adjacentPolygons = adjacentEdges.get(edge);
+
+        assert adjacentPolygons.size() == 2;
+
+        ArrayList<AtomicPolygon> polygons = new ArrayList<>();
+        polygons.addAll(adjacentPolygons);
+        AtomicPolygon merged = GraphUtils.merge(polygons.get(0), polygons.get(1));
+        atomicPolygons.remove(polygons.get(0));
+        atomicPolygons.remove(polygons.get(1));
+        atomicPolygons.add(merged);
+
+        State newState = State.createNew(atomicPolygons);
+
+        newState.iteration = this.getIteration() + 1;
+        newState.derivedFrom = this;
+
+        return newState;
+    }
 
     public State addRemoveFlippedCompound(
             CompoundPolygon sourceCompound, 

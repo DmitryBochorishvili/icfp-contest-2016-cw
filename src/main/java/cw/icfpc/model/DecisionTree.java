@@ -16,24 +16,24 @@ public class DecisionTree
             if (state.isEdgeOuter(edge))
                 nodes.addAll(tryUnfoldByEdge(state, currentStateArea, edge));
             else {
-                //nodes.addAll(trytoMergeByInnerEdge(state, currentStateArea, edge));
+                nodes.addAll(trytoMergeByInnerEdge(state, currentStateArea, edge));
             }
         });
 
         return nodes;
     }
 
-//    private static List<State> trytoMergeByInnerEdge(State state, double currentStateArea, Edge edge) {
-//        List<State> proposedStates = new LinkedList<State>();
-//        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
-//
-//        State newState = state.mergeAdjacentAtomicPolygons(edge);
-//        if (newState.getSimpleArea() > currentStateArea && newState.isStateValid())
-//        {
-//            proposedStates.add(newState);
-//        }
-//        return proposedStates;
-//    }
+    private static List<State> trytoMergeByInnerEdge(State state, double currentStateArea, Edge edge) {
+        List<State> proposedStates = new LinkedList<State>();
+        Iterable<CompoundPolygon> compounds = AdjacentPolyGenerator.getAllCompounds(state, edge);
+
+        State newState = state.mergeAdjacentAtomicPolygons(edge);
+        if (newState.getSimpleArea() > currentStateArea && newState.isStateValid())
+        {
+            proposedStates.add(newState);
+        }
+        return proposedStates;
+    }
 
     private static List<State> tryUnfoldByEdge(State state, double currentStateArea, Edge edge) {
         List<State> proposedStates = new LinkedList<State>();
