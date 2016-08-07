@@ -217,7 +217,7 @@ public final class State
             if (merged.getVertices().size() == 4) {
                 List<Edge> outerEdges = merged.getEdges();
                 double distance = MathUtils.distance(outerEdges.get(0).getA(), outerEdges.get(0).getB());
-                return outerEdges.stream().allMatch(e -> MathUtils.distance(e.getA(), e.getB()) == distance);
+                return outerEdges.stream().allMatch(e -> Math.abs(MathUtils.distance(e.getA(), e.getB()) - distance) < MathUtils.EPSILON);
             }
         }
         return false;
