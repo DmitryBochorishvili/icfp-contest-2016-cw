@@ -203,7 +203,8 @@ public final class State
      */
     public boolean isStateValid()
     {
-        return allPolygonsAdjacent() && getSimpleArea() <= 1;
+        return allPolygonsAdjacent() && getSimpleArea() <= 1
+                && (atomicPolygons.size() > 1 || getSimpleArea() <= 0.5);
     }
 
     /**
