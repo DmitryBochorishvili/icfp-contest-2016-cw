@@ -7,6 +7,8 @@ import org.apache.commons.math3.fraction.BigFraction;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.io.File;
@@ -26,6 +28,7 @@ public class StateVisualizer {
         private int offsetX = 0;
         private int offsetY = 0;
         private State state;
+        private String title;
         private List<AtomicPolygon> facets = new LinkedList<>();
         private Color overrideColor;
     }
@@ -37,6 +40,22 @@ public class StateVisualizer {
     }
     
     public StateVisualizer addScene(State s, boolean belowPrevious) {
+        return addScene(s, belowPrevious, "");
+    }
+    
+    public StateVisualizer addScene(State s, boolean belowPrevious, String title) {
+        if (currentScene.state == null) {
+            currentScene.state = s;
+            if (!title.isEmpty()) {
+                currentScene.title = title;
+            }
+            return this;
+        }
+
+        if (!title.isEmpty()) {
+            currentScene.title = title;
+        }
+        
         Scene prevScene = currentScene;
         currentScene = new Scene();
         scenes.add(currentScene);
@@ -88,6 +107,10 @@ public class StateVisualizer {
         return new StateVisualizer(s);
     }
 
+    public static StateVisualizer builder() {
+        return new StateVisualizer(null);
+    }
+
     private void drawState(Graphics2D g2d, State s) {
         g2d.setStroke(new BasicStroke(2));
         drawVertices(g2d, s);
@@ -98,7 +121,11 @@ public class StateVisualizer {
     private void drawTitle(Graphics2D g2d, State s)
     {
         g2d.setColor(Color.WHITE);
-        g2d.drawString("Iteration: " + s.getIteration() + ", Polygons: " + s.getAtomicPolygons().size(),
+        String title = currentScene.title;
+        if (title == null || title.isEmpty()) {
+            title = "Iteration: " + s.getIteration() + ", Polygons: " + s.getAtomicPolygons().size();
+        }
+        g2d.drawString(title,
                 currentScene.offsetX + MARGIN, currentScene.offsetY + boardYScale + MARGIN * 3 / 2);
     }
 
@@ -174,5 +201,34 @@ public class StateVisualizer {
         }
 
         g2d.setStroke(prev);
+    }
+    
+    public static void main(String[] argv) throws IOException {
+        String directory = "downloadedProblems";
+        Files.newDirectoryStream(Paths.get(directory))
+                .forEach(subdir -> {
+                    if (!Files.isDirectory(subdir)) {
+                        return;
+                    }
+                    System.out.println("Drawing directory: " + subdir);
+                    final StateVisualizer vis = StateVisualizer.builder();
+                    
+                    try {
+                        Files.newDirectoryStream(subdir).forEach(problemPath -> {
+                            ProblemReader r = new ProblemReader();
+                            State s = null;
+                            try {
+                                s = r.readProblemFromFile(problemPath.toAbsolutePath().toString());
+                            } catch (IOException | IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                            vis.addScene(s, false, "Problem: " + problemPath.getFileName());
+                        });
+
+                        vis.drawToFile(subdir + "/problems.png");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
     }
 }
