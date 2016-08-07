@@ -140,7 +140,9 @@ public class MainApp
             }
 
             int step = 0;
-            while (solution == null && !nodes.isEmpty() && step < 100)
+            while (solution == null && !nodes.isEmpty()
+                    && (System.currentTimeMillis() - result.time < 5000)
+                    && step < 100)
             {
                 step++;
                 State currentState = nodes.remove(0);

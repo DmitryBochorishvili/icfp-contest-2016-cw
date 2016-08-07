@@ -91,7 +91,7 @@ public final class AdjacentPolyGenerator
         List<Set<AtomicPolygon>> result = new ArrayList<>();
 
         // don't go deeper than 5 nodes
-        if (parentTree.size() >= 5)
+        if (parentTree.size() >= 3)
             return result;
 
         Set<AtomicPolygon> currentTree = new HashSet<AtomicPolygon>(parentTree);

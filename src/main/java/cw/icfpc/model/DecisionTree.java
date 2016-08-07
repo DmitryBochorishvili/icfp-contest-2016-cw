@@ -6,13 +6,21 @@ import java.util.List;
 
 public class DecisionTree
 {
+
+    private static long startTime;
+
     public static List<State> generateDecisionNodes(State state)
     {
         double currentStateArea = state.getSimpleArea();
 
         List<State> nodes = new LinkedList<>();
 
+        startTime = System.currentTimeMillis();
+
         state.getEdges().forEach(edge -> {
+            if (System.currentTimeMillis() - startTime > 1000)
+                return;
+
             nodes.addAll(tryUnfoldByEdge(state, currentStateArea, edge));
             if (!state.isEdgeOuter(edge)) {
                 nodes.addAll(trytoMergeByInnerEdge(state, currentStateArea, edge));
