@@ -148,7 +148,7 @@ public class MainApp
             if (drawStates)
             {
                 String simpleFileName = new File(problemFile).getName();
-                String picFileName = "pic_" + simpleFileName;
+                String picFileName = "pic_" + simpleFileName + ".png";
                 vis.drawToFile(picFileName);
             }
         }
