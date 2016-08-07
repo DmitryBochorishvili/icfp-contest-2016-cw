@@ -250,6 +250,8 @@ public class MathUtils
         // y1 = y * a / c + x * b / c
         BigFraction y1 = y.multiply(a) .add (x.multiply(b));
 
-        return new FractionPoint(x1, y1);
+        FractionPoint result = new FractionPoint(x1, y1);
+        result.destId = point.destId;
+        return result;
     }
 }
