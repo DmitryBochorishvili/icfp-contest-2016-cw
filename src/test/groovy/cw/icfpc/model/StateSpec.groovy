@@ -13,7 +13,7 @@ class StateSpec extends Specification
             def poly = new AtomicPolygon(getFractionPointList('0,0 1,0 1,1 0,1'))
 
         expect:
-            new State([poly]).isFinalState() == true
+            State.createNew([poly]).isFinalState() == true
     }
 
     def 'final state: true for moved square'()
@@ -22,7 +22,7 @@ class StateSpec extends Specification
             def poly = new AtomicPolygon(getFractionPointList('1/2,0 3/2,0 3/2,1 1/2,1'))
 
         expect:
-            new State([poly]).isFinalState() == true
+            State.createNew([poly]).isFinalState() == true
     }
 
     def 'final state: false for not a square'()
@@ -31,7 +31,7 @@ class StateSpec extends Specification
             def poly = new AtomicPolygon(getFractionPointList('0,0 1,1 2,1 1,0'))
 
         expect:
-            new State([poly]).isFinalState() == false
+            State.createNew([poly]).isFinalState() == false
     }
 
 }

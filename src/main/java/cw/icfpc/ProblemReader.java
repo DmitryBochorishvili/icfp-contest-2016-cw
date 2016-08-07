@@ -43,7 +43,7 @@ public class ProblemReader {
         List<Edge> edges = readEdges(input);
 
         List<AtomicPolygon> atomicPolygons = atomizePolygons2(polygons, edges);
-        return new State(atomicPolygons);
+        return State.createNew(atomicPolygons);
     }
 
     public static List<AtomicPolygon> atomizePolygons2(List<List<FractionPoint>> polygons, List<Edge> edges) {

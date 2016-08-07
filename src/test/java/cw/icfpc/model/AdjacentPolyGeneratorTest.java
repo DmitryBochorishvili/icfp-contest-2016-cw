@@ -66,7 +66,7 @@ public class AdjacentPolyGeneratorTest {
         AtomicPolygonStub h = new AtomicPolygonStub("h");
 
         AtomicPolygon[] polys = {a, b, c, d, e, f, g, h};
-        State state = new State(new ArrayList<>(Arrays.asList(polys)));
+        State state = State.createNew(new ArrayList<>(Arrays.asList(polys)));
         
         //   A
         //   B

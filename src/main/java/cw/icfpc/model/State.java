@@ -20,7 +20,18 @@ public final class State
     private int iteration = 0;
     private State derivedFrom;
 
-    public State(List<AtomicPolygon> atomicPolygons)
+    /**
+     * Makes sure it's a first-generation State with all the proper indexes.
+     */
+    public static State createNew(List<AtomicPolygon> polygons) {
+        return new State(polygons);
+    }
+
+    /**
+     * Please only create State-s with #createNew or with State's methods.
+     * @param atomicPolygons
+     */
+    private State(List<AtomicPolygon> atomicPolygons)
     {
         this.atomicPolygons = atomicPolygons;
 
@@ -65,10 +76,6 @@ public final class State
         return atomicPolygons;
     }
 
-    public static State valueOf(List<AtomicPolygon> polygons) {
-        return new State(polygons);
-    }
-
     // returns sum of all atomic polygons areas
     // doesn't take into account a possibility that a polygon could present in multiple layers.
     public double getSimpleArea()
@@ -79,7 +86,7 @@ public final class State
     public State addCompound(CompoundPolygon flippedCompound) {
         List<AtomicPolygon> atomicPolygons = new ArrayList<>(this.atomicPolygons);
         atomicPolygons.addAll(flippedCompound.getPolygons());
-        return State.valueOf(atomicPolygons);
+        return State.createNew(atomicPolygons);
     }
 
     public State addRemoveFlippedCompound(
@@ -100,7 +107,7 @@ public final class State
         AtomicPolygon merged = GraphUtils.merge(p1, p2);
         atomicPolygons.add(merged);
 
-        State newState = State.valueOf(atomicPolygons);
+        State newState = State.createNew(atomicPolygons);
 
         newState.iteration = this.getIteration() + 1;
         newState.derivedFrom = this;

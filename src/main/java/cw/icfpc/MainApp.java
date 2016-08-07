@@ -96,6 +96,6 @@ public class MainApp
 
         polygons.add(new AtomicPolygon(vertices));
 
-        return new State(polygons);
+        return State.createNew(polygons);
     }
 }
