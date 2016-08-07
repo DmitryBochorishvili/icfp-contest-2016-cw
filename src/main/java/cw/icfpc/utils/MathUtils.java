@@ -227,4 +227,27 @@ public class MathUtils
             div = y;
         }
     }
+
+    /**
+     * Rotates given point by specified angle around 0,0.
+     * Angle is specified as a coordinate of point that should end up
+     * at 1,0 coordinates after rotation by that angle.
+     */
+    public static FractionPoint rotate(FractionPoint point, FractionPoint angleTangent)
+    {
+        BigFraction a = angleTangent.getX();
+        BigFraction b = angleTangent.getY().negate();
+        BigFraction c = BigFraction.ONE;
+
+        BigFraction x = point.getX();
+        BigFraction y = point.getY();
+
+        // x1 = x * a / c - y * b / c
+        BigFraction x1 = x.multiply(a) .subtract (y.multiply(b));
+
+        // y1 = y * a / c + x * b / c
+        BigFraction y1 = y.multiply(a) .add (x.multiply(b));
+
+        return new FractionPoint(x1, y1);
+    }
 }

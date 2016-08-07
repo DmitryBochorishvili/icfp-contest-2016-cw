@@ -123,7 +123,7 @@ class MathUtilsSpec extends Specification
     {
         expect:
             MathUtils.angleBetween(p('0,0'), p('0,1'), p('1,1')) == -Math.PI/2
-            MathUtils.angleBetween(p('1,0'), p('0,0'), p('1,1')) == -3*Math.PI/4
+            MathUtils.angleBetween(p('1,0'), p('0,0'), p('1,1')) == -3 * Math.PI/4
             MathUtils.angleBetween(p('1,0'), p('1/2,1/2'), p('0,0')) == Math.PI/2
     }
     
@@ -140,4 +140,9 @@ class MathUtilsSpec extends Specification
             inter.closeTo(new FractionPoint(new BigFraction(1, 1), new BigFraction(0, 1)))
     }
 
+    def 'rotate'()
+    {
+        expect:
+            getFractionPoint('1,0') == MathUtils.rotate(getFractionPoint('4/5,3/5'), getFractionPoint('4/5,3/5'))
+    }
 }
