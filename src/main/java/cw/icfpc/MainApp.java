@@ -7,8 +7,6 @@ import cw.icfpc.model.State;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.fraction.BigFraction;
@@ -28,6 +26,7 @@ public class MainApp
         options.addOption("f", true, "file with problem description");
         options.addOption("d", true, "directory with problems");
         options.addOption("i", false, "generate state images");
+        options.addOption("s", false, "submit found solutions to the server");
 
         CommandLineParser parser = new DefaultParser();
         CommandLine cmd = parser.parse(options, args);
@@ -47,20 +46,20 @@ public class MainApp
         {
             long time = System.currentTimeMillis();
             String file = cmd.getOptionValue('f');
-            State solution = solveProblem(file, drawStateImages);
+            State solution = solveProblem(file, drawStateImages, cmd.hasOption('s'));
             System.out.println("Problem " + file + (solution == null ? " NOT" : "") + " solved in " + (System.currentTimeMillis() - time));
         }
 
         if (cmd.hasOption('d'))
         {
             String directory = cmd.getOptionValue('d');
-            Files.walk(Paths.get(cmd.getOptionValue('d'))).forEach(filePath -> {
+            Files.walk(Paths.get(directory)).forEach(filePath -> {
                 if (Files.isRegularFile(filePath)) {
                     long time = System.currentTimeMillis();
                     State solution = null;
                     try
                     {
-                        solution = solveProblem(filePath.toString(), drawStateImages);
+                        solution = solveProblem(filePath.toString(), drawStateImages, cmd.hasOption('s'));
                     } catch (Exception e)
                     {
                         e.printStackTrace();
@@ -73,7 +72,7 @@ public class MainApp
         System.out.println("Finished");
     }
 
-    private static State solveProblem(String problemFile, boolean drawStates)
+    private static State solveProblem(String problemFile, boolean drawStates, boolean submitToServer)
     {
         State solution = null;
 
@@ -142,10 +141,24 @@ public class MainApp
                 }
                 Collections.reverse(path);
 
-                if (drawStates)
+                if (drawStates) {
                     for (State st: path) {
                         vis.addScene(st, false);
                     }
+                }
+
+                if (submitToServer) {
+                    String strId = new File(problemFile).getName();
+                    
+                    try {
+                        int id = Integer.parseInt(strId);
+                        System.out.println("Submitting! Ta-da!..");
+                        ServerCommunicator.submitSolution(strId, solution.toSolution());
+                    }
+                    catch (NumberFormatException e) {
+                        System.out.println("It's apparently not a problem file: " + strId);
+                    }
+                }
             }
 
             if (drawStates)
